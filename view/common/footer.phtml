@@ -99,8 +99,9 @@ $currentYear = date('Y');
                 <!-- 統計情報 -->
                 <ul class="list-unstyled text-white-50 small">
                     <?php 
-                    $itemCount = $this->api()->search('items', ['site_id' => $site->id()])->getTotalResults();
-                    $mediaCount = $this->api()->search('media', ['site_id' => $site->id()])->getTotalResults();
+                    // メモリ効率のため、limitを1にしてトータル数のみ取得
+                    $itemCount = $this->api()->search('items', ['site_id' => $site->id(), 'limit' => 1])->getTotalResults();
+                    $mediaCount = $this->api()->search('media', ['site_id' => $site->id(), 'limit' => 1])->getTotalResults();
                     ?>
                     <li class="mb-1">
                         <i class="bi bi-collection me-2"></i>
