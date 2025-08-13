@@ -77,8 +77,6 @@ if ($itemSet && $site) {
     $displayItemSet = false;
 }
 
-// $this->headLink()
-//     ->appendStylesheet($assetUrl('css/search.css', 'AdvancedSearch'));
 $this->headScript()
     ->appendFile($assetUrl('js/search.js', 'AdvancedSearch'), 'text/javascript', ['defer' => 'defer']);
 ?>
@@ -88,134 +86,292 @@ $this->headScript()
 <?php if ($breadcrumbs): ?>
     <?= $breadcrumbs() ?>
 <?php else: ?>
-<?php // ブレッドクラムナビゲーションをpartialとして読み込み ?>
-<?= $this->partial('common/breadcrumbs', [
-    'site' => $site, 
-    'itemSet' => isset($itemSet) ? $itemSet : null,
-    'isAdmin' => isset($isAdmin) ? $isAdmin : false,
-    'langValue' => isset($langValue) ? $langValue : null
-]) ?>
+<!-- モダンなパンくずリスト -->
+<nav aria-label="<?= $translate('Breadcrumb') ?>" class="mt-3">
+    <div class="container">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="<?= $site ? $site->url() : '/' ?>" class="text-decoration-none">
+                    <i class="bi bi-house-door me-1"></i><?= $translate('Home') ?>
+                </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <?= $translate('Search') ?>
+            </li>
+        </ol>
+    </div>
+</nav>
 <?php endif; ?>
 <?php endif; ?>
 
-<div id="search-page" class="container-fluid">
+<div id="search-page" class="search-page-modern">
 <?php endif; // End NOT partial. ?>
 
 <?php if ($displayItemSet): ?>
 
     <?php
-    $vars->offsetSet('resourceType', 'item_sets'); // TODO Check if really needed.
+    $vars->offsetSet('resourceType', 'item_sets');
     $this->htmlElement('body')->appendAttribute('class', 'search-page item-set resource browse');
     ?>
-    <?= $this->pageTitle($itemSet->displayTitle(null, $langValue), 2) ?>
-    <h3><?= $translate('Item set') ?></h3>
-    <div class="metadata">
-        <?= $this->resourcePageBlocks($itemSet)->getBlocks() ?>
+    <!-- アイテムセットヘッダー -->
+    <div class="item-set-header bg-light py-4 mb-4">
+        <div class="container">
+            <h1 class="display-6 fw-bold mb-2"><?= $itemSet->displayTitle(null, $langValue) ?></h1>
+            <p class="text-muted mb-0">
+                <i class="bi bi-folder me-2"></i><?= $translate('Item set') ?>
+            </p>
+        </div>
     </div>
-    <div class="item-set-items">
-        <h3><?= $translate('Items') ?></h3>
+    
+    <div class="container">
+        <div class="metadata mb-4">
+            <?= $this->resourcePageBlocks($itemSet)->getBlocks() ?>
+        </div>
+        <div class="item-set-items">
+            <h3 class="h4 fw-bold mb-3">
+                <i class="bi bi-collection me-2"></i><?= $translate('Items') ?>
+            </h3>
+        </div>
     </div>
 
 <?php else: ?>
 
-    <!--
     <?php
     if ($query->isBrowse()) {
-        // No search query.
         $mainTitle = $translate($searchConfig->subSetting('results', 'label_default') ?: 'Search');
     } else {
         $mainTitle = $response->getTotalResults()
-            ? $translate($searchConfig->subSetting('results', 'label_results') ?: 'Search results')
-            : $translate($searchConfig->subSetting('results', 'label_no_results') ?: 'No results');
+            ? sprintf($translate('%d Results'), $response->getTotalResults())
+            : $translate('No results');
     }
-
+    
     $this->htmlElement('body')->appendAttribute('class', 'search-page resource browse');
     ?>
-    <?= $this->pageTitle($mainTitle, 2) ?>
--->
-
-<h2 class="text-center my-4"><?= $translate('Search') ?></h2>
+    
+    <!-- 検索ページヘッダー -->
+    <div class="search-header bg-light py-5 mb-5">
+        <div class="container text-center">
+            <h1 class="display-5 fw-bold mb-3">
+                <i class="bi bi-search me-3"></i><?= $mainTitle ?>
+            </h1>
+            <?php if ($response->getTotalResults()): ?>
+            <p class="text-muted mb-0">
+                <?= sprintf($translate('Found %d items matching your search'), $response->getTotalResults()) ?>
+            </p>
+            <?php endif; ?>
+        </div>
+    </div>
 
 <?php endif; ?>
 
-<?= $searchConfig->renderForm(['template' => null, 'skip_form_action' => $skipFormAction]) ?>
-
-<div class="search-results-wrapper">
-    <div class="row">
-        
-        <!-- ファセット（フィルター）列 -->
-        <?php if ($displayFacets === 'before' || $displayFacets === 'after'): ?>
-        <div class="col-lg-3 col-md-4 order-2 order-md-1">
-            <aside class="search-facets sticky-top pt-3" style="top: 20px;">
-                <?= $partial('search/facets-list') ?>
-            </aside>
-        </div>
-        <?php endif; ?>
-
-        <!-- メインコンテンツ列 -->
-        <div class="<?= ($displayFacets === 'before' || $displayFacets === 'after') ? 'col-lg-9 col-md-8' : 'col-12' ?> order-1 order-md-2 p-3">
-            <div class="search-results">
-
-                <?php if ($displayPartsHeader): ?>
-                <div class="search-results-part search-results-header">
-                    <?= $partial('search/results-header-footer', $variables + ['resultPart' => 'header']) ?>
+<!-- 検索フォーム -->
+<div class="search-form-section mb-5">
+    <div class="container">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white py-3">
+                <button class="btn btn-link text-decoration-none p-0 w-100 text-start collapsed" 
+                        type="button" 
+                        id="searchFormToggle"
+                        data-bs-toggle="collapse" 
+                        data-bs-target="#searchFormCollapse" 
+                        aria-expanded="false" 
+                        aria-controls="searchFormCollapse">
+                    <h5 class="mb-0 d-flex align-items-center justify-content-between">
+                        <span>
+                            <i class="bi bi-funnel me-2"></i>
+                            <?= $translate('Advanced Search') ?>
+                        </span>
+                        <i class="bi bi-chevron-down"></i>
+                    </h5>
+                </button>
+            </div>
+            <div id="searchFormCollapse" class="collapse">
+                <div class="card-body p-4">
+                    <?= $searchConfig->renderForm(['template' => null, 'skip_form_action' => $skipFormAction]) ?>
                 </div>
-                <?php endif; ?>
-
-                <?php $this->trigger('view.browse.before'); ?>
-
-                <?php if ($documentCount): ?>
-
-                <div class="search-results-part search-results-list">
-                    <?php foreach (array_filter($response->getResourceTotalResults()) as $resourceType => $count): ?>
-                    <div class="mb-4">
-                        <h3 class="border-bottom pb-2">
-                            <i class="fas fa-folder-open me-2 text-primary"></i>
-                            <?= $escape(sprintf($translate('%1$d %2$s'), $count, $translate($easyMeta->resourceLabelCount($resourceType, $count)))) ?>
-                        </h3>
-                        <?= $partial('search/results', $variables + ['resourceType' => $resourceType]) ?>
-                    </div>
-                    <?php endforeach; ?>
-                </div>
-
-                <?php else: ?>
-
-                <div class="noresults">
-                    <div class="alert alert-info text-center">
-                        <i class="fas fa-search fa-2x mb-3 text-muted"></i>
-                        <h4><?= $translate('No Results Found') ?></h4>
-                        <?php if (empty($query) && !$itemSet): ?>
-                        <p><?= $translate('Fill a query and get results.') ?></p>
-                        <?php elseif (empty($query) && $itemSet): ?>
-                        <p><?= $translate('This item set has no items.') ?></p>
-                        <?php else: ?>
-                        <?php if (in_array($searchConfig->subSetting('results', 'search_filters', 'header'), ['header', 'both'])): ?>
-                        <div class="search-results-part search-results-header mb-3">
-                            <?= $searchConfig->renderSearchFilters($query, ['template' => 'common/search-filters-links']) ?>
-                        </div>
-                        <?php endif; ?>
-                        <p><?= $translate('The query returned no results') ?></p>
-                        <small class="text-muted"><?= $translate('Try adjusting your search criteria or filters') ?></small>
-                        <?php endif; ?>
-                    </div>
-                </div>
-
-                <?php endif; ?>
-
-                <?php $this->trigger('view.browse.after'); ?>
-
-                <?php if ($displayPartsFooter): ?>
-                <div class="search-results-part search-results-footer">
-                    <?= $partial('search/results-header-footer', $variables + ['resultPart' => 'footer']) ?>
-                </div>
-                <?php endif; ?>
-
             </div>
         </div>
+    </div>
+</div>
 
+<script>
+// 詳細検索フォームの開閉状態をローカルストレージで管理
+document.addEventListener('DOMContentLoaded', function() {
+    const searchFormToggle = document.getElementById('searchFormToggle');
+    const searchFormCollapse = document.getElementById('searchFormCollapse');
+    const storageKey = 'searchFormState';
+    
+    if (searchFormToggle && searchFormCollapse) {
+        // ローカルストレージから状態を読み込み
+        const savedState = localStorage.getItem(storageKey);
+        
+        // 初期値はクローズ、保存された状態がopenの場合のみ開く
+        if (savedState === 'open') {
+            searchFormCollapse.classList.add('show');
+            searchFormToggle.classList.remove('collapsed');
+            searchFormToggle.setAttribute('aria-expanded', 'true');
+        }
+        
+        // 開閉時に状態を保存
+        searchFormCollapse.addEventListener('shown.bs.collapse', function() {
+            localStorage.setItem(storageKey, 'open');
+            // アイコンの回転
+            const icon = searchFormToggle.querySelector('.bi-chevron-down');
+            if (icon) {
+                icon.style.transform = 'rotate(180deg)';
+                icon.style.transition = 'transform 0.3s';
+            }
+        });
+        
+        searchFormCollapse.addEventListener('hidden.bs.collapse', function() {
+            localStorage.setItem(storageKey, 'closed');
+            // アイコンの回転を戻す
+            const icon = searchFormToggle.querySelector('.bi-chevron-down');
+            if (icon) {
+                icon.style.transform = 'rotate(0deg)';
+                icon.style.transition = 'transform 0.3s';
+            }
+        });
+    }
+});
+</script>
+
+<style>
+/* 検索フォームトグルボタンのスタイル */
+#searchFormToggle {
+    color: var(--bs-body-color);
+    transition: all 0.3s ease;
+}
+
+#searchFormToggle:hover {
+    color: var(--bs-primary);
+}
+
+#searchFormToggle:focus {
+    box-shadow: none;
+}
+
+#searchFormToggle .bi-chevron-down {
+    transition: transform 0.3s ease;
+}
+
+#searchFormToggle:not(.collapsed) .bi-chevron-down {
+    transform: rotate(180deg);
+}
+
+/* カードヘッダーのボーダー調整 */
+.search-form-section .card-header {
+    border-bottom: 1px solid var(--bs-border-color);
+}
+
+.search-form-section .collapse.show + .card-header,
+.search-form-section .card-header:has(+ .collapse.show) {
+    border-bottom: 1px solid var(--bs-border-color);
+}
+</style>
+
+<!-- 検索結果 -->
+<div class="search-results-wrapper py-4">
+    <div class="container">
+        <div class="row">
+            
+            <!-- ファセット（フィルター）列 -->
+            <?php if ($displayFacets === 'before' || $displayFacets === 'after'): ?>
+            <div class="col-lg-3 col-md-4 order-2 order-md-<?= $displayFacets === 'before' ? '1' : '2' ?> mb-4">
+                <aside class="search-facets">
+                    <div class="sticky-top" style="top: 80px;">
+                        <?= $partial('search/facets-list') ?>
+                    </div>
+                </aside>
+            </div>
+            <?php endif; ?>
+
+            <!-- メインコンテンツ列 -->
+            <div class="<?= ($displayFacets === 'before' || $displayFacets === 'after') ? 'col-lg-9 col-md-8' : 'col-12' ?> order-1 order-md-<?= $displayFacets === 'after' ? '1' : '2' ?>">
+                <div class="search-results">
+
+                    <?php if ($displayPartsHeader): ?>
+                    <div class="search-results-part search-results-header mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <?= $partial('search/results-header-footer', $variables + ['resultPart' => 'header']) ?>
+                            </div>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+
+                    <?php $this->trigger('view.browse.before'); ?>
+
+                    <?php if ($documentCount): ?>
+
+                    <div class="search-results-part search-results-list">
+                        <?php foreach (array_filter($response->getResourceTotalResults()) as $resourceType => $count): ?>
+                        <div class="resource-type-section mb-5">
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <h3 class="h4 fw-bold mb-0">
+                                    <i class="bi bi-collection me-2 text-primary"></i>
+                                    <?= $escape(sprintf($translate('%1$d %2$s'), $count, $translate($easyMeta->resourceLabelCount($resourceType, $count)))) ?>
+                                </h3>
+                                <span class="badge bg-primary rounded-pill"><?= $count ?></span>
+                            </div>
+                            <div class="resource-results">
+                                <?= $partial('search/results', $variables + ['resourceType' => $resourceType]) ?>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+
+                    <?php else: ?>
+
+                    <div class="noresults">
+                        <div class="card text-center py-5">
+                            <div class="card-body">
+                                <i class="bi bi-search fs-1 text-muted mb-3 d-block"></i>
+                                <h4 class="fw-bold mb-3"><?= $translate('No Results Found') ?></h4>
+                                <?php if (empty($query) && !$itemSet): ?>
+                                <p class="text-muted"><?= $translate('Fill a query and get results.') ?></p>
+                                <?php elseif (empty($query) && $itemSet): ?>
+                                <p class="text-muted"><?= $translate('This item set has no items.') ?></p>
+                                <?php else: ?>
+                                <?php if (in_array($searchConfig->subSetting('results', 'search_filters', 'header'), ['header', 'both'])): ?>
+                                <div class="search-results-part search-results-header mb-3">
+                                    <?= $searchConfig->renderSearchFilters($query, ['template' => 'common/search-filters-links']) ?>
+                                </div>
+                                <?php endif; ?>
+                                <p class="text-muted mb-2"><?= $translate('The query returned no results') ?></p>
+                                <small class="text-muted d-block">
+                                    <i class="bi bi-lightbulb me-1"></i>
+                                    <?= $translate('Try adjusting your search criteria or filters') ?>
+                                </small>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+
+                    <?php endif; ?>
+
+                    <?php $this->trigger('view.browse.after'); ?>
+
+                    <?php if ($displayPartsFooter): ?>
+                    <div class="search-results-part search-results-footer mt-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <?= $partial('search/results-header-footer', $variables + ['resultPart' => 'footer']) ?>
+                            </div>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+
+                </div>
+            </div>
+
+        </div>
     </div>
 </div>
 
 <?php if (empty($isPartial)): ?>
 </div>
+
+<!-- メインコンテンツとフッターの間隔を確保 -->
+<div class="mb-5 pb-5"></div>
 <?php endif; ?>

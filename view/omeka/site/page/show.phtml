@@ -29,10 +29,10 @@ switch ($this->siteSetting('subnav_display')) {
 $showPagePagination = $this->siteSetting('show_page_pagination', true);
 ?>
 
-<div class="container">
+<div class="container py-5">
     <!-- モダンなパンくずリスト -->
     <?php if ($activePage && $activePage['depth'] !== 0): ?>
-    <nav aria-label="<?= $translate('Breadcrumb') ?>" class="mt-3">
+    <nav aria-label="<?= $translate('Breadcrumb') ?>" class="mb-4">
         <ol class="breadcrumb">
             <?php
             $breadcrumbs = [];
@@ -136,7 +136,7 @@ $showPagePagination = $this->siteSetting('show_page_pagination', true);
     <?php $this->trigger('view.show.before'); ?>
     
     <!-- ページコンテンツ（Omeka Sのブロックシステム） -->
-    <div class="page-content my-4">
+    <div class="page-content my-5">
         <div class="blocks">
             <?php echo $this->content; ?>
         </div>
@@ -184,3 +184,6 @@ $showPagePagination = $this->siteSetting('show_page_pagination', true);
     <?php endif; ?>
     <?php endif; ?>
 </div>
+
+<!-- メインコンテンツとフッターの間隔を確保 -->
+<div class="mb-5 pb-5"></div>

@@ -18,9 +18,9 @@ $mediaCount = count($item->media());
 // ページタイトルを設定
 $this->headTitle($itemTitle);
 ?>
-<div class="container">
+<div class="container py-5">
     <!-- モダンなタイトルセクション -->
-    <div class="item-header py-5 mb-4">
+    <div class="item-header py-4 mb-5">
         <div class="row align-items-center">
             <div class="col-lg-8 mx-auto text-center">
                 <!-- リソースタイプバッジ -->
@@ -92,3 +92,6 @@ $this->headTitle($itemTitle);
 
 <?php $this->trigger('view.show.after'); ?>
 </div>
+
+<!-- メインコンテンツとフッターの間隔を確保 -->
+<div class="mb-5 pb-5"></div>

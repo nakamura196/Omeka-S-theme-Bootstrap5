@@ -17,4 +17,51 @@ $form
     ->prepare();
 ?>
 
-<?= $this->form($form) ?>
+<!-- クイック検索フォーム（Bootstrap 5） -->
+<div class="search-form-quick">
+    <?= $this->form()->openTag($form) ?>
+    
+    <div class="input-group">
+        <?php
+        // メイン検索フィールド
+        if ($form->has('q')):
+            $qElement = $form->get('q');
+            $qElement->setAttributes([
+                'class' => 'form-control',
+                'placeholder' => $this->translate('Search...'),
+                'aria-label' => $this->translate('Search')
+            ]);
+            echo $this->formElement($qElement);
+        endif;
+        
+        // レコード/フルテキストオプション
+        if ($form->has('rft')):
+            $rftElement = $form->get('rft');
+            $rftElement->setAttribute('class', 'form-select');
+            echo $this->formElement($rftElement);
+        endif;
+        
+        // 他の隠しフィールド
+        foreach ($form as $element):
+            if ($element->getAttribute('type') === 'hidden'):
+                echo $this->formElement($element);
+            endif;
+        endforeach;
+        
+        // 送信ボタン
+        if ($form->has('submit')):
+            $submitElement = $form->get('submit');
+            $submitElement->setAttributes([
+                'class' => 'btn btn-primary',
+                'value' => $this->translate('Search')
+            ]);
+        ?>
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-search"></i>
+            <span class="d-none d-sm-inline ms-1"><?= $this->translate('Search') ?></span>
+        </button>
+        <?php endif; ?>
+    </div>
+    
+    <?= $this->form()->closeTag() ?>
+</div>

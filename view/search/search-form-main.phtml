@@ -55,19 +55,120 @@ if ($filters) {
 */
 ?>
 
-<div class="container">
-<div id="advanced-search-form-wrapper" class="card mb-3">
-    <div class="card-header">
-        <?= $this->translate('Search Form') ?>
-    </div>
-    <div id="advanced-search-form" class="card-body">
-        <?= $this->form()->openTag($form) ?>
-        <?= $this->formCollection($form) ?>
-        <div class="search-form-buttons d-flex justify-content-center align-items-center mt-3 text-center">
-            <?= $reset ? $this->formButton($reset) : null ?>
-            <?= $submit ? $this->formButton($submit) : null ?>
+<!-- モダンな検索フォーム（Bootstrap 5） -->
+<div id="advanced-search-form-wrapper" class="search-form-modern">
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-primary text-white py-3">
+            <h5 class="mb-0">
+                <i class="bi bi-search me-2"></i>
+                <?= $translate('Advanced Search') ?>
+            </h5>
         </div>
-        <?= $this->form()->closeTag() ?>
+        <div id="advanced-search-form" class="card-body p-4">
+            <?= $this->form()->openTag($form) ?>
+            
+            <!-- フォームフィールド -->
+            <div class="search-form-fields">
+                <?php
+                // フォームをフィールドごとにカスタマイズ
+                foreach ($form as $element):
+                    if ($element instanceof \Laminas\Form\Fieldset):
+                        // フィールドセットの場合
+                        ?>
+                        <div class="mb-4">
+                            <?php if ($element->getLabel()): ?>
+                            <h6 class="fw-bold mb-3 text-secondary">
+                                <i class="bi bi-filter-circle me-1"></i>
+                                <?= $translate($element->getLabel()) ?>
+                            </h6>
+                            <?php endif; ?>
+                            
+                            <div class="row g-3">
+                                <?php foreach ($element as $subElement): ?>
+                                <div class="col-md-6">
+                                    <?php
+                                    // Bootstrap 5のフォームコントロールクラスを追加
+                                    $subElement->setAttribute('class', 'form-control');
+                                    if ($subElement->getLabel()): ?>
+                                    <label class="form-label text-muted small">
+                                        <?= $translate($subElement->getLabel()) ?>
+                                    </label>
+                                    <?php endif; ?>
+                                    <?= $this->formElement($subElement) ?>
+                                </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                        <?php
+                    else:
+                        // 通常のフォーム要素の場合
+                        $element->setAttribute('class', 'form-control');
+                        ?>
+                        <div class="mb-3">
+                            <?php if ($element->getLabel()): ?>
+                            <label class="form-label">
+                                <?= $translate($element->getLabel()) ?>
+                            </label>
+                            <?php endif; ?>
+                            <?= $this->formElement($element) ?>
+                        </div>
+                        <?php
+                    endif;
+                endforeach;
+                ?>
+            </div>
+            
+            <!-- 検索ボタン -->
+            <div class="search-form-buttons d-flex justify-content-center gap-2 mt-4 pt-3 border-top">
+                <?php if ($reset): ?>
+                <button type="button" 
+                        form="<?= $formId ?>" 
+                        class="btn btn-outline-secondary px-4"
+                        onclick="document.getElementById('<?= $formId ?>').reset(); return false;">
+                    <i class="bi bi-arrow-clockwise me-2"></i>
+                    <?= $translate('Reset') ?>
+                </button>
+                <?php endif; ?>
+                
+                <?php if ($submit): 
+                    $submit->setAttribute('class', 'btn btn-primary px-5');
+                    $submit->setLabel('<i class="bi bi-search me-2"></i>' . $translate('Search'));
+                    $submit->setLabelOption('disable_html_escape', true);
+                ?>
+                <?= $this->formButton($submit) ?>
+                <?php endif; ?>
+            </div>
+            
+            <?= $this->form()->closeTag() ?>
+        </div>
     </div>
 </div>
-</div>
+
+<style>
+/* 検索フォームのカスタムスタイル */
+.search-form-modern .form-control:focus {
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+}
+
+.search-form-modern .card-header {
+    background: linear-gradient(135deg, var(--bs-primary) 0%, var(--bs-indigo) 100%);
+}
+
+/* フィールドセットのスタイル */
+.search-form-fields .form-label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+/* レスポンシブ調整 */
+@media (max-width: 768px) {
+    .search-form-buttons {
+        flex-direction: column;
+    }
+    
+    .search-form-buttons .btn {
+        width: 100%;
+    }
+}
+</style>
