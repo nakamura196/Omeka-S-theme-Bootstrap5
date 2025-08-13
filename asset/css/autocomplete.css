@@ -1,0 +1,124 @@
+/* jQuery Autocomplete Styles for Bootstrap 5 Theme */
+
+/* Autocomplete suggestions container - Bootstrap dropdown style */
+.autocomplete-suggestions {
+    position: absolute;
+    border: var(--bs-border-width) solid var(--bs-border-color);
+    background: var(--bs-body-bg);
+    background-clip: padding-box;
+    overflow: auto;
+    border-radius: var(--bs-border-radius);
+    box-shadow: var(--bs-box-shadow);
+    margin-top: 0.125rem;
+    max-height: 300px;
+    z-index: var(--bs-dropdown-zindex, 1000);
+    min-width: 10rem;
+    padding: 0.5rem 0;
+}
+
+/* Individual suggestion item - Bootstrap dropdown-item style */
+.autocomplete-suggestion {
+    display: block;
+    width: 100%;
+    padding: var(--bs-dropdown-item-padding-y, 0.25rem) var(--bs-dropdown-item-padding-x, 1rem);
+    clear: both;
+    font-weight: 400;
+    color: var(--bs-dropdown-link-color, #212529);
+    text-align: inherit;
+    text-decoration: none;
+    white-space: nowrap;
+    background-color: transparent;
+    border: 0;
+    cursor: pointer;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Hover state for suggestions - Bootstrap dropdown-item hover */
+.autocomplete-suggestion:hover {
+    color: var(--bs-dropdown-link-hover-color, #1e2125);
+    background-color: var(--bs-dropdown-link-hover-bg, #f8f9fa);
+}
+
+/* Selected/active suggestion - Bootstrap dropdown-item active */
+.autocomplete-suggestion.autocomplete-selected {
+    color: var(--bs-dropdown-link-active-color, #fff);
+    text-decoration: none;
+    background-color: var(--bs-dropdown-link-active-bg, #0d6efd);
+}
+
+/* Strong text in suggestions (matched text) */
+.autocomplete-suggestion strong {
+    font-weight: 600;
+    color: var(--bs-primary, #0d6efd);
+}
+
+.autocomplete-suggestion.autocomplete-selected strong {
+    color: var(--bs-white, #fff);
+}
+
+/* No suggestions found message */
+.autocomplete-no-suggestion {
+    padding: 0.5rem 1rem;
+    color: var(--bs-secondary, #6c757d);
+    font-style: italic;
+    font-size: 0.875rem;
+}
+
+/* Group labels in suggestions */
+.autocomplete-group {
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: var(--bs-secondary, #6c757d);
+    background-color: var(--bs-gray-100, #f8f9fa);
+    border-bottom: 1px solid var(--bs-border-color, #dee2e6);
+}
+
+/* Loading state */
+.autocomplete-loading {
+    padding: 0.5rem 1rem;
+    color: var(--bs-secondary, #6c757d);
+    font-size: 0.875rem;
+}
+
+.autocomplete-loading::after {
+    content: "...";
+    animation: dots 1.5s steps(4, end) infinite;
+}
+
+@keyframes dots {
+    0%, 20% {
+        content: ".";
+    }
+    40% {
+        content: "..";
+    }
+    60%, 100% {
+        content: "...";
+    }
+}
+
+/* Input field with autocomplete */
+input.autosuggest {
+    position: relative;
+}
+
+/* Ensure proper z-index stacking */
+.form-control.autosuggest:focus + .autocomplete-suggestions {
+    z-index: 10000;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 576px) {
+    .autocomplete-suggestions {
+        max-height: 200px;
+        font-size: 1rem;
+    }
+    
+    .autocomplete-suggestion {
+        padding: 0.75rem 1rem;
+    }
+}

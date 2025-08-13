@@ -16,6 +16,8 @@ $this->headLink()->appendStylesheet('https://cdn.jsdelivr.net/npm/bootstrap-icon
 // Search Form Override CSS
 
 $this->headLink()->appendStylesheet($this->assetUrl('css/search-view-toggle.css'));
+// Autocomplete styles
+$this->headLink()->appendStylesheet($this->assetUrl('css/autocomplete.css'));
 
 $this->headScript()->prependFile($this->assetUrl('js/default.js'));
 $this->headScript()->prependFile($this->assetUrl('js/global.js', 'Omeka'));
