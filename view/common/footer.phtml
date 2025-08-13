@@ -1,18 +1,198 @@
 <?php
 /**
- * Simple Footer Component
+ * Modern Footer Component
  * 
  * @var \Laminas\View\Renderer\PhpRenderer $this
  */
+$translate = $this->plugin('translate');
+$escape = $this->plugin('escapeHtml');
+$siteTitle = $site->title();
+$siteDescription = $site->summary();
+$currentYear = date('Y');
 ?>
-<footer class="bg-light py-4 mt-5">
-    <div class="container">
-        <div class="text-center">
-            <?php if ($footerContent = $this->themeSetting('footer')): ?>
-                <?php echo $footerContent; ?>
-            <?php else: ?>
-                <p class="mb-0"><?php echo $this->translate('Powered by Omeka S'); ?></p>
-            <?php endif; ?>
+
+<!-- モダンなフッター（Bootstrap 5） -->
+<footer class="site-footer bg-dark text-white mt-auto">
+    <!-- メインフッター -->
+    <div class="container py-5">
+        <div class="row g-4">
+            <!-- サイト情報 -->
+            <div class="col-lg-4">
+                <h5 class="mb-3">
+                    <?php if ($this->themeSetting('logo')): ?>
+                        <img src="<?php echo $this->themeSettingAssetUrl('logo'); ?>" 
+                             alt="<?php echo $escape($siteTitle); ?>" 
+                             height="30" 
+                             class="d-inline-block me-2 bg-white p-1 rounded">
+                    <?php else: ?>
+                        <i class="bi bi-archive me-2"></i>
+                    <?php endif; ?>
+                    <?php echo $escape($siteTitle); ?>
+                </h5>
+                <?php if ($siteDescription): ?>
+                <p class="text-white-50 small">
+                    <?php echo $escape($siteDescription); ?>
+                </p>
+                <?php endif; ?>
+                
+                <!-- ソーシャルリンク（オプション） -->
+                <?php if ($this->themeSetting('footer_social_links')): ?>
+                <div class="d-flex gap-2 mt-3">
+                    <?php 
+                    $socialLinks = json_decode($this->themeSetting('footer_social_links'), true);
+                    if ($socialLinks):
+                        foreach ($socialLinks as $platform => $url):
+                    ?>
+                    <a href="<?php echo $escape($url); ?>" 
+                       class="btn btn-outline-light btn-sm rounded-circle" 
+                       target="_blank" 
+                       rel="noopener noreferrer"
+                       title="<?php echo $escape(ucfirst($platform)); ?>">
+                        <i class="bi bi-<?php echo $escape($platform); ?>"></i>
+                    </a>
+                    <?php 
+                        endforeach;
+                    endif;
+                    ?>
+                </div>
+                <?php endif; ?>
+            </div>
+            
+            <!-- クイックリンク -->
+            <div class="col-lg-4">
+                <h6 class="text-uppercase mb-3"><?php echo $translate('Quick Links'); ?></h6>
+                <ul class="list-unstyled">
+                    <?php
+                    $nav = $site->publicNav()->menu();
+                    if ($nav->hasPages()):
+                        $pages = $nav->getPages();
+                        $count = 0;
+                        foreach ($pages as $page):
+                            if ($count >= 5) break; // 最大5件まで表示
+                            $count++;
+                    ?>
+                    <li class="mb-2">
+                        <a href="<?php echo $escape($page->getHref()); ?>" 
+                           class="text-white-50 text-decoration-none">
+                            <i class="bi bi-chevron-right small me-1"></i>
+                            <?php echo $escape($page->getLabel()); ?>
+                        </a>
+                    </li>
+                    <?php
+                        endforeach;
+                    endif;
+                    ?>
+                </ul>
+            </div>
+            
+            <!-- 追加情報 -->
+            <div class="col-lg-4">
+                <h6 class="text-uppercase mb-3"><?php echo $translate('Information'); ?></h6>
+                
+                <!-- カスタムフッターコンテンツまたは統計情報 -->
+                <?php if ($footerContent = $this->themeSetting('footer')): ?>
+                <div class="text-white-50 small mb-3">
+                    <?php echo $footerContent; ?>
+                </div>
+                <?php endif; ?>
+                
+                <!-- 統計情報 -->
+                <ul class="list-unstyled text-white-50 small">
+                    <?php 
+                    $itemCount = $this->api()->search('items', ['site_id' => $site->id()])->getTotalResults();
+                    $mediaCount = $this->api()->search('media', ['site_id' => $site->id()])->getTotalResults();
+                    ?>
+                    <li class="mb-1">
+                        <i class="bi bi-collection me-2"></i>
+                        <?php echo sprintf($translate('%d Items'), $itemCount); ?>
+                    </li>
+                    <li class="mb-1">
+                        <i class="bi bi-image me-2"></i>
+                        <?php echo sprintf($translate('%d Media Files'), $mediaCount); ?>
+                    </li>
+                </ul>
+                
+                <!-- 言語切り替え（オプション） -->
+                <?php if ($this->siteSetting('locale_switcher')): ?>
+                <div class="dropdown mt-3">
+                    <button class="btn btn-sm btn-outline-light dropdown-toggle" 
+                            type="button" 
+                            data-bs-toggle="dropdown" 
+                            aria-expanded="false">
+                        <i class="bi bi-translate me-1"></i>
+                        <?php echo $translate('Language'); ?>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-dark">
+                        <?php
+                        $locales = ['ja' => '日本語', 'en' => 'English'];
+                        foreach ($locales as $locale => $label):
+                        ?>
+                        <li>
+                            <a class="dropdown-item" href="?locale=<?php echo $locale; ?>">
+                                <?php echo $escape($label); ?>
+                            </a>
+                        </li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+    
+    <!-- コピーライトバー -->
+    <div class="border-top border-secondary">
+        <div class="container py-3">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="mb-0 text-white-50 small">
+                        &copy; <?php echo $currentYear; ?> <?php echo $escape($siteTitle); ?>. 
+                        <?php echo $translate('All rights reserved.'); ?>
+                    </p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="mb-0 text-white-50 small">
+                        <?php echo $translate('Powered by'); ?> 
+                        <a href="https://omeka.org/s/" 
+                           class="text-white-50" 
+                           target="_blank" 
+                           rel="noopener noreferrer">
+                            Omeka S
+                        </a>
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 </footer>
+
+<!-- ページトップへ戻るボタン -->
+<button type="button" 
+        class="btn btn-primary btn-floating btn-lg position-fixed bottom-0 end-0 m-4 d-none" 
+        id="btn-back-to-top"
+        title="<?php echo $translate('Back to top'); ?>"
+        style="z-index: 1000;">
+    <i class="bi bi-arrow-up"></i>
+</button>
+
+<script>
+// ページトップへ戻るボタンの表示制御
+document.addEventListener('DOMContentLoaded', function() {
+    const btnBackToTop = document.getElementById('btn-back-to-top');
+    
+    window.addEventListener('scroll', function() {
+        if (window.pageYOffset > 300) {
+            btnBackToTop.classList.remove('d-none');
+        } else {
+            btnBackToTop.classList.add('d-none');
+        }
+    });
+    
+    btnBackToTop.addEventListener('click', function() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
+});
+</script>

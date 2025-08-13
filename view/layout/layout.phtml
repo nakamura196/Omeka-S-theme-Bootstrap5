@@ -19,6 +19,10 @@ $this->headLink()->appendStylesheet($this->assetUrl('css/search-view-toggle.css'
 // Autocomplete styles
 $this->headLink()->appendStylesheet($this->assetUrl('css/autocomplete.css'));
 
+// Favicon設定
+$this->headLink(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => $this->assetUrl('favicon.ico')]);
+$this->headLink(['rel' => 'shortcut icon', 'type' => 'image/x-icon', 'href' => $this->assetUrl('favicon.ico')]);
+
 $this->headScript()->prependFile($this->assetUrl('js/default.js'));
 $this->headScript()->prependFile($this->assetUrl('js/global.js', 'Omeka'));
 $this->headScript()->prependFile($this->assetUrl('vendor/jquery/jquery.min.js', 'Omeka'));

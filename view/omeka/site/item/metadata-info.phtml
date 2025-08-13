@@ -1,0 +1,151 @@
+<?php
+/**
+ * Item metadata information partial template
+ * 
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\ItemRepresentation $item
+ */
+
+$translate = $this->plugin('translate');
+$escape = $this->plugin('escapeHtml');
+
+// アイテムの作成日時
+$created = $item->created();
+
+// アイテムの更新日時
+$modified = $item->modified();
+
+// メタデータの日付情報を取得
+$dateCreated = $item->value('dcterms:created');
+$dateIssued = $item->value('dcterms:issued');
+$dateModified = $item->value('dcterms:modified');
+
+// 日付フォーマット（日本語）
+$dateFormat = 'Y年n月j日 H:i';
+
+// アイコンの定義
+$calendarIcon = '<i class="bi bi-calendar3 me-2"></i>';
+$clockIcon = '<i class="bi bi-clock-history me-2"></i>';
+$editIcon = '<i class="bi bi-pencil-square me-2"></i>';
+?>
+
+<div class="item-metadata-info my-5">
+    <div class="card">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">
+                <i class="bi bi-info-circle me-2"></i><?= $translate('Metadata Information') ?>
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <!-- システム作成日 -->
+                <div class="col-md-6">
+                    <div class="d-flex align-items-start">
+                        <div class="text-primary me-3">
+                            <?= $calendarIcon ?>
+                        </div>
+                        <div>
+                            <div class="text-muted small"><?= $translate('Created') ?></div>
+                            <div class="fw-semibold">
+                                <?= $escape($created->format($dateFormat)) ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- システム更新日 -->
+                <div class="col-md-6">
+                    <div class="d-flex align-items-start">
+                        <div class="text-info me-3">
+                            <?= $clockIcon ?>
+                        </div>
+                        <div>
+                            <div class="text-muted small"><?= $translate('Last Modified') ?></div>
+                            <div class="fw-semibold">
+                                <?= $escape($modified->format($dateFormat)) ?>
+                            </div>
+                            <?php if ($created != $modified): ?>
+                                <div class="text-muted small mt-1">
+                                    (<?= $translate('Updated') ?> <?= $created->diff($modified)->format('%a') ?> <?= $translate('days after creation') ?>)
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+
+                <?php if ($dateCreated): ?>
+                <!-- Dublin Core 作成日 -->
+                <div class="col-md-6">
+                    <div class="d-flex align-items-start">
+                        <div class="text-success me-3">
+                            <?= $calendarIcon ?>
+                        </div>
+                        <div>
+                            <div class="text-muted small"><?= $translate('Date Created (DC)') ?></div>
+                            <div class="fw-semibold">
+                                <?= $escape($dateCreated) ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <?php endif; ?>
+
+                <?php if ($dateIssued): ?>
+                <!-- Dublin Core 発行日 -->
+                <div class="col-md-6">
+                    <div class="d-flex align-items-start">
+                        <div class="text-warning me-3">
+                            <?= $editIcon ?>
+                        </div>
+                        <div>
+                            <div class="text-muted small"><?= $translate('Date Issued (DC)') ?></div>
+                            <div class="fw-semibold">
+                                <?= $escape($dateIssued) ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <?php endif; ?>
+
+                <?php if ($dateModified): ?>
+                <!-- Dublin Core 更新日 -->
+                <div class="col-md-6">
+                    <div class="d-flex align-items-start">
+                        <div class="text-danger me-3">
+                            <?= $clockIcon ?>
+                        </div>
+                        <div>
+                            <div class="text-muted small"><?= $translate('Date Modified (DC)') ?></div>
+                            <div class="fw-semibold">
+                                <?= $escape($dateModified) ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <?php endif; ?>
+            </div>
+
+            <!-- 追加情報 -->
+            <div class="mt-4 pt-3 border-top">
+                <div class="row g-3">
+                    <div class="col-sm-4">
+                        <div class="text-muted small"><?= $translate('Item ID') ?></div>
+                        <div class="font-monospace">#<?= $escape($item->id()) ?></div>
+                    </div>
+                    <?php if ($item->resourceClass()): ?>
+                    <div class="col-sm-4">
+                        <div class="text-muted small"><?= $translate('Resource Class') ?></div>
+                        <div><?= $escape($translate($item->resourceClass()->label())) ?></div>
+                    </div>
+                    <?php endif; ?>
+                    <?php if ($item->resourceTemplate()): ?>
+                    <div class="col-sm-4">
+                        <div class="text-muted small"><?= $translate('Resource Template') ?></div>
+                        <div><?= $escape($item->resourceTemplate()->label()) ?></div>
+                    </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,265 @@
+<?php
+/**
+ * Item actions partial template
+ * 
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\ItemRepresentation $item
+ * @var \Omeka\Api\Representation\SiteRepresentation $site
+ */
+
+$translate = $this->plugin('translate');
+$escape = $this->plugin('escapeHtml');
+
+// 現在のURL（完全なURLを生成）
+$currentUrl = $this->serverUrl(true);
+$itemPath = $item->siteUrl($site->slug());
+// serverUrlヘルパーを使って完全なURLを生成
+$itemUrl = $this->serverUrl($itemPath);
+$jsonLdUrl = $item->apiUrl() . '?pretty_print=1';
+
+// タイトル（引用用）
+$title = $item->displayTitle();
+
+// サイト名を作成者として使用
+$creatorString = $site->title();
+?>
+
+<div class="item-actions my-4">
+    <div class="d-flex justify-content-center gap-2 flex-wrap">
+        
+        <!-- JSON-LD出力 -->
+        <button type="button" 
+                class="btn btn-outline-secondary btn-sm"
+                onclick="window.open('<?= $escape($jsonLdUrl) ?>', '_blank')"
+                title="<?= $translate('View JSON-LD') ?>">
+            <i class="bi bi-code-slash me-1" aria-hidden="true"></i>
+            <span class="d-none d-sm-inline"><?= $translate('JSON-LD') ?></span>
+        </button>
+        
+        <!-- URLコピー -->
+        <button type="button" 
+                class="btn btn-outline-secondary btn-sm"
+                onclick="copyToClipboard('<?= $escape($itemUrl) ?>')"
+                title="<?= $translate('Copy URL') ?>">
+            <i class="bi bi-link-45deg me-1" aria-hidden="true"></i>
+            <span class="d-none d-sm-inline"><?= $translate('Copy URL') ?></span>
+        </button>
+        
+        <!-- 引用形式表示 -->
+        <button type="button" 
+                class="btn btn-outline-secondary btn-sm"
+                data-bs-toggle="modal"
+                data-bs-target="#citationModal"
+                title="<?= $translate('Citation') ?>">
+            <i class="bi bi-quote me-1" aria-hidden="true"></i>
+            <span class="d-none d-sm-inline"><?= $translate('Citation') ?></span>
+        </button>
+        
+        <!-- 共有（ソーシャル） -->
+        <div class="dropdown">
+            <button type="button" 
+                    class="btn btn-outline-secondary btn-sm dropdown-toggle" 
+                    data-bs-toggle="dropdown" 
+                    aria-expanded="false"
+                    title="<?= $translate('Share') ?>">
+                <i class="bi bi-share me-1" aria-hidden="true"></i>
+                <span class="d-none d-sm-inline"><?= $translate('Share') ?></span>
+            </button>
+            <ul class="dropdown-menu">
+                <li>
+                    <a class="dropdown-item" 
+                       href="https://twitter.com/intent/tweet?url=<?= urlencode($itemUrl) ?>&text=<?= urlencode($title) ?>" 
+                       target="_blank">
+                        <i class="bi bi-twitter me-2" aria-hidden="true"></i>
+                        Twitter
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" 
+                       href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode($itemUrl) ?>" 
+                       target="_blank">
+                        <i class="bi bi-facebook me-2" aria-hidden="true"></i>
+                        Facebook
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" 
+                       href="mailto:?subject=<?= urlencode($title) ?>&body=<?= urlencode($itemUrl) ?>">
+                        <i class="bi bi-envelope me-2" aria-hidden="true"></i>
+                        <?= $translate('Email') ?>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Citation Modal -->
+<div class="modal fade" id="citationModal" tabindex="-1" aria-labelledby="citationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="citationModalLabel">
+                    <i class="bi bi-quote me-2"></i><?= $translate('Citation') ?>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="<?= $translate('Close') ?>"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Citation Styles Tabs -->
+                <ul class="nav nav-tabs mb-3" id="citationTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="apa-tab" data-bs-toggle="tab" data-bs-target="#apa" type="button" role="tab">
+                            APA
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="mla-tab" data-bs-toggle="tab" data-bs-target="#mla" type="button" role="tab">
+                            MLA
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="chicago-tab" data-bs-toggle="tab" data-bs-target="#chicago" type="button" role="tab">
+                            Chicago
+                        </button>
+                    </li>
+                </ul>
+                
+                <div class="tab-content" id="citationTabContent">
+                    <!-- APA Style -->
+                    <div class="tab-pane fade show active" id="apa" role="tabpanel">
+                        <div class="p-3 bg-light rounded mb-3 font-monospace small lh-lg text-break">
+                            <p class="mb-0" id="apa-citation">
+                                <?= $escape($creatorString) ?> (<span class="citation-year"></span>). <em><?= $escape($title) ?></em>. <?= $escape($itemUrl) ?>
+                            </p>
+                        </div>
+                        <button class="btn btn-sm btn-primary" onclick="copyCitationText('apa-citation')">
+                            <i class="bi bi-clipboard me-1"></i><?= $translate('Copy') ?>
+                        </button>
+                    </div>
+                    
+                    <!-- MLA Style -->
+                    <div class="tab-pane fade" id="mla" role="tabpanel">
+                        <div class="p-3 bg-light rounded mb-3 font-monospace small lh-lg text-break">
+                            <p class="mb-0" id="mla-citation">
+                                <?= $escape($creatorString) ?>. "<?= $escape($title) ?>." Web. <span class="citation-date-mla"></span>. &lt;<?= $escape($itemUrl) ?>&gt;.
+                            </p>
+                        </div>
+                        <button class="btn btn-sm btn-primary" onclick="copyCitationText('mla-citation')">
+                            <i class="bi bi-clipboard me-1"></i><?= $translate('Copy') ?>
+                        </button>
+                    </div>
+                    
+                    <!-- Chicago Style -->
+                    <div class="tab-pane fade" id="chicago" role="tabpanel">
+                        <div class="p-3 bg-light rounded mb-3 font-monospace small lh-lg text-break">
+                            <p class="mb-0" id="chicago-citation">
+                                <?= $escape($creatorString) ?>. "<?= $escape($title) ?>." Accessed <span class="citation-date-chicago"></span>. <?= $escape($itemUrl) ?>.
+                            </p>
+                        </div>
+                        <button class="btn btn-sm btn-primary" onclick="copyCitationText('chicago-citation')">
+                            <i class="bi bi-clipboard me-1"></i><?= $translate('Copy') ?>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Notification -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    <div id="copyToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-body d-flex align-items-center">
+            <i class="bi bi-check-circle-fill text-success me-2"></i>
+            <span id="toastMessage"><?= $translate('Copied to clipboard') ?></span>
+        </div>
+    </div>
+</div>
+
+<script>
+// ページ読み込み時に利用者のローカルタイムゾーンで日付を設定
+document.addEventListener('DOMContentLoaded', function() {
+    const now = new Date();
+    
+    // APA用（年のみ）
+    document.querySelectorAll('.citation-year').forEach(el => {
+        el.textContent = now.getFullYear();
+    });
+    
+    // MLA用（日 月名 年）
+    const monthsShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    document.querySelectorAll('.citation-date-mla').forEach(el => {
+        el.textContent = now.getDate() + ' ' + monthsShort[now.getMonth()] + ' ' + now.getFullYear();
+    });
+    
+    // Chicago用（月名 日, 年）
+    const monthsFull = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    document.querySelectorAll('.citation-date-chicago').forEach(el => {
+        el.textContent = monthsFull[now.getMonth()] + ' ' + now.getDate() + ', ' + now.getFullYear();
+    });
+});
+
+/**
+ * URLをクリップボードにコピー
+ */
+function copyToClipboard(url) {
+    navigator.clipboard.writeText(url).then(function() {
+        showToast('<?= $translate('URL copied to clipboard') ?>');
+    }).catch(function(err) {
+        console.error('Copy failed: ', err);
+        fallbackCopyTextToClipboard(url);
+    });
+}
+
+/**
+ * 引用テキストをコピー
+ */
+function copyCitationText(elementId) {
+    const element = document.getElementById(elementId);
+    const text = element.textContent || element.innerText;
+    
+    navigator.clipboard.writeText(text).then(function() {
+        showToast('<?= $translate('Citation copied to clipboard') ?>');
+    }).catch(function(err) {
+        console.error('Copy failed: ', err);
+        fallbackCopyTextToClipboard(text);
+    });
+}
+
+/**
+ * フォールバック: 古いブラウザ用のコピー機能
+ */
+function fallbackCopyTextToClipboard(text) {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed";
+    textArea.style.opacity = "0";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    
+    try {
+        document.execCommand('copy');
+        showToast('<?= $translate('Copied to clipboard') ?>');
+    } catch (err) {
+        console.error('Fallback copy failed: ', err);
+    }
+    
+    document.body.removeChild(textArea);
+}
+
+/**
+ * Toast通知を表示
+ */
+function showToast(message) {
+    const toastEl = document.getElementById('copyToast');
+    const toastMessage = document.getElementById('toastMessage');
+    toastMessage.textContent = message;
+    
+    const toast = new bootstrap.Toast(toastEl, {
+        delay: 2000
+    });
+    toast.show();
+}
+</script>
+

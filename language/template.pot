@@ -214,3 +214,75 @@ msgstr ""
 
 msgid "Romanian"
 msgstr ""
+
+msgid "Item Actions"
+msgstr ""
+
+msgid "View JSON-LD"
+msgstr ""
+
+msgid "JSON-LD"
+msgstr ""
+
+msgid "Copy URL"
+msgstr ""
+
+msgid "Citation"
+msgstr ""
+
+msgid "Share"
+msgstr ""
+
+msgid "Email"
+msgstr ""
+
+msgid "Close"
+msgstr ""
+
+msgid "URL copied to clipboard"
+msgstr ""
+
+msgid "Citation copied to clipboard"
+msgstr ""
+
+msgid "Copied to clipboard"
+msgstr ""
+
+msgid "Copy"
+msgstr ""
+
+msgid "Metadata Information"
+msgstr ""
+
+msgid "Current Access Time"
+msgstr ""
+
+msgid "Created"
+msgstr ""
+
+msgid "Last Modified"
+msgstr ""
+
+msgid "Updated"
+msgstr ""
+
+msgid "days after creation"
+msgstr ""
+
+msgid "Date Created (DC)"
+msgstr ""
+
+msgid "Date Issued (DC)"
+msgstr ""
+
+msgid "Date Modified (DC)"
+msgstr ""
+
+msgid "Item ID"
+msgstr ""
+
+msgid "Resource Class"
+msgstr ""
+
+msgid "Resource Template"
+msgstr ""

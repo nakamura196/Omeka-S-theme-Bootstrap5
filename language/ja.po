@@ -212,3 +212,87 @@ msgstr "ウクライナ語"
 
 msgid "Romanian"
 msgstr "ルーマニア語"
+
+msgid "Item Actions"
+msgstr "アイテムアクション"
+
+msgid "View JSON-LD"
+msgstr "JSON-LDを表示"
+
+msgid "JSON-LD"
+msgstr "JSON-LD"
+
+msgid "Copy URL"
+msgstr "URLをコピー"
+
+msgid "Copy Citation"
+msgstr "引用をコピー"
+
+msgid "Citation"
+msgstr "引用"
+
+msgid "Print"
+msgstr "印刷"
+
+msgid "Share"
+msgstr "共有"
+
+msgid "Email"
+msgstr "メール"
+
+msgid "Close"
+msgstr "閉じる"
+
+msgid "URL copied to clipboard"
+msgstr "URLをクリップボードにコピーしました"
+
+msgid "Citation copied to clipboard"
+msgstr "引用をクリップボードにコピーしました"
+
+msgid "Copied to clipboard"
+msgstr "クリップボードにコピーしました"
+
+msgid "Copy failed"
+msgstr "コピーに失敗しました"
+
+msgid "Fallback copy failed"
+msgstr "フォールバックコピーに失敗しました"
+
+msgid "accessed"
+msgstr "アクセス日"
+
+msgid "Metadata Information"
+msgstr "メタデータ情報"
+
+msgid "Current Access Time"
+msgstr "現在のアクセス日時"
+
+msgid "Created"
+msgstr "作成日"
+
+msgid "Last Modified"
+msgstr "最終更新日"
+
+msgid "Updated"
+msgstr "更新"
+
+msgid "days after creation"
+msgstr "日後"
+
+msgid "Date Created (DC)"
+msgstr "作成日 (Dublin Core)"
+
+msgid "Date Issued (DC)"
+msgstr "発行日 (Dublin Core)"
+
+msgid "Date Modified (DC)"
+msgstr "更新日 (Dublin Core)"
+
+msgid "Item ID"
+msgstr "アイテムID"
+
+msgid "Resource Class"
+msgstr "リソースクラス"
+
+msgid "Resource Template"
+msgstr "リソーステンプレート"

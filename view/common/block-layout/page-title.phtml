@@ -1,0 +1,9 @@
+<?php 
+$escape = $this->plugin('escapeHtml');
+?>
+<!-- モダンなページタイトル（Bootstrap 5） -->
+<div class="page-title-block my-5 text-center">
+    <h1 class="display-5 fw-bold">
+        <?php echo $escape($pageTitle); ?>
+    </h1>
+</div>

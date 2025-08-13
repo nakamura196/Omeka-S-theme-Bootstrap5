@@ -1,54 +1,96 @@
 <?php
 $escape = $this->plugin('escapeHtml');
+$translate = $this->plugin('translate');
 $siteTitle = $site->title();
 ?>
-<header>
-    <nav class="navbar navbar-expand-lg bg-light">
-        <div class="container-fluid">
+
+<!-- モダンなヘッダー（Bootstrap 5） -->
+<header class="site-header">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
             <!-- サイトブランド/ロゴ -->
-            <a class="navbar-brand" href="<?php echo $site->url(); ?>">
+            <a class="navbar-brand d-flex align-items-center" href="<?php echo $site->url(); ?>">
                 <?php if ($this->themeSetting('logo')): ?>
-                    <img src="<?php echo $this->themeSettingAssetUrl('logo'); ?>" alt="<?php echo $escape($siteTitle); ?>" height="30" class="d-inline-block align-text-top">
+                    <img src="<?php echo $this->themeSettingAssetUrl('logo'); ?>" 
+                         alt="<?php echo $escape($siteTitle); ?>" 
+                         height="40" 
+                         class="d-inline-block me-2">
                 <?php else: ?>
-                    <?php echo $escape($siteTitle); ?>
+                    <i class="bi bi-archive fs-4 text-primary me-2"></i>
                 <?php endif; ?>
+                <span class="fw-bold"><?php echo $escape($siteTitle); ?></span>
             </a>
             
             <!-- モバイル用トグルボタン -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler border-0" 
+                    type="button" 
+                    data-bs-toggle="collapse" 
+                    data-bs-target="#navbarMain" 
+                    aria-controls="navbarMain" 
+                    aria-expanded="false" 
+                    aria-label="<?php echo $escape($translate('Toggle navigation')); ?>">
                 <span class="navbar-toggler-icon"></span>
             </button>
             
             <!-- ナビゲーションコンテンツ -->
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <!-- Omekaナビゲーションメニュー（右寄せ） -->
-                <div class="navbar-nav ms-auto mb-2 mb-lg-0">
+            <div class="collapse navbar-collapse" id="navbarMain">
+                <!-- メインナビゲーション -->
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                     <?php
                     $nav = $site->publicNav()->menu();
-                    if ($nav->hasPages()) {
-                        foreach ($nav->getPages() as $page) {
+                    if ($nav->hasPages()):
+                        foreach ($nav->getPages() as $page):
                             $hasChildren = $page->hasPages();
-                            if ($hasChildren) {
+                            $isActive = $page->isActive();
+                            
+                            if ($hasChildren):
                                 // ドロップダウンメニュー
-                                echo '<div class="nav-item dropdown">';
-                                echo '<a class="nav-link dropdown-toggle" href="' . $escape($page->getHref()) . '" id="navbarDropdown' . $escape($page->getId()) . '" role="button" data-bs-toggle="dropdown" aria-expanded="false">';
-                                echo $escape($page->getLabel());
-                                echo '</a>';
-                                echo '<ul class="dropdown-menu" aria-labelledby="navbarDropdown' . $escape($page->getId()) . '">';
-                                foreach ($page->getPages() as $childPage) {
-                                    echo '<li><a class="dropdown-item" href="' . $escape($childPage->getHref()) . '">' . $escape($childPage->getLabel()) . '</a></li>';
-                                }
-                                echo '</ul>';
-                                echo '</div>';
-                            } else {
-                                // 通常のナビゲーションリンク
-                                $isActive = $page->isActive() ? ' active' : '';
-                                echo '<a class="nav-link' . $isActive . '" href="' . $escape($page->getHref()) . '">' . $escape($page->getLabel()) . '</a>';
-                            }
-                        }
-                    }
                     ?>
-                </div>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle <?php echo $isActive ? 'active fw-semibold' : ''; ?>" 
+                           href="#" 
+                           id="navbarDropdown<?php echo $escape($page->getId()); ?>" 
+                           role="button" 
+                           data-bs-toggle="dropdown" 
+                           aria-expanded="false">
+                            <?php echo $escape($page->getLabel()); ?>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-sm" 
+                            aria-labelledby="navbarDropdown<?php echo $escape($page->getId()); ?>">
+                            <!-- 親ページへのリンク -->
+                            <li>
+                                <a class="dropdown-item <?php echo $isActive ? 'active' : ''; ?>" 
+                                   href="<?php echo $escape($page->getHref()); ?>">
+                                    <i class="bi bi-house-door me-2"></i>
+                                    <?php echo $escape($page->getLabel()); ?>
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <?php foreach ($page->getPages() as $childPage): ?>
+                            <li>
+                                <a class="dropdown-item <?php echo $childPage->isActive() ? 'active' : ''; ?>" 
+                                   href="<?php echo $escape($childPage->getHref()); ?>">
+                                    <i class="bi bi-chevron-right me-1 small"></i>
+                                    <?php echo $escape($childPage->getLabel()); ?>
+                                </a>
+                            </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </li>
+                    <?php else: ?>
+                    <!-- 通常のナビゲーションリンク -->
+                    <li class="nav-item">
+                        <a class="nav-link <?php echo $isActive ? 'active fw-semibold' : ''; ?>" 
+                           href="<?php echo $escape($page->getHref()); ?>">
+                            <?php echo $escape($page->getLabel()); ?>
+                        </a>
+                    </li>
+                    <?php
+                            endif;
+                        endforeach;
+                    endif;
+                    ?>
+                </ul>
             </div>
         </div>
     </nav>

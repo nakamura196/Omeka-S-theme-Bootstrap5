@@ -1,39 +1,160 @@
 <?php
 /**
- * Simple Hero Section Component
+ * Modern Hero Section Component
  * 
  * @var \Laminas\View\Renderer\PhpRenderer $this
  * @var \Omeka\Api\Representation\SiteRepresentation $site
  */
 
+$translate = $this->plugin('translate');
+$escape = $this->plugin('escapeHtml');
+
 // Get site information
 $site = $this->site;
 $heroTitle = $site->title();
-$heroDescription = $site->summary() ?: $this->translate('Explore our extensive collection of digital resources, documents, and media.');
+$heroDescription = $site->summary() ?: $translate('Explore our extensive collection of digital resources, documents, and media.');
 $heroImage = $this->themeSettingAssetUrl('hero_image');
 $heroButtonUrl = $this->themeSetting('hero_button_url');
-$heroButtonText = $this->themeSetting('hero_button_text') ?: $this->translate('Explore Collections');
+$heroButtonText = $this->themeSetting('hero_button_text') ?: $translate('Explore Collections');
+$heroButtonSecondaryUrl = $this->themeSetting('hero_button_secondary_url');
+$heroButtonSecondaryText = $this->themeSetting('hero_button_secondary_text') ?: $translate('Search');
+
 ?>
 
-<div class="position-relative overflow-hidden p-3 p-md-5 mb-4 text-center bg-dark text-white">
+<!-- モダンなヒーローセクション（Bootstrap 5） -->
+<section class="hero-section position-relative overflow-hidden text-white">
+    <!-- 背景画像またはグラデーション -->
     <?php if ($heroImage): ?>
-        <img src="<?php echo $this->escapeHtml($heroImage); ?>" 
-             class="position-absolute top-0 start-0 w-100 h-100" 
-             style="object-fit: cover; z-index: 0;" 
+    <div class="hero-background position-absolute top-0 start-0 w-100 h-100">
+        <img src="<?php echo $escape($heroImage); ?>" 
+             class="w-100 h-100" 
+             style="object-fit: cover;" 
              alt="">
-        <div class="position-absolute top-0 start-0 w-100 h-100 bg-dark" style="opacity: 0.6; z-index: 1;"></div>
+        <div class="position-absolute top-0 start-0 w-100 h-100 bg-dark" 
+             style="opacity: 0.5; background: linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 100%);"></div>
+    </div>
+    <?php else: ?>
+    <div class="hero-background position-absolute top-0 start-0 w-100 h-100" 
+         style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
     <?php endif; ?>
     
-    <div class="position-relative mx-auto py-5" style="z-index: 2;">
-        <h1 class="display-4 fw-bold"><?php echo $this->escapeHtml($heroTitle); ?></h1>
-        <p class="lead mx-auto" style="max-width: 700px;"><?php echo $this->escapeHtml($heroDescription); ?></p>
-        
-        <?php if ($heroButtonUrl): ?>
-        <div class="mt-4">
-            <a href="<?php echo $this->escapeHtml($heroButtonUrl); ?>" class="btn btn-primary btn-lg">
-                <?php echo $this->escapeHtml($heroButtonText); ?>
-            </a>
+    <!-- ヒーローコンテンツ -->
+    <div class="container position-relative py-5">
+        <div class="row align-items-center min-vh-50">
+            <div class="col-lg-8 mx-auto text-center py-5">
+                <!-- アニメーション付きタイトル -->
+                <h1 class="display-3 fw-bold mb-4 animate-fade-in">
+                    <?php echo $escape($heroTitle); ?>
+                </h1>
+                
+                <!-- 説明文 -->
+                <p class="lead mb-5 animate-fade-in-delay" style="max-width: 600px; margin: 0 auto;">
+                    <?php echo $escape($heroDescription); ?>
+                </p>
+                
+                <!-- CTAボタン -->
+                <div class="d-flex flex-wrap gap-3 justify-content-center mb-5 animate-fade-in-delay-2">
+                    <?php if ($heroButtonUrl): ?>
+                    <a href="<?php echo $escape($heroButtonUrl); ?>" 
+                       class="btn btn-primary btn-lg px-4 py-3 rounded-pill shadow">
+                        <i class="bi bi-collection me-2"></i>
+                        <?php echo $escape($heroButtonText); ?>
+                    </a>
+                    <?php endif; ?>
+                    
+                    <?php if ($heroButtonSecondaryUrl): ?>
+                    <a href="<?php echo $escape($heroButtonSecondaryUrl); ?>" 
+                       class="btn btn-outline-light btn-lg px-4 py-3 rounded-pill">
+                        <i class="bi bi-search me-2"></i>
+                        <?php echo $escape($heroButtonSecondaryText); ?>
+                    </a>
+                    <?php endif; ?>
+                </div>
+            </div>
         </div>
-        <?php endif; ?>
     </div>
-</div>
+    
+    <!-- 装飾的な波形 -->
+    <div class="hero-wave position-absolute bottom-0 start-0 w-100">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" preserveAspectRatio="none" style="height: 60px; width: 100%; display: block;">
+            <path fill="#ffffff" fill-opacity="1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,133.3C960,128,1056,96,1152,90.7C1248,85,1344,107,1392,117.3L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+        </svg>
+    </div>
+</section>
+
+<!-- カスタムCSS（インライン） -->
+<style>
+/* ヒーローセクションの高さ */
+.hero-section {
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+}
+
+/* アニメーション */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fadeInUp 0.8s ease-out;
+}
+
+.animate-fade-in-delay {
+    animation: fadeInUp 0.8s ease-out 0.2s both;
+}
+
+.animate-fade-in-delay-2 {
+    animation: fadeInUp 0.8s ease-out 0.4s both;
+}
+
+.animate-fade-in-delay-3 {
+    animation: fadeInUp 0.8s ease-out 0.6s both;
+}
+
+/* 統計バッジ */
+.stats-badge {
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    min-width: 120px;
+}
+
+/* ボタンホバーエフェクト */
+.hero-section .btn {
+    transition: all 0.3s ease;
+}
+
+.hero-section .btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* レスポンシブ調整 */
+@media (max-width: 768px) {
+    .hero-section {
+        min-height: 80vh;
+    }
+    
+    .display-3 {
+        font-size: 2.5rem;
+    }
+    
+    .stats-badge {
+        min-width: 100px;
+    }
+    
+    .display-6 {
+        font-size: 1.5rem;
+    }
+}
+</style>

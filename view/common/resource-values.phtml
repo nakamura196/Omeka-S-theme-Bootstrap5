@@ -12,11 +12,51 @@ $filterLocaleCallback = function ($value) use ($lang) {
     $valueLang = $value->lang();
     return $valueLang == '' || strcasecmp($valueLang, $lang) === 0;
 };
+
+// 言語コードを言語名に変換（多言語対応）
+$languageNames = [
+    'en' => $translate('English'),
+    'ja' => $translate('Japanese'),
+    'fr' => $translate('French'),
+    'de' => $translate('German'),
+    'es' => $translate('Spanish'),
+    'it' => $translate('Italian'),
+    'pt' => $translate('Portuguese'),
+    'ru' => $translate('Russian'),
+    'zh' => $translate('Chinese'),
+    'ko' => $translate('Korean'),
+    'ar' => $translate('Arabic'),
+    'nl' => $translate('Dutch'),
+    'sv' => $translate('Swedish'),
+    'no' => $translate('Norwegian'),
+    'da' => $translate('Danish'),
+    'fi' => $translate('Finnish'),
+    'pl' => $translate('Polish'),
+    'tr' => $translate('Turkish'),
+    'cs' => $translate('Czech'),
+    'hu' => $translate('Hungarian'),
+    'el' => $translate('Greek'),
+    'he' => $translate('Hebrew'),
+    'th' => $translate('Thai'),
+    'vi' => $translate('Vietnamese'),
+    'id' => $translate('Indonesian'),
+    'ms' => $translate('Malay'),
+    'hi' => $translate('Hindi'),
+    'bn' => $translate('Bengali'),
+    'uk' => $translate('Ukrainian'),
+    'ro' => $translate('Romanian'),
+];
 ?>
+
 <?php if (count($values) > 0): ?>
-<div class="metadata-section mt-5">
-    <table class="table table-borderless table-striped">
-        <tbody>
+<div class="metadata-section my-5">
+    <div class="card">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">
+                <i class="bi bi-tags me-2"></i><?= $translate('Properties') ?>
+            </h5>
+        </div>
+        <div class="card-body">
             <?php
             foreach ($values as $term => $propertyData):
                 $propertyValues = $propertyData['values'];
@@ -29,88 +69,92 @@ $filterLocaleCallback = function ($value) use ($lang) {
                 $property = $propertyData['property'];
                 $propertyLabel = $propertyData['alternate_label'] ?: $translate($property->label());
             ?>
-            <tr class="align-top">
-                <th scope="row" class="text-muted fw-normal small pe-3" style="width: 20%;"><?php echo $escape($propertyLabel); ?></th>
-                <td>
-                    <?php foreach ($propertyValues as $index => $value): ?>
-                    <?php
-                    $valueType = $value->type();
-                    $valueLang = $value->lang();
-                    $valueAnnotation = $value->valueAnnotation();
-                    ?>
-                    <div class="<?= $index > 0 ? 'mt-2' : '' ?>" lang="<?php echo $escape($valueLang); ?>">
-                        <?php if ($showLocale && $valueLang): ?>
-                        <?php
-                        // 言語コードを言語名に変換（多言語対応）
-                        $languageNames = [
-                            'en' => $translate('English'),
-                            'ja' => $translate('Japanese'),
-                            'fr' => $translate('French'),
-                            'de' => $translate('German'),
-                            'es' => $translate('Spanish'),
-                            'it' => $translate('Italian'),
-                            'pt' => $translate('Portuguese'),
-                            'ru' => $translate('Russian'),
-                            'zh' => $translate('Chinese'),
-                            'ko' => $translate('Korean'),
-                            'ar' => $translate('Arabic'),
-                            'nl' => $translate('Dutch'),
-                            'sv' => $translate('Swedish'),
-                            'no' => $translate('Norwegian'),
-                            'da' => $translate('Danish'),
-                            'fi' => $translate('Finnish'),
-                            'pl' => $translate('Polish'),
-                            'tr' => $translate('Turkish'),
-                            'cs' => $translate('Czech'),
-                            'hu' => $translate('Hungarian'),
-                            'el' => $translate('Greek'),
-                            'he' => $translate('Hebrew'),
-                            'th' => $translate('Thai'),
-                            'vi' => $translate('Vietnamese'),
-                            'id' => $translate('Indonesian'),
-                            'ms' => $translate('Malay'),
-                            'hi' => $translate('Hindi'),
-                            'bn' => $translate('Bengali'),
-                            'uk' => $translate('Ukrainian'),
-                            'ro' => $translate('Romanian'),
-                        ];
-                        
-                        // 言語コードに対応する名前があれば使用、なければコードをそのまま表示
-                        $languageDisplay = isset($languageNames[$valueLang]) ? $languageNames[$valueLang] : strtoupper($valueLang);
-                        ?>
-                        <span class="badge bg-secondary me-2" title="<?php echo $escape($valueLang); ?>"><?php echo $escape($languageDisplay); ?></span>
-                        <?php endif; ?>
-                        
-                        <?php if ('resource' == $valueType || strpos($valueType, 'resource') !== false): ?>
-                        <a href="<?= $escape($value->valueResource()->siteUrl()) ?>" class="text-decoration-none">
-                            <?php echo $filterLocale ? $value->asHtml($lang) : $value->asHtml(); ?>
-                        </a>
-                        <?php elseif ('uri' == $valueType): ?>
-                        <a href="<?= $escape($value->uri()) ?>" target="_blank" class="text-decoration-none">
-                            <?php echo $filterLocale ? $value->asHtml($lang) : $value->asHtml(); ?>
-                        </a>
-                        <?php else: ?>
-                        <?php echo $filterLocale ? $value->asHtml($lang) : $value->asHtml(); ?>
-                        <?php endif; ?>
-                        
-                        <?php if (!$value->isPublic()): ?>
-                        <small class="text-warning ms-2">(<?php echo $translate('Private'); ?>)</small>
-                        <?php endif; ?>
-                        
-                        <?php if ($valueAnnotation && $showValueAnnotations): ?>
-                        <details class="mt-2 small">
-                            <summary class="text-muted text-decoration-none"><?php echo $translate('Annotation'); ?></summary>
-                            <div class="mt-2 p-2 bg-light rounded border">
-                                <?php echo $valueAnnotation->displayValues(); ?>
-                            </div>
-                        </details>
-                        <?php endif; ?>
+            <div class="property-item mb-4">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="property-label text-muted small fw-semibold">
+                            <?php echo $escape($propertyLabel); ?>
+                            <?php if ($labelInfo !== 'none' && $property): ?>
+                                <?php if ($labelInfo === 'term'): ?>
+                                    <div class="text-muted small mt-1">
+                                        <code><?php echo $escape($property->term()); ?></code>
+                                    </div>
+                                <?php elseif ($labelInfo === 'vocab'): ?>
+                                    <div class="text-muted small mt-1">
+                                        <?php echo $escape($property->vocabulary()->label()); ?>
+                                    </div>
+                                <?php endif; ?>
+                            <?php endif; ?>
+                        </div>
                     </div>
-                    <?php endforeach; ?>
-                </td>
-            </tr>
+                    <div class="col-md-9">
+                        <?php foreach ($propertyValues as $index => $value): ?>
+                        <?php
+                        $valueType = $value->type();
+                        $valueLang = $value->lang();
+                        $valueAnnotation = $value->valueAnnotation();
+                        ?>
+                        <div class="property-value <?= $index > 0 ? 'mt-3' : '' ?>" lang="<?php echo $escape($valueLang); ?>">
+                            <?php if ($showLocale && $valueLang): ?>
+                            <?php
+                            // 言語コードに対応する名前があれば使用、なければコードをそのまま表示
+                            $languageDisplay = isset($languageNames[$valueLang]) ? $languageNames[$valueLang] : strtoupper($valueLang);
+                            ?>
+                            <span class="badge bg-info text-white me-2 mb-1" title="<?php echo $escape($valueLang); ?>">
+                                <i class="bi bi-translate me-1"></i><?php echo $escape($languageDisplay); ?>
+                            </span>
+                            <?php endif; ?>
+                            
+                            <div class="value-content">
+                                <?php if ('resource' == $valueType || strpos($valueType, 'resource') !== false): ?>
+                                <a href="<?= $escape($value->valueResource()->siteUrl()) ?>" class="text-decoration-none link-primary">
+                                    <i class="bi bi-box-arrow-up-right me-1"></i>
+                                    <?php echo $filterLocale ? $value->asHtml($lang) : $value->asHtml(); ?>
+                                </a>
+                                <?php elseif ('uri' == $valueType): ?>
+                                <a href="<?= $escape($value->uri()) ?>" target="_blank" class="text-decoration-none link-primary">
+                                    <i class="bi bi-link-45deg me-1"></i>
+                                    <?php echo $filterLocale ? $value->asHtml($lang) : $value->asHtml(); ?>
+                                </a>
+                                <?php else: ?>
+                                <?php echo $filterLocale ? $value->asHtml($lang) : $value->asHtml(); ?>
+                                <?php endif; ?>
+                                
+                                <?php if (!$value->isPublic()): ?>
+                                <span class="badge bg-warning text-dark ms-2">
+                                    <i class="bi bi-lock me-1"></i><?php echo $translate('Private'); ?>
+                                </span>
+                                <?php endif; ?>
+                            </div>
+                            
+                            <?php if ($valueAnnotation && $showValueAnnotations): ?>
+                            <div class="annotation-container mt-2">
+                                <button class="btn btn-sm btn-outline-secondary" type="button" 
+                                        data-bs-toggle="collapse" 
+                                        data-bs-target="#annotation-<?php echo $property->id(); ?>-<?php echo $index; ?>" 
+                                        aria-expanded="false">
+                                    <i class="bi bi-chat-square-text me-1"></i>
+                                    <?php echo $translate('Annotation'); ?>
+                                </button>
+                                <div class="collapse mt-2" id="annotation-<?php echo $property->id(); ?>-<?php echo $index; ?>">
+                                    <div class="card card-body bg-light border-0">
+                                        <?php echo $valueAnnotation->displayValues(); ?>
+                                    </div>
+                                </div>
+                            </div>
+                            <?php endif; ?>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </div>
+            
+            <?php if (next($values) !== false): ?>
+            <hr class="my-3">
+            <?php endif; ?>
+            
             <?php endforeach; ?>
-        </tbody>
-    </table>
+        </div>
+    </div>
 </div>
 <?php endif; ?>

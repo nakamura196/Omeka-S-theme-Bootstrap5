@@ -1,19 +1,94 @@
 <?php
 $translate = $this->plugin('translate');
+$escape = $this->plugin('escapeHtml');
 $this->headLink()->appendStylesheet($this->assetUrl('css/resource-page-blocks.css', 'Omeka'));
 $this->htmlElement('body')->appendAttribute('class', 'item resource show');
 $filterLocale = (bool) $this->siteSetting('filter_locale_values');
 $lang = $this->lang();
 $valueLang = $filterLocale ? [$lang, ''] : null;
+
+// アイテムの情報を取得
+$itemTitle = $item->displayTitle(null, $valueLang);
+$resourceClass = $item->resourceClass();
+$resourceTemplate = $item->resourceTemplate();
+
+// メディアの数を取得
+$mediaCount = count($item->media());
+
+// ページタイトルを設定
+$this->headTitle($itemTitle);
 ?>
 <div class="container">
-    <div class="text-center my-4">
-        <?php echo $this->pageTitle($item->displayTitle(null, $valueLang), 2); ?>
-        <!-- <h3><?php echo $translate('Item'); ?></h3> -->
+    <!-- モダンなタイトルセクション -->
+    <div class="item-header py-5 mb-4">
+        <div class="row align-items-center">
+            <div class="col-lg-8 mx-auto text-center">
+                <!-- リソースタイプバッジ -->
+                <?php if ($resourceClass): ?>
+                <div class="mb-3">
+                    <span class="badge bg-primary">
+                        <i class="bi bi-tag me-1"></i>
+                        <?= $escape($translate($resourceClass->label())) ?>
+                    </span>
+                    <?php if ($resourceTemplate): ?>
+                    <span class="badge bg-secondary ms-2">
+                        <i class="bi bi-layout-text-sidebar me-1"></i>
+                        <?= $escape($resourceTemplate->label()) ?>
+                    </span>
+                    <?php endif; ?>
+                </div>
+                <?php endif; ?>
+                
+                <!-- メインタイトル -->
+                <h1 class="display-5 fw-bold mb-3">
+                    <?= $escape($itemTitle) ?>
+                </h1>
+                
+                <!-- 追加情報バー -->
+                <div class="d-flex justify-content-center align-items-center flex-wrap gap-3 text-muted small">
+                    <!-- アイテムID -->
+                    <div>
+                        <i class="bi bi-hash me-1"></i>
+                        <span><?= $translate('Item ID') ?>: <?= $escape($item->id()) ?></span>
+                    </div>
+                    
+                    <?php if ($mediaCount > 0): ?>
+                    <!-- メディア数 -->
+                    <div class="vr d-none d-sm-block"></div>
+                    <div>
+                        <i class="bi bi-image me-1"></i>
+                        <span><?= $mediaCount ?> <?= $mediaCount === 1 ? $translate('Media') : $translate('Media files') ?></span>
+                    </div>
+                    <?php endif; ?>
+                    
+                    <!-- 作成日 -->
+                    <div class="vr d-none d-sm-block"></div>
+                    <div>
+                        <i class="bi bi-calendar me-1"></i>
+                        <span><?= $escape($item->created()->format('Y/m/d')) ?></span>
+                    </div>
+                    
+                    <!-- 公開状態 -->
+                    <?php if (!$item->isPublic()): ?>
+                    <div class="vr d-none d-sm-block"></div>
+                    <div>
+                        <span class="badge bg-warning text-dark">
+                            <i class="bi bi-lock me-1"></i>
+                            <?= $translate('Private') ?>
+                        </span>
+                    </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
     </div>
 <?php $this->trigger('view.show.before'); ?>
 
+<?php echo $this->partial('omeka/site/item/actions', ['item' => $item, 'site' => $site]); ?>
+
 <?php echo $this->resourcePageBlocks($item)->getBlocks(); ?>
+
+<?php echo $this->partial('omeka/site/item/metadata-info', ['item' => $item]); ?>
 
 <?php $this->trigger('view.show.after'); ?>
 </div>

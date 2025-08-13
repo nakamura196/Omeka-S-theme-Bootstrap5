@@ -1,7 +1,19 @@
 <?php
+$translate = $this->plugin('translate');
+$escape = $this->plugin('escapeHtml');
 $this->headLink()->appendStylesheet($this->assetUrl('css/page-blocks.css', 'Omeka'));
 $this->htmlElement('body')->appendAttribute('class', $pageBodyClass);
-$this->pageTitle($page->title(), 2);
+
+// ページ情報を取得
+$pageTitle = $page->title();
+$pageSlug = $page->slug();
+$pageCreated = $page->created();
+$pageModified = $page->modified();
+$isPublic = $page->isPublic();
+
+// ページタイトルを設定（ブラウザタブ用）
+$this->headTitle($pageTitle);
+
 $nav = $site->publicNav();
 $activePage = $nav->findActive($nav->getContainer());
 switch ($this->siteSetting('subnav_display')) {
@@ -18,26 +30,157 @@ $showPagePagination = $this->siteSetting('show_page_pagination', true);
 ?>
 
 <div class="container">
+    <!-- モダンなパンくずリスト -->
+    <?php if ($activePage && $activePage['depth'] !== 0): ?>
+    <nav aria-label="<?= $translate('Breadcrumb') ?>" class="mt-3">
+        <ol class="breadcrumb">
+            <?php
+            $breadcrumbs = [];
+            $currentPage = $activePage['page'];
+            while ($currentPage) {
+                array_unshift($breadcrumbs, $currentPage);
+                $currentPage = $currentPage->getParent();
+            }
+            ?>
+            <li class="breadcrumb-item">
+                <a href="<?= $escape($site->url()) ?>" class="text-decoration-none">
+                    <i class="bi bi-house-door me-1"></i><?= $translate('Home') ?>
+                </a>
+            </li>
+            <?php foreach ($breadcrumbs as $index => $breadcrumb): ?>
+                <?php if ($index === count($breadcrumbs) - 1): ?>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        <?= $escape($breadcrumb->title()) ?>
+                    </li>
+                <?php else: ?>
+                    <li class="breadcrumb-item">
+                        <a href="<?= $escape($breadcrumb->siteUrl()) ?>" class="text-decoration-none">
+                            <?= $escape($breadcrumb->title()) ?>
+                        </a>
+                    </li>
+                <?php endif; ?>
+            <?php endforeach; ?>
+        </ol>
+    </nav>
+    <?php endif; ?>
 
-<?php if ($activePage): ?>
-<?php if ($activePage['depth'] !== 0): ?>
-<nav class="breadcrumbs"><?php echo $nav->breadcrumbs(); ?></nav>
-<?php endif; ?>
-<?php endif; ?>
+    <!-- ページメタ情報 -->
+    <div class="page-meta-info my-4">
+        <div class="d-flex justify-content-center align-items-center flex-wrap gap-3 text-muted small">
+            <!-- 作成日 -->
+            <div>
+                <i class="bi bi-calendar-plus me-1"></i>
+                <span><?= $translate('Created') ?>: <?= $escape($pageCreated->format('Y/m/d')) ?></span>
+            </div>
+            
+            <?php if ($pageModified != $pageCreated): ?>
+            <!-- 更新日 -->
+            <div class="vr d-none d-sm-block"></div>
+            <div>
+                <i class="bi bi-calendar-check me-1"></i>
+                <span><?= $translate('Updated') ?>: <?= $escape($pageModified->format('Y/m/d')) ?></span>
+            </div>
+            <?php endif; ?>
+            
+            <!-- 公開状態 -->
+            <?php if (!$isPublic): ?>
+            <div class="vr d-none d-sm-block"></div>
+            <div>
+                <span class="badge bg-warning text-dark">
+                    <i class="bi bi-lock me-1"></i>
+                    <?= $translate('Private') ?>
+                </span>
+            </div>
+            <?php endif; ?>
+        </div>
+    </div>
 
-<?php if ($activePage): ?>
-<?php if ($displaySubnav): ?>
-<nav class="sub-menu"><?php echo $nav->menu()->renderSubMenu(); ?></nav>
-<?php endif; ?>
-<?php endif; ?>
+    <!-- サブナビゲーション -->
+    <?php if ($activePage && $displaySubnav): ?>
+    <nav class="sub-navigation mb-4">
+        <div class="card">
+            <div class="card-header bg-light">
+                <h6 class="mb-0">
+                    <i class="bi bi-list-nested me-2"></i><?= $translate('Sub Pages') ?>
+                </h6>
+            </div>
+            <div class="card-body">
+                <ul class="nav nav-pills flex-column">
+                    <?php
+                    $subPages = $activePage['page']->getPages();
+                    foreach ($subPages as $subPage):
+                        if ($subPage->isPublic() || $this->identity()):
+                    ?>
+                    <li class="nav-item">
+                        <a class="nav-link <?= $subPage->id() === $page->id() ? 'active' : '' ?>" 
+                           href="<?= $escape($subPage->siteUrl()) ?>">
+                            <i class="bi bi-chevron-right me-1"></i>
+                            <?= $escape($subPage->title()) ?>
+                            <?php if (!$subPage->isPublic()): ?>
+                                <span class="badge bg-warning text-dark ms-2">
+                                    <i class="bi bi-lock"></i>
+                                </span>
+                            <?php endif; ?>
+                        </a>
+                    </li>
+                    <?php
+                        endif;
+                    endforeach;
+                    ?>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <?php endif; ?>
 
-<?php $this->trigger('view.show.before'); ?>
-<div class="blocks">
-    <?php echo $this->content; ?>
-</div>
-<?php $this->trigger('view.show.after'); ?>
-<?php if ($showPagePagination): ?>
-<?php echo $this->sitePagePagination(); ?>
-<?php endif; ?>
-
+    <?php $this->trigger('view.show.before'); ?>
+    
+    <!-- ページコンテンツ（Omeka Sのブロックシステム） -->
+    <div class="page-content my-4">
+        <div class="blocks">
+            <?php echo $this->content; ?>
+        </div>
+    </div>
+    
+    <?php $this->trigger('view.show.after'); ?>
+    
+    <!-- モダンなページネーション -->
+    <?php if ($showPagePagination): ?>
+    <?php 
+    $pagePaginationHtml = $this->sitePagePagination();
+    if ($pagePaginationHtml): 
+    ?>
+    <nav class="page-pagination my-5" aria-label="<?= $translate('Page navigation') ?>">
+        <div class="card">
+            <div class="card-body">
+                <div class="pagination-wrapper">
+                    <?php 
+                    // HTMLを解析してBootstrap 5スタイルに変換
+                    $pagePaginationHtml = str_replace(
+                        ['<nav class="pagination">', '</nav>'],
+                        ['<div class="d-flex justify-content-between align-items-center">', '</div>'],
+                        $pagePaginationHtml
+                    );
+                    
+                    // 前へ・次へリンクをボタンスタイルに
+                    $pagePaginationHtml = preg_replace(
+                        '/<a([^>]*?)class="previous"([^>]*?)>/',
+                        '<a$1class="btn btn-outline-secondary"$2><i class="bi bi-chevron-left me-1"></i>',
+                        $pagePaginationHtml
+                    );
+                    
+                    $pagePaginationHtml = preg_replace(
+                        '/<a([^>]*?)class="next"([^>]*?)>(.*?)<\/a>/',
+                        '<a$1class="btn btn-outline-secondary"$2>$3 <i class="bi bi-chevron-right ms-1"></i></a>',
+                        $pagePaginationHtml
+                    );
+                    
+                    echo $pagePaginationHtml;
+                    ?>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <?php endif; ?>
+    <?php endif; ?>
 </div>
