@@ -292,11 +292,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     <?php if ($displayPartsHeader): ?>
                     <div class="search-results-part search-results-header mb-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <?= $partial('search/results-header-footer', $variables + ['resultPart' => 'header']) ?>
-                            </div>
-                        </div>
+                        <?= $partial('search/results-header-footer', $variables + ['resultPart' => 'header']) ?>
                     </div>
                     <?php endif; ?>
 
@@ -354,11 +350,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     <?php if ($displayPartsFooter): ?>
                     <div class="search-results-part search-results-footer mt-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <?= $partial('search/results-header-footer', $variables + ['resultPart' => 'footer']) ?>
-                            </div>
-                        </div>
+                        <?= $partial('search/results-header-footer', $variables + ['resultPart' => 'footer']) ?>
                     </div>
                     <?php endif; ?>
 
@@ -371,7 +363,4 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <?php if (empty($isPartial)): ?>
 </div>
-
-<!-- メインコンテンツとフッターの間隔を確保 -->
-<div class="mb-5 pb-5"></div>
 <?php endif; ?>

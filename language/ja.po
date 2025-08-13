@@ -296,3 +296,82 @@ msgstr "リソースクラス"
 
 msgid "Resource Template"
 msgstr "リソーステンプレート"
+
+msgid "All rights reserved."
+msgstr "All rights reserved."
+
+msgid "Powered by"
+msgstr "Powered by"
+
+msgid "Quick Links"
+msgstr "クイックリンク"
+
+msgid "Information"
+msgstr "お知らせ"
+
+msgid "Language"
+msgstr "言語"
+
+msgid "%d Items"
+msgstr "%d アイテム"
+
+msgid "%d Media Files"
+msgstr "%d メディアファイル"
+
+msgid "Back to top"
+msgstr "トップへ戻る"
+
+msgid "Toggle navigation"
+msgstr "ナビゲーション切り替え"
+
+msgid "Explore Collections"
+msgstr "コレクションを探す"
+
+msgid "Explore our extensive collection of digital resources, documents, and media."
+msgstr "デジタルリソース、ドキュメント、メディアの広範なコレクションをご覧ください。"
+
+msgid "No results"
+msgstr "結果なし"
+
+msgid "%d Results"
+msgstr "%d 件の結果"
+
+msgid "Found %d items matching your search"
+msgstr "検索条件に一致する %d 件のアイテムが見つかりました"
+
+msgid "Item set"
+msgstr "アイテムセット"
+
+msgid "Breadcrumb"
+msgstr "パンくずリスト"
+
+msgid "Sub Pages"
+msgstr "サブページ"
+
+msgid "Page navigation"
+msgstr "ページナビゲーション"
+
+msgid "Grid"
+msgstr "グリッド"
+
+msgid "List"
+msgstr "リスト"
+
+msgid "%s resource"
+msgid_plural "%s resources"
+msgstr[0] "%s リソース"
+
+msgid "Select Citation Style"
+msgstr "引用スタイルを選択"
+
+msgid "APA Style"
+msgstr "APAスタイル"
+
+msgid "MLA Style"
+msgstr "MLAスタイル"
+
+msgid "Chicago Style"
+msgstr "シカゴスタイル"
+
+msgid "Copy"
+msgstr "コピー"

@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Bootstrap5 Modernized 2.0.0\n"
+"Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-19 12:00+0000\n"
+"POT-Creation-Date: 2025-08-14 07:33+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,272 +17,520 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "Search Form"
-msgstr ""
-
-msgid "Search"
-msgstr ""
-
-msgid "Reset"
-msgstr ""
-
-msgid "Submit"
-msgstr ""
-
-msgid "Advanced Search"
-msgstr ""
-
-msgid "Results"
-msgstr ""
-
-msgid "Grid view"
-msgstr ""
-
-msgid "List view"
-msgstr ""
-
-msgid "grid"
-msgstr ""
-
-msgid "list"
-msgstr ""
-
-msgid "View mode"
-msgstr ""
-
-msgid "Pagination"
-msgstr ""
-
-msgid "Previous"
-msgstr ""
-
-msgid "Next"
-msgstr ""
-
-msgid "Page"
-msgstr ""
-
-msgid "pages"
-msgstr ""
-
-msgid "Items per page"
-msgstr ""
-
-msgid "Sort by"
-msgstr ""
-
-msgid "Filter"
-msgstr ""
-
-msgid "Filters"
-msgstr ""
-
-msgid "Clear all filters"
-msgstr ""
-
-msgid "Apply filters"
-msgstr ""
-
-msgid "No Results Found"
-msgstr ""
-
-msgid "Fill a query and get results."
-msgstr ""
-
-msgid "This item set has no items."
-msgstr ""
-
-msgid "The query returned no results"
-msgstr ""
-
-msgid "Try adjusting your search criteria or filters"
-msgstr ""
-
+#: view/layout/layout.phtml:112
 msgid "Powered by Omeka S"
 msgstr ""
 
+#: view/omeka/site/page/show.phtml:35 view/search/search.phtml:90
+msgid "Breadcrumb"
+msgstr ""
+
+#: view/omeka/site/page/show.phtml:47 view/search/search.phtml:95
+#: view/common/breadcrumbs.phtml:27
 msgid "Home"
 msgstr ""
 
-msgid "Browse"
-msgstr ""
-
-msgid "Items"
-msgstr ""
-
-msgid "Collections"
-msgstr ""
-
-msgid "IIIF Manifest"
-msgstr ""
-
-msgid "Help"
-msgstr ""
-
-msgid "Private"
-msgstr ""
-
-msgid "Annotation"
-msgstr ""
-
-msgid "English"
-msgstr ""
-
-msgid "Japanese"
-msgstr ""
-
-msgid "French"
-msgstr ""
-
-msgid "German"
-msgstr ""
-
-msgid "Spanish"
-msgstr ""
-
-msgid "Italian"
-msgstr ""
-
-msgid "Portuguese"
-msgstr ""
-
-msgid "Russian"
-msgstr ""
-
-msgid "Chinese"
-msgstr ""
-
-msgid "Korean"
-msgstr ""
-
-msgid "Arabic"
-msgstr ""
-
-msgid "Dutch"
-msgstr ""
-
-msgid "Swedish"
-msgstr ""
-
-msgid "Norwegian"
-msgstr ""
-
-msgid "Danish"
-msgstr ""
-
-msgid "Finnish"
-msgstr ""
-
-msgid "Polish"
-msgstr ""
-
-msgid "Turkish"
-msgstr ""
-
-msgid "Czech"
-msgstr ""
-
-msgid "Hungarian"
-msgstr ""
-
-msgid "Greek"
-msgstr ""
-
-msgid "Hebrew"
-msgstr ""
-
-msgid "Thai"
-msgstr ""
-
-msgid "Vietnamese"
-msgstr ""
-
-msgid "Indonesian"
-msgstr ""
-
-msgid "Malay"
-msgstr ""
-
-msgid "Hindi"
-msgstr ""
-
-msgid "Bengali"
-msgstr ""
-
-msgid "Ukrainian"
-msgstr ""
-
-msgid "Romanian"
-msgstr ""
-
-msgid "Item Actions"
-msgstr ""
-
-msgid "View JSON-LD"
-msgstr ""
-
-msgid "JSON-LD"
-msgstr ""
-
-msgid "Copy URL"
-msgstr ""
-
-msgid "Citation"
-msgstr ""
-
-msgid "Share"
-msgstr ""
-
-msgid "Email"
-msgstr ""
-
-msgid "Close"
-msgstr ""
-
-msgid "URL copied to clipboard"
-msgstr ""
-
-msgid "Citation copied to clipboard"
-msgstr ""
-
-msgid "Copied to clipboard"
-msgstr ""
-
-msgid "Copy"
-msgstr ""
-
-msgid "Metadata Information"
-msgstr ""
-
-msgid "Current Access Time"
-msgstr ""
-
+#: view/omeka/site/page/show.phtml:73
+#: view/omeka/site/item/metadata-info.phtml:48
 msgid "Created"
 msgstr ""
 
-msgid "Last Modified"
-msgstr ""
-
+#: view/omeka/site/page/show.phtml:81
+#: view/omeka/site/item/metadata-info.phtml:69
 msgid "Updated"
 msgstr ""
 
-msgid "days after creation"
+#: view/omeka/site/page/show.phtml:91 view/omeka/site/item/show.phtml:77
+#: view/common/resource-values.phtml:125
+msgid "Private"
 msgstr ""
 
-msgid "Date Created (DC)"
+#: view/omeka/site/page/show.phtml:104
+msgid "Sub Pages"
 msgstr ""
 
-msgid "Date Issued (DC)"
+#: view/omeka/site/page/show.phtml:153
+msgid "Page navigation"
 msgstr ""
 
-msgid "Date Modified (DC)"
+#: view/omeka/site/item/actions.phtml:34
+msgid "View JSON-LD"
 msgstr ""
 
+#: view/omeka/site/item/actions.phtml:36
+msgid "JSON-LD"
+msgstr ""
+
+#: view/omeka/site/item/actions.phtml:43 view/omeka/site/item/actions.phtml:45
+msgid "Copy URL"
+msgstr ""
+
+#: view/omeka/site/item/actions.phtml:53 view/omeka/site/item/actions.phtml:55
+#: view/omeka/site/item/actions.phtml:103
+msgid "Citation"
+msgstr ""
+
+#: view/omeka/site/item/actions.phtml:64 view/omeka/site/item/actions.phtml:66
+msgid "Share"
+msgstr ""
+
+#: view/omeka/site/item/actions.phtml:89
+msgid "Email"
+msgstr ""
+
+#: view/omeka/site/item/actions.phtml:105
+msgid "Close"
+msgstr ""
+
+#: view/omeka/site/item/actions.phtml:136
+#: view/omeka/site/item/actions.phtml:148
+#: view/omeka/site/item/actions.phtml:160
+msgid "Copy"
+msgstr ""
+
+#: view/omeka/site/item/actions.phtml:174
+#: view/omeka/site/item/actions.phtml:243
+msgid "Copied to clipboard"
+msgstr ""
+
+#: view/omeka/site/item/actions.phtml:207
+msgid "URL copied to clipboard"
+msgstr ""
+
+#: view/omeka/site/item/actions.phtml:222
+msgid "Citation copied to clipboard"
+msgstr ""
+
+#: view/omeka/site/item/show.phtml:52
+#: view/omeka/site/item/metadata-info.phtml:132
 msgid "Item ID"
 msgstr ""
 
+#: view/omeka/site/item/show.phtml:60
+msgid "Media"
+msgstr ""
+
+#: view/omeka/site/item/show.phtml:60
+msgid "Media files"
+msgstr ""
+
+#: view/omeka/site/item/metadata-info.phtml:36
+msgid "Metadata Information"
+msgstr ""
+
+#: view/omeka/site/item/metadata-info.phtml:63
+msgid "Last Modified"
+msgstr ""
+
+#: view/omeka/site/item/metadata-info.phtml:69
+msgid "days after creation"
+msgstr ""
+
+#: view/omeka/site/item/metadata-info.phtml:84
+msgid "Date Created (DC)"
+msgstr ""
+
+#: view/omeka/site/item/metadata-info.phtml:101
+msgid "Date Issued (DC)"
+msgstr ""
+
+#: view/omeka/site/item/metadata-info.phtml:118
+msgid "Date Modified (DC)"
+msgstr ""
+
+#: view/omeka/site/item/metadata-info.phtml:137
 msgid "Resource Class"
 msgstr ""
 
+#: view/omeka/site/item/metadata-info.phtml:143
 msgid "Resource Template"
+msgstr ""
+
+#: view/search/facet-range-double.phtml:42
+msgid "from"
+msgstr ""
+
+#: view/search/facet-range-double.phtml:48
+msgid "to"
+msgstr ""
+
+#: view/search/facet-range-double.phtml:51
+msgid "Ok"
+msgstr ""
+
+#: view/search/search-form-main.phtml:64 view/search/search.phtml:182
+msgid "Advanced Search"
+msgstr ""
+
+#: view/search/search-form-main.phtml:129
+msgid "Reset"
+msgstr ""
+
+#: view/search/search-form-main.phtml:135 view/search/search.phtml:99
+#: view/search/search.phtml:141 view/search/search-form-quick.phtml:32
+#: view/search/search-form-quick.phtml:56
+#: view/search/search-form-quick.phtml:61
+#: view/common/jpsearch-search-form.phtml:31
+#: view/common/jpsearch-search-form.phtml:37 view/common/hero.phtml:20
+#: view/common/search-form.phtml:15 view/common/breadcrumbs.phtml:43
+msgid "Search"
+msgstr ""
+
+#: view/search/results-header-footer.phtml:55
+#, php-format
+msgid "%s resource"
+msgstr ""
+
+#: view/search/results-header-footer.phtml:55
+#, php-format
+msgid "%s resources"
+msgstr ""
+
+#: view/search/results-header-footer.phtml:95
+msgid "View mode"
+msgstr ""
+
+#: view/search/results-header-footer.phtml:97
+msgid "Grid view"
+msgstr ""
+
+#: view/search/results-header-footer.phtml:99
+msgid "Grid"
+msgstr ""
+
+#: view/search/results-header-footer.phtml:102
+msgid "List view"
+msgstr ""
+
+#: view/search/results-header-footer.phtml:104
+msgid "List"
+msgstr ""
+
+#: view/search/facet-actives.phtml:18
+#, php-format
+msgid "from %1$s"
+msgstr ""
+
+#: view/search/facet-actives.phtml:19
+#, php-format
+msgid "to %1$s"
+msgstr ""
+
+#: view/search/facet-actives.phtml:34 view/common/search-filters-links.phtml:28
+msgid "Remove filter"
+msgstr ""
+
+#: view/search/search.phtml:121
+msgid "Item set"
+msgstr ""
+
+#: view/search/search.phtml:132
+msgid "Items"
+msgstr ""
+
+#: view/search/search.phtml:144
+#, php-format
+msgid "%d Results"
+msgstr ""
+
+#: view/search/search.phtml:145
+msgid "No results"
+msgstr ""
+
+#: view/search/search.phtml:159
+#, php-format
+msgid "Found %d items matching your search"
+msgstr ""
+
+#: view/search/search.phtml:313
+#, php-format
+msgid "%1$d %2$s"
+msgstr ""
+
+#: view/search/search.phtml:330
+msgid "No Results Found"
+msgstr ""
+
+#: view/search/search.phtml:332
+msgid "Fill a query and get results."
+msgstr ""
+
+#: view/search/search.phtml:334
+msgid "This item set has no items."
+msgstr ""
+
+#: view/search/search.phtml:341
+msgid "The query returned no results"
+msgstr ""
+
+#: view/search/search.phtml:344
+msgid "Try adjusting your search criteria or filters"
+msgstr ""
+
+#: view/search/search-form-quick.phtml:31
+msgid "Search..."
+msgstr ""
+
+#: view/search/facet-select-range.phtml:20
+msgid "Between"
+msgstr ""
+
+#: view/search/facet-select-range.phtml:21
+#: view/search/facet-select-range.phtml:30 view/search/facet-select.phtml:18
+msgid "Select below…"
+msgstr ""
+
+#: view/search/facet-select-range.phtml:29
+msgid "and"
+msgstr ""
+
+#: view/search/pagination-per-page-selector.phtml:19
+msgid "Per page"
+msgstr ""
+
+#: view/search/facets-list.phtml:172 view/search/facets-list.phtml:175
+msgid "See more"
+msgstr ""
+
+#: view/search/facets-list.phtml:173
+msgid "See less"
+msgstr ""
+
+#: view/search/results.phtml:36
+msgid "[Untitled]"
+msgstr ""
+
+#: view/search/results.phtml:50
+msgid "No media"
+msgstr ""
+
+#: view/common/jpsearch-search-form.phtml:28
+msgid "Enter search keywords..."
+msgstr ""
+
+#: view/common/jpsearch-search-form.phtml:44
+msgid "Advanced Search Options"
+msgstr ""
+
+#: view/common/footer.phtml:63
+msgid "Quick Links"
+msgstr ""
+
+#: view/common/footer.phtml:90
+msgid "Information"
+msgstr ""
+
+#: view/common/footer.phtml:108
+#, php-format
+msgid "%d Items"
+msgstr ""
+
+#: view/common/footer.phtml:112
+#, php-format
+msgid "%d Media Files"
+msgstr ""
+
+#: view/common/footer.phtml:124
+msgid "Language"
+msgstr ""
+
+#: view/common/footer.phtml:151
+msgid "All rights reserved."
+msgstr ""
+
+#: view/common/footer.phtml:156
+msgid "Powered by"
+msgstr ""
+
+#: view/common/footer.phtml:174
+msgid "Back to top"
+msgstr ""
+
+#: view/common/hero.phtml:15
+msgid ""
+"Explore our extensive collection of digital resources, documents, and media."
+msgstr ""
+
+#: view/common/hero.phtml:18
+msgid "Explore Collections"
+msgstr ""
+
+#: view/common/search-form.phtml:17
+msgid "Enter a search term"
+msgstr ""
+
+#: view/common/search-form.phtml:18
+msgid "Query"
+msgstr ""
+
+#: view/common/search-form.phtml:20
+msgid "Submit"
+msgstr ""
+
+#: view/common/resource-values.phtml:18
+msgid "English"
+msgstr ""
+
+#: view/common/resource-values.phtml:19
+msgid "Japanese"
+msgstr ""
+
+#: view/common/resource-values.phtml:20
+msgid "French"
+msgstr ""
+
+#: view/common/resource-values.phtml:21
+msgid "German"
+msgstr ""
+
+#: view/common/resource-values.phtml:22
+msgid "Spanish"
+msgstr ""
+
+#: view/common/resource-values.phtml:23
+msgid "Italian"
+msgstr ""
+
+#: view/common/resource-values.phtml:24
+msgid "Portuguese"
+msgstr ""
+
+#: view/common/resource-values.phtml:25
+msgid "Russian"
+msgstr ""
+
+#: view/common/resource-values.phtml:26
+msgid "Chinese"
+msgstr ""
+
+#: view/common/resource-values.phtml:27
+msgid "Korean"
+msgstr ""
+
+#: view/common/resource-values.phtml:28
+msgid "Arabic"
+msgstr ""
+
+#: view/common/resource-values.phtml:29
+msgid "Dutch"
+msgstr ""
+
+#: view/common/resource-values.phtml:30
+msgid "Swedish"
+msgstr ""
+
+#: view/common/resource-values.phtml:31
+msgid "Norwegian"
+msgstr ""
+
+#: view/common/resource-values.phtml:32
+msgid "Danish"
+msgstr ""
+
+#: view/common/resource-values.phtml:33
+msgid "Finnish"
+msgstr ""
+
+#: view/common/resource-values.phtml:34
+msgid "Polish"
+msgstr ""
+
+#: view/common/resource-values.phtml:35
+msgid "Turkish"
+msgstr ""
+
+#: view/common/resource-values.phtml:36
+msgid "Czech"
+msgstr ""
+
+#: view/common/resource-values.phtml:37
+msgid "Hungarian"
+msgstr ""
+
+#: view/common/resource-values.phtml:38
+msgid "Greek"
+msgstr ""
+
+#: view/common/resource-values.phtml:39
+msgid "Hebrew"
+msgstr ""
+
+#: view/common/resource-values.phtml:40
+msgid "Thai"
+msgstr ""
+
+#: view/common/resource-values.phtml:41
+msgid "Vietnamese"
+msgstr ""
+
+#: view/common/resource-values.phtml:42
+msgid "Indonesian"
+msgstr ""
+
+#: view/common/resource-values.phtml:43
+msgid "Malay"
+msgstr ""
+
+#: view/common/resource-values.phtml:44
+msgid "Hindi"
+msgstr ""
+
+#: view/common/resource-values.phtml:45
+msgid "Bengali"
+msgstr ""
+
+#: view/common/resource-values.phtml:46
+msgid "Ukrainian"
+msgstr ""
+
+#: view/common/resource-values.phtml:47
+msgid "Romanian"
+msgstr ""
+
+#: view/common/resource-values.phtml:56
+msgid "Properties"
+msgstr ""
+
+#: view/common/resource-values.phtml:137
+msgid "Annotation"
+msgstr ""
+
+#: view/common/search-filters-links.phtml:19
+msgid "Active filters"
+msgstr ""
+
+#: view/common/breadcrumbs.phtml:35
+msgid "Collections"
+msgstr ""
+
+#: view/common/helper/iiif-viewers.phtml:50
+msgid "IIIF Manifest"
+msgstr ""
+
+#: view/common/form-row.phtml:108
+msgid "Learn more"
+msgstr ""
+
+#: view/common/header.phtml:31
+msgid "Toggle navigation"
+msgstr ""
+
+#: view/common/pagination.phtml:15 view/common/pagination.phtml:29
+msgid "Pagination"
+msgstr ""
+
+#: view/common/pagination.phtml:23 view/common/pagination.phtml:24
+msgid "Page"
+msgstr ""
+
+#: view/common/pagination.phtml:31 view/common/pagination.phtml:35
+msgid "Previous"
+msgstr ""
+
+#: view/common/pagination.phtml:41 view/common/pagination.phtml:45
+msgid "Next"
+msgstr ""
+
+#: view/common/pagination.phtml:54
+msgid "0 results"
 msgstr ""

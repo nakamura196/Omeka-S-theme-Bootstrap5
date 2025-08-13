@@ -148,12 +148,12 @@ $currentYear = date('Y');
                 <div class="col-md-6">
                     <p class="mb-0 text-white-50 small">
                         &copy; <?php echo $currentYear; ?> <?php echo $escape($siteTitle); ?>. 
-                        <?php echo $translate('All rights reserved.'); ?>
+                        <?php echo $escape($translate('All rights reserved.')); ?>
                     </p>
                 </div>
                 <div class="col-md-6 text-md-end">
                     <p class="mb-0 text-white-50 small">
-                        <?php echo $translate('Powered by'); ?> 
+                        <?php echo $escape($translate('Powered by')); ?> 
                         <a href="https://omeka.org/s/" 
                            class="text-white-50" 
                            target="_blank" 
