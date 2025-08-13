@@ -46,7 +46,7 @@ $text = $setting['viewer_help_text'] ?? '';
         height="600" allowfullscreen frameborder="0"></iframe>
     <?php endif; ?>
     <div class="text-right" style="margin-top : 10px;">
-        <button class="btn btn-link" href="<?php echo $manifest; ?>?manifest=<?php echo $manifest; ?>"
+        <a class="btn btn-link" href="<?php echo $manifest; ?>?manifest=<?php echo $manifest; ?>"
             title="<?php echo $translate('IIIF Manifest'); ?>" target="_blank"><img style="height: 30px"
                 <?php echo $logoAttr; ?> /></a>
         <?php for($i = 0; $i < 10; $i++): ?>
@@ -59,9 +59,9 @@ $text = $setting['viewer_help_text'] ?? '';
                         $icon = getIconAttr($this, $setting["icon_".$index], $iconAttr);
                         $label = $setting["label_".$index];
                     ?>
-        <button class="btn btn-link" href="<?php echo $url; ?>" title="<?php echo $label; ?>" target="_blank">
+        <a class="btn btn-link" href="<?php echo $url; ?>" title="<?php echo $label; ?>" target="_blank">
             <img style="height: 30px" <?php echo $icon; ?> />
-        </button>
+        </a>
         <?php endif; ?>
         <?php endfor; ?>
         <?php if($help !== ""): ?>

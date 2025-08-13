@@ -1,8 +1,14 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Bootstrap5 Modernized Theme\n"
+"Project-Id-Version: Bootstrap5 Modernized 2.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-13 12:00+0900\n"
+"POT-Creation-Date: 2024-12-19 12:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -11,11 +17,22 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-# View toggle buttons
-msgid "Grid"
+msgid "Search Form"
 msgstr ""
 
-msgid "List"
+msgid "Search"
+msgstr ""
+
+msgid "Reset"
+msgstr ""
+
+msgid "Submit"
+msgstr ""
+
+msgid "Advanced Search"
+msgstr ""
+
+msgid "Results"
 msgstr ""
 
 msgid "Grid view"
@@ -24,14 +41,48 @@ msgstr ""
 msgid "List view"
 msgstr ""
 
-# Hero section
-msgid "Explore Collections"
+msgid "grid"
 msgstr ""
 
-msgid "Explore our extensive collection of digital resources, documents, and media."
+msgid "list"
 msgstr ""
 
-# Search and filters
+msgid "View mode"
+msgstr ""
+
+msgid "Pagination"
+msgstr ""
+
+msgid "Previous"
+msgstr ""
+
+msgid "Next"
+msgstr ""
+
+msgid "Page"
+msgstr ""
+
+msgid "pages"
+msgstr ""
+
+msgid "Items per page"
+msgstr ""
+
+msgid "Sort by"
+msgstr ""
+
+msgid "Filter"
+msgstr ""
+
+msgid "Filters"
+msgstr ""
+
+msgid "Clear all filters"
+msgstr ""
+
+msgid "Apply filters"
+msgstr ""
+
 msgid "No Results Found"
 msgstr ""
 
@@ -44,81 +95,36 @@ msgstr ""
 msgid "The query returned no results"
 msgstr ""
 
-msgid "Search"
+msgid "Try adjusting your search criteria or filters"
 msgstr ""
 
-msgid "Advanced Search"
+msgid "Powered by Omeka S"
 msgstr ""
 
-msgid "Search collections..."
+msgid "Home"
 msgstr ""
 
-# Pagination
-msgid "Previous"
+msgid "Browse"
 msgstr ""
 
-msgid "Next"
-msgstr ""
-
-msgid "First"
-msgstr ""
-
-msgid "Last"
-msgstr ""
-
-# Sort options
-msgid "Sort by"
-msgstr ""
-
-msgid "Relevance"
-msgstr ""
-
-msgid "Title"
-msgstr ""
-
-msgid "Date"
-msgstr ""
-
-msgid "Created"
-msgstr ""
-
-msgid "Modified"
-msgstr ""
-
-# Per page
-msgid "Per page"
-msgstr ""
-
-msgid "items per page"
-msgstr ""
-
-# Resource types
 msgid "Items"
 msgstr ""
 
-msgid "Item Sets"
+msgid "Collections"
 msgstr ""
 
-msgid "Media"
+msgid "IIIF Manifest"
 msgstr ""
 
-msgid "Pages"
+msgid "Help"
 msgstr ""
 
-# Metadata
 msgid "Private"
-msgstr ""
-
-msgid "Public"
 msgstr ""
 
 msgid "Annotation"
 msgstr ""
 
-msgid "Has annotation"
-msgstr ""
-
-# Languages
 msgid "English"
 msgstr ""
 
@@ -207,54 +213,4 @@ msgid "Ukrainian"
 msgstr ""
 
 msgid "Romanian"
-msgstr ""
-
-# Common actions
-msgid "View"
-msgstr ""
-
-msgid "Edit"
-msgstr ""
-
-msgid "Delete"
-msgstr ""
-
-msgid "Add"
-msgstr ""
-
-msgid "Save"
-msgstr ""
-
-msgid "Cancel"
-msgstr ""
-
-msgid "Apply"
-msgstr ""
-
-msgid "Reset"
-msgstr ""
-
-msgid "Clear"
-msgstr ""
-
-msgid "Download"
-msgstr ""
-
-msgid "Upload"
-msgstr ""
-
-msgid "Browse"
-msgstr ""
-
-msgid "Select"
-msgstr ""
-
-msgid "All"
-msgstr ""
-
-msgid "None"
-msgstr ""
-
-# Footer
-msgid "Powered by Omeka S"
 msgstr ""

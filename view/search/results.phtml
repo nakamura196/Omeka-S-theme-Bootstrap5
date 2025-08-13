@@ -16,6 +16,7 @@ if (!$resources) return;
 $plugins = $this->getHelperPluginManager();
 $assetUrl = $plugins->get('assetUrl');
 $translate = $plugins->get('translate');
+$escape = $plugins->get('escapeHtml');
 $hyperlink = $plugins->get('hyperlink');
 $thumbnail = $plugins->get('thumbnail');
 $escapeValueOrGetHtml = $plugins->get('escapeValueOrGetHtml');
@@ -146,17 +147,63 @@ $thumbnailType = $searchConfig->subSetting('results', 'thumbnail_type', 'medium'
                 <div class="col">
                     <div class="d-flex w-100 justify-content-between align-items-start">
                         <div class="flex-grow-1">
-                            <h6 class="mb-1">
-                                <a href="<?= $resourceUrl ?>" class="text-decoration-none text-dark">
+                            <!-- タイトル -->
+                            <h6 class="mb-2">
+                                <a href="<?= $resourceUrl ?>" class="text-decoration-none text-primary fw-bold">
                                     <?= $escapeValueOrGetHtml($heading) ?>
                                 </a>
                             </h6>
                             
-                            <?php if (strlen($body)): ?>
-                            <p class="mb-1 text-muted">
-                                <?= $this->escapeHtml(mb_strimwidth(strip_tags($body), 0, 200, '...')) ?>
-                            </p>
-                            <?php endif; ?>
+                            <!-- メタデータ（改行なしで横並び） -->
+                            <?php
+                            // テーマ設定からリスト表示プロパティを取得
+                            $listDisplayProperties = $this->themeSetting('list_display_properties');
+                            if ($listDisplayProperties) {
+                                $propertyTerms = array_filter(array_map('trim', explode("\n", $listDisplayProperties)));
+                                if ($propertyTerms) {
+                                    $metadataItems = [];
+                                    foreach ($propertyTerms as $term) {
+                                        $propertyValues = $resource->value($term, ['all' => true, 'default' => []]);
+                                        if ($propertyValues) {
+                                            // プロパティのラベルを取得
+                                            try {
+                                                $propertyEntity = $this->api()->searchOne('properties', ['term' => $term])->getContent();
+                                                $propertyLabel = $translate($propertyEntity->label());
+                                            } catch (Exception $e) {
+                                                $propertyLabel = $term;
+                                            }
+                                            
+                                            $values = [];
+                                            foreach ($propertyValues as $propertyValue) {
+                                                $valueText = strip_tags($propertyValue->asHtml());
+                                                if (strlen($valueText) > 40) {
+                                                    $valueText = mb_strimwidth($valueText, 0, 40, '...');
+                                                }
+                                                $values[] = $escape($valueText);
+                                            }
+                                            
+                                            $metadataItems[] = '<span class="badge bg-light text-dark border me-2 mb-1">' . 
+                                                              '<small class="text-muted">' . $escape($propertyLabel) . ':</small> ' .
+                                                              '<span class="fw-normal">' . implode(', ', $values) . '</span>' .
+                                                              '</span>';
+                                        }
+                                    }
+                                    
+                                    if ($metadataItems) {
+                                        echo '<div class="d-flex flex-wrap">';
+                                        echo implode('', $metadataItems);
+                                        echo '</div>';
+                                    }
+                                }
+                            } else {
+                                // デフォルトの説明文表示（設定がない場合）
+                                if (strlen($body)): ?>
+                                <p class="mb-1 text-muted small">
+                                    <?= $this->escapeHtml(mb_strimwidth(strip_tags($body), 0, 200, '...')) ?>
+                                </p>
+                                <?php endif;
+                            }
+                            ?>
                         </div>
                         
                         <?php if ($selectionButton || $contactUsSelector): ?>

@@ -7,6 +7,8 @@
 
 // Scripts are loaded via an event on view.layout and can be managed in search-form-main-header.phtml.
 
+$translate = $this->plugin('translate');
+
 $params = $this->params()->fromQuery() ?: [];
 $form
     ->setData($params)
@@ -56,7 +58,7 @@ if ($filters) {
 <div class="container">
 <div id="advanced-search-form-wrapper" class="card mb-3">
     <div class="card-header">
-        検索フォーム
+        <?= $this->translate('Search Form') ?>
     </div>
     <div id="advanced-search-form" class="card-body">
         <?= $this->form()->openTag($form) ?>

@@ -1,10 +1,13 @@
+# Japanese translation for Bootstrap5 Modernized theme
+# Copyright (C) 2024
+# This file is distributed under the same license as the theme.
 msgid ""
 msgstr ""
-"Project-Id-Version: Bootstrap5 Modernized Theme\n"
+"Project-Id-Version: Bootstrap5 Modernized 2.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-13 12:00+0900\n"
-"PO-Revision-Date: 2025-01-13 12:00+0900\n"
-"Last-Translator: \n"
+"POT-Creation-Date: 2024-12-19 12:00+0000\n"
+"PO-Revision-Date: 2024-12-19 12:00+0000\n"
+"Last-Translator: Satoru Nakamura\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
@@ -12,16 +15,23 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-# Number format for item counts
-msgid "%1$d %2$s"
-msgstr "%1$d%2$s"
+msgid "Search Form"
+msgstr "検索フォーム"
 
-# View toggle buttons
-msgid "Grid"
-msgstr "グリッド"
+msgid "Search"
+msgstr "検索"
 
-msgid "List"
-msgstr "リスト"
+msgid "Reset"
+msgstr "リセット"
+
+msgid "Submit"
+msgstr "送信"
+
+msgid "Advanced Search"
+msgstr "詳細検索"
+
+msgid "Results"
+msgstr "検索結果"
 
 msgid "Grid view"
 msgstr "グリッド表示"
@@ -29,122 +39,90 @@ msgstr "グリッド表示"
 msgid "List view"
 msgstr "リスト表示"
 
-# Hero section
-msgid "Explore Collections"
-msgstr "コレクションを探索"
+msgid "grid"
+msgstr "グリッド"
 
-msgid "Explore our extensive collection of digital resources, documents, and media."
-msgstr "デジタルリソース、ドキュメント、メディアの豊富なコレクションをご覧ください。"
+msgid "list"
+msgstr "リスト"
 
-# Search and filters
-msgid "No Results Found"
-msgstr "検索結果がありません"
+msgid "View mode"
+msgstr "表示モード"
 
-msgid "Fill a query and get results."
-msgstr "クエリを入力して検索してください。"
+msgid "Pagination"
+msgstr "ページネーション"
 
-msgid "This item set has no items."
-msgstr "このアイテムセットにはアイテムがありません。"
-
-msgid "The query returned no results"
-msgstr "検索条件に一致する結果が見つかりませんでした"
-
-msgid "Search"
-msgstr "検索"
-
-msgid "Advanced Search"
-msgstr "詳細検索"
-
-msgid "Search collections..."
-msgstr "コレクションを検索..."
-
-# Pagination
 msgid "Previous"
 msgstr "前へ"
 
 msgid "Next"
 msgstr "次へ"
 
-msgid "First"
-msgstr "最初"
-
-msgid "Last"
-msgstr "最後"
-
-# Sort options
-msgid "Sort by"
-msgstr "並び替え"
-
-msgid "Relevance"
-msgstr "関連性"
-
-msgid "Title"
-msgstr "タイトル"
-
-msgid "Date"
-msgstr "日付"
-
-msgid "Created"
-msgstr "作成日"
-
-msgid "Modified"
-msgstr "更新日"
-
-# Per page
-msgid "Per page"
-msgstr "表示件数"
-
-msgid "items per page"
-msgstr "件/ページ"
-
-# Resource types
-msgid "Items"
-msgstr "アイテム"
-
-msgid "items"
-msgstr "件のアイテム"
-
-msgid "item"
-msgstr "件のアイテム"
-
-msgid "Item Sets"
-msgstr "アイテムセット"
-
-msgid "item sets"
-msgstr "件のアイテムセット"
-
-msgid "item set"
-msgstr "件のアイテムセット"
-
-msgid "Media"
-msgstr "メディア"
-
-msgid "media"
-msgstr "件のメディア"
-
-msgid "Pages"
+msgid "Page"
 msgstr "ページ"
 
 msgid "pages"
-msgstr "件のページ"
+msgstr "ページ"
 
-msgid "page"
-msgstr "件のページ"
+msgid "Items per page"
+msgstr "1ページの表示件数"
 
-# Metadata
+msgid "Sort by"
+msgstr "並び順"
+
+msgid "Filter"
+msgstr "フィルター"
+
+msgid "Filters"
+msgstr "フィルター"
+
+msgid "Clear all filters"
+msgstr "すべてのフィルターをクリア"
+
+msgid "Apply filters"
+msgstr "フィルターを適用"
+
+msgid "No Results Found"
+msgstr "結果が見つかりませんでした"
+
+msgid "Fill a query and get results."
+msgstr "検索条件を入力して結果を取得してください。"
+
+msgid "This item set has no items."
+msgstr "このコレクションにはアイテムがありません。"
+
+msgid "The query returned no results"
+msgstr "検索条件に一致する結果がありませんでした"
+
+msgid "Try adjusting your search criteria or filters"
+msgstr "検索条件やフィルターを調整してお試しください"
+
+msgid "Powered by Omeka S"
+msgstr "Powered by Omeka S"
+
+msgid "Home"
+msgstr "ホーム"
+
+msgid "Browse"
+msgstr "閲覧"
+
+msgid "Items"
+msgstr "アイテム"
+
+msgid "Collections"
+msgstr "コレクション"
+
+msgid "IIIF Manifest"
+msgstr "IIIFマニフェスト"
+
+msgid "Help"
+msgstr "ヘルプ"
+
 msgid "Private"
 msgstr "非公開"
-
-msgid "Public"
-msgstr "公開"
 
 msgid "Annotation"
 msgstr "注釈"
 
-msgid "Has annotation"
-msgstr "注釈あり"
-
-# Languages
 msgid "English"
 msgstr "英語"
 
@@ -234,53 +212,3 @@ msgstr "ウクライナ語"
 
 msgid "Romanian"
 msgstr "ルーマニア語"
-
-# Common actions
-msgid "View"
-msgstr "表示"
-
-msgid "Edit"
-msgstr "編集"
-
-msgid "Delete"
-msgstr "削除"
-
-msgid "Add"
-msgstr "追加"
-
-msgid "Save"
-msgstr "保存"
-
-msgid "Cancel"
-msgstr "キャンセル"
-
-msgid "Apply"
-msgstr "適用"
-
-msgid "Reset"
-msgstr "リセット"
-
-msgid "Clear"
-msgstr "クリア"
-
-msgid "Download"
-msgstr "ダウンロード"
-
-msgid "Upload"
-msgstr "アップロード"
-
-msgid "Browse"
-msgstr "閲覧"
-
-msgid "Select"
-msgstr "選択"
-
-msgid "All"
-msgstr "すべて"
-
-msgid "None"
-msgstr "なし"
-
-# Footer
-msgid "Powered by Omeka S"
-msgstr "Powered by Omeka S"
