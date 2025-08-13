@@ -10,6 +10,21 @@
 $translate = $this->plugin('translate');
 
 $params = $this->params()->fromQuery() ?: [];
+
+// フォームデータの整形（文字列を配列に変換）
+if (!empty($params)) {
+    foreach ($params as $key => $value) {
+        // filter フィールドが文字列の場合、配列に変換
+        if ($key === 'filter' && is_string($value)) {
+            $params[$key] = [$value];
+        }
+        // その他の配列であるべきフィールドも確認
+        if (in_array($key, ['facet', 'item_set_id']) && is_string($value)) {
+            $params[$key] = [$value];
+        }
+    }
+}
+
 $form
     ->setData($params)
     ->prepare();

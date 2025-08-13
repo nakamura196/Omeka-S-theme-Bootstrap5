@@ -89,13 +89,6 @@ $currentYear = date('Y');
             <div class="col-lg-4">
                 <h6 class="text-uppercase mb-3"><?php echo $translate('Information'); ?></h6>
                 
-                <!-- カスタムフッターコンテンツまたは統計情報 -->
-                <?php if ($footerContent = $this->themeSetting('footer')): ?>
-                <div class="text-white-50 small mb-3">
-                    <?php echo $footerContent; ?>
-                </div>
-                <?php endif; ?>
-                
                 <!-- 統計情報 -->
                 <ul class="list-unstyled text-white-50 small">
                     <?php 
@@ -144,24 +137,23 @@ $currentYear = date('Y');
     <!-- コピーライトバー -->
     <div class="border-top border-secondary">
         <div class="container py-3">
-            <div class="row align-items-center">
-                <div class="col-md-6">
-                    <p class="mb-0 text-white-50 small">
-                        &copy; <?php echo $currentYear; ?> <?php echo $escape($siteTitle); ?>. 
-                        <?php echo $escape($translate('All rights reserved.')); ?>
-                    </p>
-                </div>
-                <div class="col-md-6 text-md-end">
-                    <p class="mb-0 text-white-50 small">
-                        <?php echo $escape($translate('Powered by')); ?> 
-                        <a href="https://omeka.org/s/" 
-                           class="text-white-50" 
-                           target="_blank" 
-                           rel="noopener noreferrer">
-                            Omeka S
-                        </a>
-                    </p>
-                </div>
+            <div class="text-center">
+                <!-- Omeka Sのフッター情報を表示 -->
+                <?php if ($footerInfo = $this->themeSetting('footer')): ?>
+                <p class="mb-0 text-white-50 small">
+                    <?php echo $footerInfo; ?>
+                </p>
+                <?php else: ?>
+                <p class="mb-0 text-white-50 small">
+                    <?php echo $escape($translate('Powered by')); ?> 
+                    <a href="https://omeka.org/s/" 
+                       class="text-white-50" 
+                       target="_blank" 
+                       rel="noopener noreferrer">
+                        Omeka S
+                    </a>
+                </p>
+                <?php endif; ?>
             </div>
         </div>
     </div>

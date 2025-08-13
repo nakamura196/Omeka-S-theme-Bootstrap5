@@ -387,3 +387,12 @@ msgstr "シカゴスタイル"
 
 msgid "Copy"
 msgstr "コピー"
+
+msgid "Active facets"
+msgstr "有効なフィルター"
+
+msgid "Active filters"
+msgstr "有効なフィルター"
+
+msgid "Remove filter"
+msgstr "フィルターを削除"

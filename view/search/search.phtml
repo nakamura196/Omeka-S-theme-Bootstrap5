@@ -303,12 +303,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="search-results-part search-results-list">
                         <?php foreach (array_filter($response->getResourceTotalResults()) as $resourceType => $count): ?>
                         <div class="resource-type-section mb-5">
-                            <div class="d-flex align-items-center justify-content-between mb-3">
+                            <div class="mb-3">
                                 <h3 class="h4 fw-bold mb-0">
                                     <i class="bi bi-collection me-2 text-primary"></i>
                                     <?= $escape(sprintf($translate('%1$d %2$s'), $count, $translate($easyMeta->resourceLabelCount($resourceType, $count)))) ?>
                                 </h3>
-                                <span class="badge bg-primary rounded-pill"><?= $count ?></span>
                             </div>
                             <div class="resource-results">
                                 <?= $partial('search/results', $variables + ['resourceType' => $resourceType]) ?>
