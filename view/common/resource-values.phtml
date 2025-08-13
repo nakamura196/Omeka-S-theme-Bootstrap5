@@ -14,8 +14,8 @@ $filterLocaleCallback = function ($value) use ($lang) {
 };
 ?>
 <?php if (count($values) > 0): ?>
-<div class="metadata-section" style="margin-top: 6rem;">
-    <table class="table table-sm table-borderless table-striped">
+<div class="metadata-section mt-5">
+    <table class="table table-borderless table-striped">
         <tbody>
             <?php
             foreach ($values as $term => $propertyData):
@@ -40,7 +40,7 @@ $filterLocaleCallback = function ($value) use ($lang) {
                     ?>
                     <div class="<?= $index > 0 ? 'mt-2' : '' ?>" lang="<?php echo $escape($valueLang); ?>">
                         <?php if ($showLocale && $valueLang): ?>
-                        <small class="text-muted me-2">[<?php echo $valueLang; ?>]</small>
+                        <span class="badge bg-secondary me-2"><?php echo $valueLang; ?></span>
                         <?php endif; ?>
                         
                         <?php if ('resource' == $valueType || strpos($valueType, 'resource') !== false): ?>

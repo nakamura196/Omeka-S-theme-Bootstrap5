@@ -1,0 +1,73 @@
+<?php
+use Omeka\Api\Exception\NotFoundException;
+// アイコンURL取得
+function getIconAttr($view, $iconId, $attribute)
+{
+    // IDがない場合はなし
+    if (!$iconId)
+    {
+        return '';
+    }
+    try {
+        // アイコンIDからデータ取得
+        $icon = $view->api()->read('iiif_viewers_icons', $iconId)->getContent();
+        if (!$icon)
+        {
+            return '';
+        }
+        return sprintf($attribute, $icon->assetUrl());
+    } catch (NotFoundException $e) {
+        return '';
+    }
+}
+$translate = $this->plugin('translate');
+
+$manifest = $config["iiifResourceUri"];
+$iconAttr = 'src="%s"';
+$setting = $config["setting"];
+
+// ロゴアイコン
+$logoIconId = $setting['manifest_icon'];
+// src属性取得
+$logoAttr = getIconAttr($this, $logoIconId, $iconAttr);
+
+$lang = $setting['viewer_lang'] ?? '';
+$viewer = $setting['viewer_value'] ?? '';
+$help = $setting['viewer_help'] ?? '';
+$text = $setting['viewer_help_text'] ?? '';
+?>
+<div style="margin-top : 10px; margin-bottom : 10px;">
+    <?php if($viewer == "mirador"): ?>
+    <iframe
+        src="<?php echo $config["asset"]; ?>vendor/mirador/index.html?manifest=<?php echo $manifest; ?>&lang=<?php echo $lang; ?>"
+        width="100%" height="600" allowfullscreen frameborder="0"></iframe>
+    <?php else: ?>
+    <iframe src="<?php echo $config["asset"]; ?>vendor/uv/uv.html#?manifest=<?php echo $manifest; ?>" width="100%"
+        height="600" allowfullscreen frameborder="0"></iframe>
+    <?php endif; ?>
+    <div class="text-right" style="margin-top : 10px;">
+        <button class="btn btn-link" href="<?php echo $manifest; ?>?manifest=<?php echo $manifest; ?>"
+            title="<?php echo $translate('IIIF Manifest'); ?>" target="_blank"><img style="height: 30px"
+                <?php echo $logoAttr; ?> /></a>
+        <?php for($i = 0; $i < 10; $i++): ?>
+        <?php
+                    $index = $i + 1;
+                    if (isset($setting["url_" . $index])):
+                ?>
+        <?php 
+                        $url = $setting["url_".$index].$manifest;
+                        $icon = getIconAttr($this, $setting["icon_".$index], $iconAttr);
+                        $label = $setting["label_".$index];
+                    ?>
+        <button class="btn btn-link" href="<?php echo $url; ?>" title="<?php echo $label; ?>" target="_blank">
+            <img style="height: 30px" <?php echo $icon; ?> />
+        </button>
+        <?php endif; ?>
+        <?php endfor; ?>
+        <?php if($help !== ""): ?>
+        <a href="<?php echo $help; ?>">
+            <button><?php echo ($text != "" ? $text : "Help"); ?></button>
+        </a>
+        <?php endif; ?>
+    </div>
+</div>

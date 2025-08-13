@@ -11,6 +11,8 @@ $site = $this->site;
 $heroTitle = $site->title();
 $heroDescription = $site->summary() ?: $this->translate('Explore our extensive collection of digital resources, documents, and media.');
 $heroImage = $this->themeSettingAssetUrl('hero_image');
+$heroButtonUrl = $this->themeSetting('hero_button_url');
+$heroButtonText = $this->themeSetting('hero_button_text') ?: $this->translate('Explore Collections');
 ?>
 
 <div class="position-relative overflow-hidden p-3 p-md-5 mb-4 text-center bg-dark text-white">
@@ -25,5 +27,13 @@ $heroImage = $this->themeSettingAssetUrl('hero_image');
     <div class="position-relative mx-auto py-5" style="z-index: 2;">
         <h1 class="display-4 fw-bold"><?php echo $this->escapeHtml($heroTitle); ?></h1>
         <p class="lead mx-auto" style="max-width: 700px;"><?php echo $this->escapeHtml($heroDescription); ?></p>
+        
+        <?php if ($heroButtonUrl): ?>
+        <div class="mt-4">
+            <a href="<?php echo $this->escapeHtml($heroButtonUrl); ?>" class="btn btn-primary btn-lg">
+                <?php echo $this->escapeHtml($heroButtonText); ?>
+            </a>
+        </div>
+        <?php endif; ?>
     </div>
 </div>
