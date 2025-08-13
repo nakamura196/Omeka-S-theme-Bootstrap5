@@ -96,12 +96,12 @@ $multiMode = isset($displayParts['grid_list']) && !in_array($gridListMode, ['lis
             <button class="btn btn-outline-secondary btn-sm view-toggle-btn<?= $gridListMode !== 'list' ? ' active' : '' ?>" 
                     data-view="grid" type="button" aria-label="<?= $translate('Grid view') ?>">
                 <i class="fas fa-th" aria-hidden="true"></i>
-                <span class="d-none d-sm-inline ms-1"><?= $translate('grid') ?></span>
+                <span class="d-none d-sm-inline ms-1"><?= $translate('Grid') ?></span>
             </button>
             <button class="btn btn-outline-secondary btn-sm view-toggle-btn<?= $gridListMode === 'list' ? ' active' : '' ?>" 
                     data-view="list" type="button" aria-label="<?= $translate('List view') ?>">
                 <i class="fas fa-list" aria-hidden="true"></i>
-                <span class="d-none d-sm-inline ms-1"><?= $translate('list') ?></span>
+                <span class="d-none d-sm-inline ms-1"><?= $translate('List') ?></span>
             </button>
         </div>
         <?php endif; ?>

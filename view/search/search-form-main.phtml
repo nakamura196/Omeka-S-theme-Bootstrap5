@@ -53,6 +53,7 @@ if ($filters) {
 */
 ?>
 
+<div class="container">
 <div id="advanced-search-form-wrapper" class="card mb-3">
     <div class="card-header">
         検索フォーム
@@ -60,10 +61,11 @@ if ($filters) {
     <div id="advanced-search-form" class="card-body">
         <?= $this->form()->openTag($form) ?>
         <?= $this->formCollection($form) ?>
-        <div class="search-form-buttons d-flex justify-content-start align-items-center mt-3">
+        <div class="search-form-buttons d-flex justify-content-center align-items-center mt-3 text-center">
             <?= $reset ? $this->formButton($reset) : null ?>
             <?= $submit ? $this->formButton($submit) : null ?>
         </div>
         <?= $this->form()->closeTag() ?>
     </div>
+</div>
 </div>

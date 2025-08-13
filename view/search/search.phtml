@@ -69,7 +69,7 @@ $displayPartsHeader = array_filter($displayParts, fn ($v) => in_array($v, ['head
 $displayPartsFooter = array_filter($displayParts, fn ($v) => in_array($v, ['footer', 'both']));
 $displayFacets = $displayParts ? $displayParts['facets'] ?? 'before' : 'none';
 
-if (isset($itemSet) && $itemSet && $site) {
+if ($itemSet && $site) {
     $redirectItemSets = $this->siteSetting('advancedsearch_item_sets_redirects', ['default' => 'browse']);
     $redirectItemSet = $redirectItemSets[$itemSet->id()] ?? $redirectItemSets['default'] ?? 'browse';
     $displayItemSet = $redirectItemSet !== 'first' || $response->getCurrentPage() <= 1;
@@ -92,8 +92,8 @@ $this->headScript()
 <?= $this->partial('common/breadcrumbs', [
     'site' => $site, 
     'itemSet' => isset($itemSet) ? $itemSet : null,
-    'isAdmin' => $isAdmin,
-    'langValue' => $langValue
+    'isAdmin' => isset($isAdmin) ? $isAdmin : false,
+    'langValue' => isset($langValue) ? $langValue : null
 ]) ?>
 <?php endif; ?>
 <?php endif; ?>
@@ -184,9 +184,9 @@ $this->headScript()
                     <div class="alert alert-info text-center">
                         <i class="fas fa-search fa-2x mb-3 text-muted"></i>
                         <h4><?= $translate('No Results Found') ?></h4>
-                        <?php if (empty($query) && (!isset($itemSet) || !$itemSet)): ?>
+                        <?php if (empty($query) && !$itemSet): ?>
                         <p><?= $translate('Fill a query and get results.') ?></p>
-                        <?php elseif (empty($query) && isset($itemSet) && $itemSet): ?>
+                        <?php elseif (empty($query) && $itemSet): ?>
                         <p><?= $translate('This item set has no items.') ?></p>
                         <?php else: ?>
                         <?php if (in_array($searchConfig->subSetting('results', 'search_filters', 'header'), ['header', 'both'])): ?>

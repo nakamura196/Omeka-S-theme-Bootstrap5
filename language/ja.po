@@ -1,0 +1,286 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Bootstrap5 Modernized Theme\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-01-13 12:00+0900\n"
+"PO-Revision-Date: 2025-01-13 12:00+0900\n"
+"Last-Translator: \n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+# Number format for item counts
+msgid "%1$d %2$s"
+msgstr "%1$d%2$s"
+
+# View toggle buttons
+msgid "Grid"
+msgstr "グリッド"
+
+msgid "List"
+msgstr "リスト"
+
+msgid "Grid view"
+msgstr "グリッド表示"
+
+msgid "List view"
+msgstr "リスト表示"
+
+# Hero section
+msgid "Explore Collections"
+msgstr "コレクションを探索"
+
+msgid "Explore our extensive collection of digital resources, documents, and media."
+msgstr "デジタルリソース、ドキュメント、メディアの豊富なコレクションをご覧ください。"
+
+# Search and filters
+msgid "No Results Found"
+msgstr "検索結果がありません"
+
+msgid "Fill a query and get results."
+msgstr "クエリを入力して検索してください。"
+
+msgid "This item set has no items."
+msgstr "このアイテムセットにはアイテムがありません。"
+
+msgid "The query returned no results"
+msgstr "検索条件に一致する結果が見つかりませんでした"
+
+msgid "Search"
+msgstr "検索"
+
+msgid "Advanced Search"
+msgstr "詳細検索"
+
+msgid "Search collections..."
+msgstr "コレクションを検索..."
+
+# Pagination
+msgid "Previous"
+msgstr "前へ"
+
+msgid "Next"
+msgstr "次へ"
+
+msgid "First"
+msgstr "最初"
+
+msgid "Last"
+msgstr "最後"
+
+# Sort options
+msgid "Sort by"
+msgstr "並び替え"
+
+msgid "Relevance"
+msgstr "関連性"
+
+msgid "Title"
+msgstr "タイトル"
+
+msgid "Date"
+msgstr "日付"
+
+msgid "Created"
+msgstr "作成日"
+
+msgid "Modified"
+msgstr "更新日"
+
+# Per page
+msgid "Per page"
+msgstr "表示件数"
+
+msgid "items per page"
+msgstr "件/ページ"
+
+# Resource types
+msgid "Items"
+msgstr "アイテム"
+
+msgid "items"
+msgstr "件のアイテム"
+
+msgid "item"
+msgstr "件のアイテム"
+
+msgid "Item Sets"
+msgstr "アイテムセット"
+
+msgid "item sets"
+msgstr "件のアイテムセット"
+
+msgid "item set"
+msgstr "件のアイテムセット"
+
+msgid "Media"
+msgstr "メディア"
+
+msgid "media"
+msgstr "件のメディア"
+
+msgid "Pages"
+msgstr "ページ"
+
+msgid "pages"
+msgstr "件のページ"
+
+msgid "page"
+msgstr "件のページ"
+
+# Metadata
+msgid "Private"
+msgstr "非公開"
+
+msgid "Public"
+msgstr "公開"
+
+msgid "Annotation"
+msgstr "注釈"
+
+msgid "Has annotation"
+msgstr "注釈あり"
+
+# Languages
+msgid "English"
+msgstr "英語"
+
+msgid "Japanese"
+msgstr "日本語"
+
+msgid "French"
+msgstr "フランス語"
+
+msgid "German"
+msgstr "ドイツ語"
+
+msgid "Spanish"
+msgstr "スペイン語"
+
+msgid "Italian"
+msgstr "イタリア語"
+
+msgid "Portuguese"
+msgstr "ポルトガル語"
+
+msgid "Russian"
+msgstr "ロシア語"
+
+msgid "Chinese"
+msgstr "中国語"
+
+msgid "Korean"
+msgstr "韓国語"
+
+msgid "Arabic"
+msgstr "アラビア語"
+
+msgid "Dutch"
+msgstr "オランダ語"
+
+msgid "Swedish"
+msgstr "スウェーデン語"
+
+msgid "Norwegian"
+msgstr "ノルウェー語"
+
+msgid "Danish"
+msgstr "デンマーク語"
+
+msgid "Finnish"
+msgstr "フィンランド語"
+
+msgid "Polish"
+msgstr "ポーランド語"
+
+msgid "Turkish"
+msgstr "トルコ語"
+
+msgid "Czech"
+msgstr "チェコ語"
+
+msgid "Hungarian"
+msgstr "ハンガリー語"
+
+msgid "Greek"
+msgstr "ギリシャ語"
+
+msgid "Hebrew"
+msgstr "ヘブライ語"
+
+msgid "Thai"
+msgstr "タイ語"
+
+msgid "Vietnamese"
+msgstr "ベトナム語"
+
+msgid "Indonesian"
+msgstr "インドネシア語"
+
+msgid "Malay"
+msgstr "マレー語"
+
+msgid "Hindi"
+msgstr "ヒンディー語"
+
+msgid "Bengali"
+msgstr "ベンガル語"
+
+msgid "Ukrainian"
+msgstr "ウクライナ語"
+
+msgid "Romanian"
+msgstr "ルーマニア語"
+
+# Common actions
+msgid "View"
+msgstr "表示"
+
+msgid "Edit"
+msgstr "編集"
+
+msgid "Delete"
+msgstr "削除"
+
+msgid "Add"
+msgstr "追加"
+
+msgid "Save"
+msgstr "保存"
+
+msgid "Cancel"
+msgstr "キャンセル"
+
+msgid "Apply"
+msgstr "適用"
+
+msgid "Reset"
+msgstr "リセット"
+
+msgid "Clear"
+msgstr "クリア"
+
+msgid "Download"
+msgstr "ダウンロード"
+
+msgid "Upload"
+msgstr "アップロード"
+
+msgid "Browse"
+msgstr "閲覧"
+
+msgid "Select"
+msgstr "選択"
+
+msgid "All"
+msgstr "すべて"
+
+msgid "None"
+msgstr "なし"
+
+# Footer
+msgid "Powered by Omeka S"
+msgstr "Powered by Omeka S"

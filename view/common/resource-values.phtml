@@ -40,7 +40,45 @@ $filterLocaleCallback = function ($value) use ($lang) {
                     ?>
                     <div class="<?= $index > 0 ? 'mt-2' : '' ?>" lang="<?php echo $escape($valueLang); ?>">
                         <?php if ($showLocale && $valueLang): ?>
-                        <span class="badge bg-secondary me-2"><?php echo $valueLang; ?></span>
+                        <?php
+                        // 言語コードを言語名に変換（多言語対応）
+                        $languageNames = [
+                            'en' => $translate('English'),
+                            'ja' => $translate('Japanese'),
+                            'fr' => $translate('French'),
+                            'de' => $translate('German'),
+                            'es' => $translate('Spanish'),
+                            'it' => $translate('Italian'),
+                            'pt' => $translate('Portuguese'),
+                            'ru' => $translate('Russian'),
+                            'zh' => $translate('Chinese'),
+                            'ko' => $translate('Korean'),
+                            'ar' => $translate('Arabic'),
+                            'nl' => $translate('Dutch'),
+                            'sv' => $translate('Swedish'),
+                            'no' => $translate('Norwegian'),
+                            'da' => $translate('Danish'),
+                            'fi' => $translate('Finnish'),
+                            'pl' => $translate('Polish'),
+                            'tr' => $translate('Turkish'),
+                            'cs' => $translate('Czech'),
+                            'hu' => $translate('Hungarian'),
+                            'el' => $translate('Greek'),
+                            'he' => $translate('Hebrew'),
+                            'th' => $translate('Thai'),
+                            'vi' => $translate('Vietnamese'),
+                            'id' => $translate('Indonesian'),
+                            'ms' => $translate('Malay'),
+                            'hi' => $translate('Hindi'),
+                            'bn' => $translate('Bengali'),
+                            'uk' => $translate('Ukrainian'),
+                            'ro' => $translate('Romanian'),
+                        ];
+                        
+                        // 言語コードに対応する名前があれば使用、なければコードをそのまま表示
+                        $languageDisplay = isset($languageNames[$valueLang]) ? $languageNames[$valueLang] : strtoupper($valueLang);
+                        ?>
+                        <span class="badge bg-secondary me-2" title="<?php echo $escape($valueLang); ?>"><?php echo $escape($languageDisplay); ?></span>
                         <?php endif; ?>
                         
                         <?php if ('resource' == $valueType || strpos($valueType, 'resource') !== false): ?>
