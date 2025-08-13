@@ -57,7 +57,7 @@ $this->headTitle($itemTitle);
                     <div class="vr d-none d-sm-block"></div>
                     <div>
                         <i class="bi bi-image me-1"></i>
-                        <span><?= $mediaCount ?> <?= $mediaCount === 1 ? $translate('Media') : $translate('Media files') ?></span>
+                        <span><?= sprintf($mediaCount === 1 ? $translate('%d Media file') : $translate('%d Media files'), $mediaCount) ?></span>
                     </div>
                     <?php endif; ?>
                     

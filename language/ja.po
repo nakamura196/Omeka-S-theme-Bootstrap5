@@ -315,6 +315,18 @@ msgstr "言語"
 msgid "%d Items"
 msgstr "%d アイテム"
 
+msgid "%d Media file"
+msgstr "%d メディアファイル"
+
+msgid "%d Media files"
+msgstr "%d メディアファイル"
+
+msgid "Media"
+msgstr "メディア"
+
+msgid "Media files"
+msgstr "メディアファイル"
+
 msgid "%d Media Files"
 msgstr "%d メディアファイル"
 
