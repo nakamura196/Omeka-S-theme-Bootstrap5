@@ -1,0 +1,196 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\SiteRepresentation|null $site
+ * @var \AdvancedSearch\Api\Representation\SearchConfigRepresentation $searchConfig
+ * @var \AdvancedSearch\Query $query
+ * @var \AdvancedSearch\Response $response
+ * @var string|null $resourceType The resource type may be "resources" or a specific one.
+ * @var \Omeka\Api\Representation\ItemSetRepresentation|null $itemSet
+ */
+
+// A check is done: when page is not first, the resources may be empty even with results.
+$resources = $response->getResources($resourceType);
+if (!$resources) return;
+
+$plugins = $this->getHelperPluginManager();
+$assetUrl = $plugins->get('assetUrl');
+$translate = $plugins->get('translate');
+$hyperlink = $plugins->get('hyperlink');
+$thumbnail = $plugins->get('thumbnail');
+$escapeValueOrGetHtml = $plugins->get('escapeValueOrGetHtml');
+
+$selectionButton = $site && $plugins->has('selectionButton') && $this->siteSetting('selection_append_items_browse_individual') ? $plugins->get('selectionButton') : null;
+$contactUsSelector = $site && $plugins->has('contactUsSelector') && $this->siteSetting('contactus_append_items_browse_individual') ? $plugins->get('contactUsSelector') : null;
+
+// Can be simplified in a public theme.
+$setting = $plugins->get(isset($site) ? 'siteSetting' : 'setting');
+
+$siteSlug = isset($site) ? $site->slug() : null;
+
+$filterLocale = (bool) $setting('filter_locale_values');
+$lang = $plugins->get('lang')();
+$langValue = $filterLocale ? [$lang, ''] : null;
+
+$untitled = $translate('[Untitled]');
+
+$headingTerm = $setting('browse_heading_property_term');
+$bodyTerm = $setting('browse_body_property_term');
+
+$gridListMode = $searchConfig->subSetting('results', 'grid_list_mode', 'auto');
+
+// A list does not have html-code in a consistant user interface.
+$allowHtml = (bool) $searchConfig->subSetting('results', 'allow_html');
+
+$thumbnailMode = $searchConfig->subSetting('results', 'thumbnail_mode', 'default');
+$noThumbnail = $thumbnailMode === 'none';
+$allThumbnail = $thumbnailMode === 'all';
+$defaultThumbnail = $allThumbnail
+    ? sprintf('<img loading="lazy" src="%1$s" title="%2$s"/>', $assetUrl('thumbnails/default.png', 'Omeka', true), $translate('No media'))
+    : '';
+
+$thumbnailType = $searchConfig->subSetting('results', 'thumbnail_type', 'medium');
+?>
+
+<div class="resource-list search-results-list">
+    <!-- グリッドレイアウト -->
+    <div class="row g-4">
+        <?php foreach ($resources as $resource):
+            $resourceUrl = isset($site) ? $resource->siteUrl($siteSlug) : $resource->adminUrl();
+            $resourceType = $resource->getControllerName();
+            $heading = $headingTerm ? $resource->value($headingTerm, ['default' => $untitled, 'lang' => $langValue]) : $resource->displayTitle($untitled, $langValue);
+            $body = $bodyTerm ? $resource->value($bodyTerm, ['lang' => $langValue, 'default' => '']) : $resource->displayDescription(null, $langValue);
+            ?>
+        <div class="col-lg-4 col-md-6">
+            <div class="card h-100 resource <?= $resourceType ?> shadow-sm">
+                <?php if (!$noThumbnail): ?>
+                <?php $resourceThumbnail = $thumbnail($resource, $thumbnailType); ?>
+                <?php if ($resourceThumbnail || $allThumbnail): ?>
+                <div class="card-img-top-wrapper" style="height: 200px; overflow: hidden;">
+                    <?php if ($resourceThumbnail): ?>
+                    <?= $hyperlink->raw($resourceThumbnail, $resourceUrl, ['class' => 'text-decoration-none d-block h-100']) ?>
+                    <style>
+                        .card-img-top-wrapper img {
+                            width: 100% !important;
+                            height: 100% !important;
+                            object-fit: cover;
+                        }
+                    </style>
+                    <?php else: ?>
+                    <a href="<?= $resourceUrl ?>" class="text-decoration-none d-flex align-items-center justify-content-center h-100 bg-light">
+                        <i class="fas fa-image fa-3x text-muted"></i>
+                    </a>
+                    <?php endif; ?>
+                </div>
+                <?php endif; ?>
+                <?php endif; ?>
+                
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">
+                        <a href="<?= $resourceUrl ?>" class="text-decoration-none text-dark stretched-link">
+                            <?= $escapeValueOrGetHtml($heading) ?>
+                        </a>
+                    </h5>
+                    
+                    <?php if (strlen($body)): ?>
+                    <p class="card-text text-muted flex-grow-1">
+                        <?= $this->escapeHtml(mb_strimwidth(strip_tags($body), 0, 150, '...')) ?>
+                    </p>
+                    <?php endif; ?>
+                    
+                    <div class="card-footer bg-transparent border-0 p-0 mt-auto">
+                        <small class="text-muted">
+                            <i class="fas fa-<?= $resourceType === 'items' ? 'file' : ($resourceType === 'item-sets' ? 'folder' : 'globe') ?> me-1"></i>
+                            <?= $translate(ucfirst($resourceType)) ?>
+                        </small>
+                        
+                        <?php if ($selectionButton || $contactUsSelector): ?>
+                        <div class="mt-2">
+                            <?php if ($selectionButton): ?>
+                            <?= $selectionButton($resource) ?>
+                            <?php endif; ?>
+                            <?php if ($contactUsSelector): ?>
+                            <?= $contactUsSelector($resource) ?>
+                            <?php endif; ?>
+                        </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php endforeach; ?>
+    </div>
+    
+    <!-- リストレイアウト -->
+    <div class="list-group">
+        <?php foreach ($resources as $resource):
+            $resourceUrl = isset($site) ? $resource->siteUrl($siteSlug) : $resource->adminUrl();
+            $resourceType = $resource->getControllerName();
+            $heading = $headingTerm ? $resource->value($headingTerm, ['default' => $untitled, 'lang' => $langValue]) : $resource->displayTitle($untitled, $langValue);
+            $body = $bodyTerm ? $resource->value($bodyTerm, ['lang' => $langValue, 'default' => '']) : $resource->displayDescription(null, $langValue);
+            ?>
+        <div class="list-group-item list-group-item-action border-0 border-bottom resource <?= $resourceType ?> py-3">
+            <div class="row align-items-center">
+                <?php if (!$noThumbnail): ?>
+                <?php $resourceThumbnail = $thumbnail($resource, $thumbnailType); ?>
+                <?php if ($resourceThumbnail || $allThumbnail): ?>
+                <div class="col-auto">
+                    <?php if ($resourceThumbnail): ?>
+                    <div class="thumbnail-wrapper" style="width: 80px; height: 80px; overflow: hidden;">
+                        <?= $hyperlink->raw($resourceThumbnail, $resourceUrl, ['class' => 'text-decoration-none d-block h-100 w-100']) ?>
+                        <style>
+                            .thumbnail-wrapper img {
+                                width: 80px !important;
+                                height: 80px !important;
+                                object-fit: cover;
+                                border-radius: 0.375rem;
+                            }
+                        </style>
+                    </div>
+                    <?php else: ?>
+                    <a href="<?= $resourceUrl ?>" class="text-decoration-none d-flex align-items-center justify-content-center bg-light rounded" style="width: 80px; height: 80px;">
+                        <i class="fas fa-image fa-2x text-muted"></i>
+                    </a>
+                    <?php endif; ?>
+                </div>
+                <?php endif; ?>
+                <?php endif; ?>
+                
+                <div class="col">
+                    <div class="d-flex w-100 justify-content-between align-items-start">
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1">
+                                <a href="<?= $resourceUrl ?>" class="text-decoration-none text-dark">
+                                    <?= $escapeValueOrGetHtml($heading) ?>
+                                </a>
+                            </h6>
+                            
+                            <?php if (strlen($body)): ?>
+                            <p class="mb-1 text-muted">
+                                <?= $this->escapeHtml(mb_strimwidth(strip_tags($body), 0, 200, '...')) ?>
+                            </p>
+                            <?php endif; ?>
+                            
+                            <small class="text-muted">
+                                <i class="fas fa-<?= $resourceType === 'items' ? 'file' : ($resourceType === 'item-sets' ? 'folder' : 'globe') ?> me-1"></i>
+                                <?= $translate(ucfirst($resourceType)) ?>
+                            </small>
+                        </div>
+                        
+                        <?php if ($selectionButton || $contactUsSelector): ?>
+                        <div class="ms-3">
+                            <?php if ($selectionButton): ?>
+                            <?= $selectionButton($resource) ?>
+                            <?php endif; ?>
+                            <?php if ($contactUsSelector): ?>
+                            <?= $contactUsSelector($resource) ?>
+                            <?php endif; ?>
+                        </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php endforeach; ?>
+    </div>
+</div>

@@ -1,0 +1,20 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Laminas\Form\Form $form
+ * @var \AdvancedSearch\Api\Representation\SearchConfigRepresentation $searchConfig
+ *
+ * The quick form keeps only:
+ * - the main field ("q"),
+ * - the record or fulltext option ("rft"),
+ * - the required and hidden elements,
+ * - the button submit.
+ */
+
+$params = $this->params()->fromQuery() ?: [];
+$form
+    ->setData($params)
+    ->prepare();
+?>
+
+<?= $this->form($form) ?>

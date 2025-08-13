@@ -1,0 +1,203 @@
+<?php
+$translate = $this->plugin('translate');
+$escape = $this->plugin('escapeHtml');
+
+$labelInfo = $this->fallbackSetting('property_label_information', ['site', 'global'], 'none');
+$showLocale = (bool) $this->fallbackSetting('show_locale_label', ['site'], true);
+$filterLocale = (bool) $this->fallbackSetting('filter_locale_values', ['site'], false);
+$showValueAnnotations = (bool) $this->fallbackSetting('show_value_annotations', ['site'], true);
+$lang = $this->lang();
+
+$filterLocaleCallback = function ($value) use ($lang) {
+    $valueLang = $value->lang();
+    return $valueLang == '' || strcasecmp($valueLang, $lang) === 0;
+};
+?>
+<?php if (count($values) > 0): ?>
+<div class="metadata-section">
+    <?php
+    foreach ($values as $term => $propertyData):
+        $propertyValues = $propertyData['values'];
+        if ($filterLocale) {
+            $propertyValues = array_filter($propertyValues, $filterLocaleCallback);
+        }
+        if (!$propertyValues) {
+            continue;
+        }
+        $property = $propertyData['property'];
+        $propertyLabel = $propertyData['alternate_label'] ?: $translate($property->label());
+        if ('term' === $labelInfo) {
+            $propertyTerm = $property->term();
+        } elseif ('vocab' === $labelInfo) {
+            $propertyTerm = $property->vocabulary()->label();
+        } else {
+            $propertyTerm = null;
+        }
+    ?>
+    <div class="metadata-property mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="card-title mb-0 d-flex align-items-center">
+                    <i class="fas fa-tag me-2 text-primary"></i>
+                    <span class="property-label"><?php echo $escape($propertyLabel); ?></span>
+                    <?php if ($propertyTerm !== null): ?>
+                    <small class="text-muted ms-2">
+                        <code class="field-term"><?php echo $escape($propertyTerm); ?></code>
+                    </small>
+                    <?php endif; ?>
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="property-values">
+                    <?php foreach ($propertyValues as $index => $value): ?>
+                    <?php
+                    $valueType = $value->type();
+                    $valueLang = $value->lang();
+                    $valueAnnotation = $value->valueAnnotation();
+                    $class = ['value-item'];
+                    if ('resource' == $valueType || strpos($valueType, 'resource') !== false) {
+                        $class[] = 'resource-value';
+                        $class[] = $escape($value->valueResource()->resourceName());
+                    } elseif ('uri' == $valueType) {
+                        $class[] = 'uri-value';
+                    } else {
+                        $class[] = $escape(str_replace(['_', ':'], '-', $valueType));
+                    }
+                    ?>
+                    <div class="<?php echo implode(' ', $class); ?> <?= $index > 0 ? 'border-top pt-3 mt-3' : '' ?>" lang="<?php echo $escape($valueLang); ?>">
+                        <div class="d-flex align-items-start">
+                            <div class="value-content flex-grow-1">
+                                <?php if ($showLocale && $valueLang): ?>
+                                <span class="badge bg-secondary badge-sm me-2 language-tag"><?php echo $valueLang; ?></span>
+                                <?php endif; ?>
+                                
+                                <div class="value-text">
+                                    <?php if ('resource' == $valueType || strpos($valueType, 'resource') !== false): ?>
+                                    <a href="<?= $escape($value->valueResource()->siteUrl()) ?>" class="text-decoration-none">
+                                        <i class="fas fa-external-link-alt me-1 text-primary"></i>
+                                        <?php echo $filterLocale ? $value->asHtml($lang) : $value->asHtml(); ?>
+                                    </a>
+                                    <?php elseif ('uri' == $valueType): ?>
+                                    <a href="<?= $escape($value->uri()) ?>" target="_blank" class="text-decoration-none">
+                                        <i class="fas fa-link me-1 text-primary"></i>
+                                        <?php echo $filterLocale ? $value->asHtml($lang) : $value->asHtml(); ?>
+                                    </a>
+                                    <?php else: ?>
+                                    <?php echo $filterLocale ? $value->asHtml($lang) : $value->asHtml(); ?>
+                                    <?php endif; ?>
+                                </div>
+                                
+                                <?php if ($valueAnnotation && $showValueAnnotations): ?>
+                                <div class="value-annotation mt-2">
+                                    <button class="btn btn-sm btn-outline-secondary <?php echo ('expanded' === $showValueAnnotations) ? 'collapse' : 'expand'; ?>" 
+                                            type="button" data-bs-toggle="collapse" 
+                                            data-bs-target="#annotation-<?= $term ?>-<?= $index ?>" 
+                                            aria-expanded="<?= ('expanded' === $showValueAnnotations) ? 'true' : 'false' ?>"
+                                            aria-label="<?php echo ('expanded' === $showValueAnnotations) ? $this->escapeHtml($translate('Collapse')) : $this->escapeHtml($translate('Expand')); ?>">
+                                        <i class="fas fa-comment-alt me-1"></i>
+                                        <?php echo $translate('Annotation'); ?>
+                                    </button>
+                                    <div class="collapse <?= ('expanded' === $showValueAnnotations) ? 'show' : '' ?> mt-2" 
+                                         id="annotation-<?= $term ?>-<?= $index ?>">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <?php echo $valueAnnotation->displayValues(); ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php endif; ?>
+                            </div>
+                            
+                            <div class="value-meta ms-3">
+                                <?php if(!$value->isPublic()): ?>
+                                <span class="badge bg-warning text-dark" title="<?php echo $this->escapeHtml($translate('Private')); ?>">
+                                    <i class="fas fa-lock me-1"></i>
+                                    <?php echo $translate('Private'); ?>
+                                </span>
+                                <?php endif; ?>
+                                
+                                <?php if ($valueAnnotation && $showValueAnnotations): ?>
+                                <span class="badge bg-info text-white ms-1" title="<?php echo $this->escapeHtml($translate('Has annotation')); ?>">
+                                    <i class="fas fa-comment-alt"></i>
+                                </span>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                        
+                        <?php $this->trigger('view.show.value', ['value' => $value]); ?>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php endforeach; ?>
+</div>
+
+<style>
+/* メタデータ表示のカスタムスタイル */
+.metadata-section .card {
+    border: 1px solid var(--bs-border-color);
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.metadata-section .card-header {
+    background-color: var(--bs-light);
+    border-bottom: 1px solid var(--bs-border-color);
+}
+
+.metadata-section .property-label {
+    font-weight: 600;
+    color: var(--bs-dark);
+}
+
+.metadata-section .field-term {
+    font-size: 0.75rem;
+    background-color: var(--bs-gray-100);
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+}
+
+.metadata-section .value-text {
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.metadata-section .language-tag {
+    font-size: 0.7rem;
+    vertical-align: top;
+}
+
+.metadata-section .uri-value a {
+    color: var(--bs-primary);
+    font-weight: 500;
+}
+
+.metadata-section .resource-value a {
+    color: var(--bs-success);
+    font-weight: 500;
+}
+
+.metadata-section .value-annotation .card {
+    background-color: var(--bs-gray-50);
+    border-color: var(--bs-gray-200);
+}
+
+.metadata-section .value-meta .badge {
+    font-size: 0.7rem;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+    .metadata-section .d-flex {
+        flex-direction: column;
+    }
+    
+    .metadata-section .value-meta {
+        margin-left: 0 !important;
+        margin-top: 0.5rem;
+    }
+}
+</style>
+<?php endif; ?>

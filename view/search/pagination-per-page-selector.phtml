@@ -1,0 +1,26 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \AdvancedSearch\Query $query
+ * @var \Laminas\Form\Element\Select $select
+ * @var array $options
+ * @var bool $asUrl
+ */
+
+if (count($options) <= 1) return;
+
+// Bootstrap 5クラスを追加
+$select->setAttribute('class', 'form-select form-select-sm');
+?>
+
+<div class="search-pagination-per-page d-flex align-items-center gap-2<?= $asUrl ? ' as-url' : '' ?>">
+    <label class="form-label mb-0 text-nowrap">
+        <?php 
+        $labelText = $select->getLabel() ?: $this->translate('Per page');
+        echo $this->escapeHtml($labelText);
+        ?>:
+    </label>
+    <div class="flex-shrink-0">
+        <?= $this->formSelect($select) ?>
+    </div>
+</div>

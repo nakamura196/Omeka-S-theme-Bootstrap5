@@ -1,0 +1,35 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var string $name
+ * @var array $facetValues With value, count, active, label and url when needed.
+ * @var array $options
+ * @var array|null $tree For item sets tree or thesaurus. Don't contain data from item sets not in the site.
+ */
+
+$plugins = $this->getHelperPluginManager();
+$escape = $plugins->get('escapeHtml');
+$escapeAttr = $plugins->get('escapeHtmlAttr');
+
+$displayCount = !empty($options['display_count']);
+
+$isTree = is_array($tree);
+?>
+
+<ul class="facet-items">
+    <?php foreach ($facetValues as $facetValue):
+        $treeVal = $isTree ? $tree[$facetValue['value']] ?? null : null;
+        $treeValAttrs = $treeVal ? sprintf(' data-value="%s" data-parent="%s" data-level="%s"', $treeVal['id'], $treeVal['parent'], $treeVal['level']) : '';
+    ?>
+    <li class="facet-item <?= $facetValue['active'] ? 'active' : 'inactive' ?>"<?= $treeValAttrs ?>>
+        <a href="<?= $escapeAttr($facetValue['url']) ?>">
+            <span>
+                <?= $escape($facetValue['label']) ?>
+                <?php if ($displayCount): ?>
+                <span class="count">(<?= $facetValue['count'] ?>)</span>
+                <?php endif; ?>
+            </span>
+        </a>
+    </li>
+    <?php endforeach; ?>
+</ul>

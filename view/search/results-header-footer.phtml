@@ -1,0 +1,110 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\SiteRepresentation|null $site
+ * @var \AdvancedSearch\Api\Representation\SearchConfigRepresentation $searchConfig
+ * @var \AdvancedSearch\Query $query
+ * @var \AdvancedSearch\Response $response
+ * @var \Omeka\Api\Representation\ItemSetRepresentation|null $itemSet
+ * @var string $resultPart "header" or "footer"
+ */
+
+$plugins = $this->getHelperPluginManager();
+$translate = $plugins->get('translate');
+
+// Default values of the module.
+$displayParts = [
+    'search_filters' => 'header',
+    'active_facets' => 'none',
+    'total_results' => 'header',
+    'search_form_simple' => 'none',
+    'search_form_quick' => 'none',
+    'paginator' => 'header',
+    'per_page' => 'header',
+    'sort' => 'header',
+    'grid_list' => 'header',
+    'grid_list_mode' => 'auto',
+];
+$displayParts = $searchConfig ? $searchConfig->setting('results', $displayParts) : $displayParts;
+$displayParts = array_filter($displayParts, fn ($v) => in_array($v, [$resultPart, 'both']));
+
+$paginationPerPages = isset($displayParts['per_page']) ? ($searchConfig->subSetting('results', 'per_page_list') ?: []) : [];
+$sortFields = isset($displayParts['sort']) ? $searchConfig->subSetting('results', 'sort_list') : [];
+$gridListMode = $searchConfig->subSetting('results', 'grid_list_mode', 'auto');
+$multiMode = isset($displayParts['grid_list']) && !in_array($gridListMode, ['list_only', 'grid_only']);
+?>
+
+<?php // Search filters. ?>
+
+<?php if (isset($displayParts['search_filters'])): ?>
+<?= $searchConfig->renderSearchFilters($query, ['template' => 'common/search-filters-links']) ?>
+<?php endif; ?>
+
+<?php // Active Facets. ?>
+
+<?php if (isset($displayParts['active_facets']) && $activeFacets = $response->getActiveFacets()): ?>
+<?php $facetActives = $plugins->get('facetActives'); ?>
+<?= $facetActives(null, $activeFacets, $searchConfig->setting('facet', [])) ?>
+<?php endif; ?>
+
+<?php // Total results. ?>
+
+<?php if (isset($displayParts['total_results'])): ?>
+<div class="search-results-count-total">
+    <?php $totalResults = $response->getTotalResults(); ?>
+    <?= sprintf($totalResults <= 1 ? $translate('%s resource') : $translate('%s resources'), $totalResults) ?>
+</div>
+<?php endif; ?>
+
+<?php // Search form simple. ?>
+
+<?php if (isset($displayParts['search_form_simple'])): ?>
+<?= $searchConfig->renderForm(['variant' => 'simple', 'skip_form_action' => true]) ?>
+<?php endif; ?>
+
+<?php // Search form quick. ?>
+
+<?php if (isset($displayParts['search_form_quick'])): ?>
+<?= $searchConfig->renderForm(['variant' => 'quick', 'skip_form_action' => true]) ?>
+<?php endif; ?>
+
+<?php // Search Controls Row ?>
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4">
+    
+    <?php // Pagination ?>
+    <?php if (isset($displayParts['paginator'])): ?>
+    <div class="search-results-pagination <?= isset($displayParts['total_results']) ? 'no-total-results' : '' ?>">
+        <?= $this->paginationSearch() ?>
+    </div>
+    <?php endif; ?>
+    
+    <?php // Controls (Per Page, Sort, and Grid/List) ?>
+    <div class="d-flex flex-wrap align-items-center gap-3">
+        <?php // Pagination per page ?>
+        <?php if (count($paginationPerPages)): ?>
+        <?= $this->searchPaginationPerPageSelector($query, $paginationPerPages, true) ?>
+        <?php endif; ?>
+
+        <?php // Sort ?>
+        <?php if (count($sortFields)): ?>
+        <?= $this->searchSortSelector($query, $sortFields, ['as_url' => true, 'label' => $searchConfig->subSetting('results', 'label_sort')]) ?>
+        <?php endif; ?>
+
+        <?php // Grid/List Toggle ?>
+        <?php if ($multiMode): ?>
+        <div class="btn-group" role="group" aria-label="<?= $translate('View mode') ?>">
+            <button class="btn btn-outline-secondary btn-sm view-toggle-btn<?= $gridListMode !== 'list' ? ' active' : '' ?>" 
+                    data-view="grid" type="button" aria-label="<?= $translate('Grid view') ?>">
+                <i class="fas fa-th" aria-hidden="true"></i>
+                <span class="d-none d-sm-inline ms-1"><?= $translate('grid') ?></span>
+            </button>
+            <button class="btn btn-outline-secondary btn-sm view-toggle-btn<?= $gridListMode === 'list' ? ' active' : '' ?>" 
+                    data-view="list" type="button" aria-label="<?= $translate('List view') ?>">
+                <i class="fas fa-list" aria-hidden="true"></i>
+                <span class="d-none d-sm-inline ms-1"><?= $translate('list') ?></span>
+            </button>
+        </div>
+        <?php endif; ?>
+    </div>
+    
+</div>

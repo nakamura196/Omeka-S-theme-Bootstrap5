@@ -1,0 +1,212 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\SiteRepresentation|null $site
+ * @var \AdvancedSearch\Api\Representation\SearchConfigRepresentation $searchConfig
+ * @var \AdvancedSearch\Query $query
+ * @var \AdvancedSearch\Response $response
+ * @var \Omeka\Api\Representation\ItemSetRepresentation|null $itemSet
+ */
+
+if (!isset($response)) return;
+
+$searchFacets = $searchConfig->subSetting('facet', 'facets', []);
+if (!count($searchFacets)) return;
+
+$plugins = $this->getHelperPluginManager();
+$escape = $plugins->get('escapeHtml');
+$translate = $plugins->get('translate');
+$escapeAttr = $plugins->get('escapeHtmlAttr');
+
+$facets = $response->getFacetCounts();
+$activeFacets = $response->getActiveFacets();
+
+// Don't display facet groups without facet elements.
+$facets = array_filter($facets);
+
+$isFacetModeButton = !in_array($searchConfig->subSetting('facet', 'mode'), ['link', 'js']);
+$displayActive = (bool) $searchConfig->subSetting('facet', 'display_active', true);
+$displayRefine = (bool) $searchConfig->subSetting('facet', 'display_refine', true);
+$labelRefine = $displayRefine ? $searchConfig->subSetting('facet', 'label_refine', 'Refine search') : null;
+$displayFacetButton = $isFacetModeButton && ($displayActive || !empty($facets));
+$displaySubmit = $displayFacetButton ? $searchConfig->subSetting('facet', 'display_submit', 'above') : 'none';
+$labelSubmit = $displaySubmit ? $searchConfig->subSetting('facet', 'label_submit', 'Apply facets') : null;
+$displayReset = $searchConfig->subSetting('facet', 'display_reset', 'above');
+$labelReset = $displayReset ? $searchConfig->subSetting('facet', 'label_reset', 'Reset facets') : null;
+
+$facetActives = $plugins->get('facetActives');
+$facetElements = $plugins->get('facetElements');
+
+// TODO Remove item sets facets early when item set redirects to search.
+// Don't display facets for item sets when browsing an item set.
+if (!empty($itemSet)) {
+    unset($facets['item_set_id']);
+    unset($activeFacets['item_set_id']);
+}
+?>
+
+<div id="search-facets" class="facets">
+    <div class="card mb-4">
+        <?php if ($label = $searchConfig->subSetting('facet', 'label', 'Facets')): ?>
+        <div class="card-header">
+            <h5 class="card-title mb-0">
+                <i class="fas fa-filter me-2"></i>
+                <?= $escape($translate($label)) ?>
+            </h5>
+        </div>
+        <?php endif; ?>
+
+        <div class="card-body">
+            <?php if ($displayActive && count($activeFacets)): ?>
+            <div class="active-facets mb-3">
+                <?php if ($label = $searchConfig->subSetting('facet', 'label_active_facets', 'Active facets')): ?>
+                <h6 class="text-muted mb-2">
+                    <i class="fas fa-check-circle me-1"></i>
+                    <?= $escape($translate($label)) ?>
+                </h6>
+                <?php endif; ?>
+                <div class="active-facets-list">
+                    <?= $facetActives(null, $activeFacets, $searchConfig->setting('facet')) ?>
+                </div>
+            </div>
+            <?php endif; ?>
+
+    <form id="facets-form">
+
+        <?php if ($displayFacetButton): ?>
+        <?= $this->hiddenInputsFromFilteredQuery(null, ['facet', 'refine', 'page', 'limit', 'offset', 'per_page']) ?>
+        <?php endif; ?>
+
+        <?php $displayButtonReset = $displayReset === 'above' || $displayReset === 'both'; ?>
+        <?php $displayButtonSubmit = $displayFacetButton && ($displaySubmit === 'above' || $displaySubmit === 'both'); ?>
+        <?php if ($displayButtonReset || $displayButtonSubmit): ?>
+        <div class="facets-actions facets-actions-top mb-3">
+            <div class="d-grid gap-2">
+                <?php if ($displayButtonSubmit): ?>
+                <button id="facets-apply" class="btn btn-primary btn-sm facets-apply" type="submit">
+                    <i class="fas fa-check me-1"></i>
+                    <?= $escape($translate($labelSubmit)) ?>
+                </button>
+                <?php endif; ?>
+                <?php if ($displayButtonReset): ?>
+                <button id="facets-reset" class="btn btn-outline-secondary btn-sm facets-reset" type="reset">
+                    <i class="fas fa-undo me-1"></i>
+                    <?= $escape($translate($labelReset)) ?>
+                </button>
+                <?php endif; ?>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <?php if ($displayRefine): ?>
+        <div class="facets-refine mb-3">
+            <?php if ($labelRefine): ?>
+            <label for="search-refine" class="form-label">
+                <i class="fas fa-search me-1"></i>
+                <?= $escape($translate($labelRefine)) ?>
+            </label>
+            <?php endif; ?>
+            <div class="input-group">
+                <input id="search-refine" name="refine" class="form-control form-control-sm search-refine" 
+                       value="<?= $escape($query->getQueryRefine()) ?>"
+                       placeholder="<?= $labelRefine ? $escapeAttr($translate($labelRefine)) : '' ?>"/>
+                <?php if (!$displayButtonSubmit): ?>
+                <button id="search-refine-submit" class="btn btn-outline-primary btn-sm search-refine" type="submit">
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+                <?php endif; ?>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <?php if (empty($facets) && empty($activeFacets)): ?>
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>
+            <?php if ($label = $searchConfig->subSetting('facet', 'label_no_facets', 'No facets')): ?>
+            <?= $escape($translate($label)) ?>
+            <?php endif; ?>
+        </div>
+        <?php else: ?>
+        <div class="facets-list">
+            <?php $cardId = 0; ?>
+            <?php foreach ($facets as $name => $facetValues): ?>
+            <?php $facetParams = $searchFacets[$name]; ?>
+            <?php $hasState = in_array($facetParams['state'] ?? '', ['expand', 'collapse', 'collapse_unless_set']); ?>
+            <?php $stateExpand = !$hasState || $facetParams['state'] === 'expand' || ($facetParams['state'] === 'collapse_unless_set' && !empty($activeFacets[$name])); ?>
+            <?php $cardId++; ?>
+            
+            <div class="card mb-3 facet<?= empty($facetParams['attributes']['class']) ? '' : ' ' . $escapeAttr($facetParams['attributes']['class']) ?>">
+                <div class="card-header">
+                    <?php if ($hasState): ?>
+                    <button class="btn btn-link text-decoration-none p-0 w-100 text-start<?= $stateExpand ? '' : ' collapsed' ?>" type="button" 
+                            data-bs-toggle="collapse" data-bs-target="#collapse<?= $cardId ?>" 
+                            aria-expanded="<?= $stateExpand ? 'true' : 'false' ?>" 
+                            aria-controls="collapse<?= $cardId ?>">
+                        <i class="fas fa-tags me-2 text-muted"></i>
+                        <?= $escape($translate($facetParams['label'] ?? $name)) ?>
+                        <?php if (!empty($activeFacets[$name])): ?>
+                        <span class="badge bg-primary ms-2"><?= count($activeFacets[$name]) ?></span>
+                        <?php endif; ?>
+                        <i class="fas fa-chevron-down float-end mt-1"></i>
+                    </button>
+                    <?php else: ?>
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-tags me-2 text-muted"></i>
+                        <?= $escape($translate($facetParams['label'] ?? $name)) ?>
+                        <?php if (!empty($activeFacets[$name])): ?>
+                        <span class="badge bg-primary ms-2"><?= count($activeFacets[$name]) ?></span>
+                        <?php endif; ?>
+                    </div>
+                    <?php endif; ?>
+                </div>
+                <div id="collapse<?= $cardId ?>" 
+                     class="collapse<?= $stateExpand ? ' show' : '' ?>">
+                    <div class="card-body">
+                        <div class="facet-elements">
+                            <?= $facetElements($name, $facetValues, $facetParams) ?>
+                            <?php if (($facetParams['more'] ?? '') !== '' && in_array($facetParams['type'] ?? '', ['', 'Checkbox', 'Link', 'Tree', 'TreeLink', 'Thesaurus', 'ThesaurusLink']) && count($facetValues) > (int) $facetParams['more']): ?>
+                            <div class="facet-see-more mt-2">
+                                <button type="button" class="btn btn-sm btn-outline-secondary facet-see-more-or-less expand" 
+                                        data-default-count="<?= (int) $facetParams['more'] ?>" 
+                                        data-more-count="<?= count($facetValues) - (int) $facetParams['more'] ?>" 
+                                        data-label-see-more="<?= $escapeAttr($translate('See more')) ?>" 
+                                        data-label-see-less="<?= $escapeAttr($translate('See less')) ?>">
+                                    <i class="fas fa-plus me-1"></i>
+                                    <?= $escape($translate('See more')) ?>
+                                </button>
+                            </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <?php endforeach; ?>
+        </div>
+        <?php endif; ?>
+
+        <?php $displayButtonReset = $displayReset === 'below' || $displayReset === 'both'; ?>
+        <?php $displayButtonSubmit = $displayFacetButton && ($displaySubmit === 'below' || $displaySubmit === 'both'); ?>
+        <?php if ($displayButtonReset || $displayButtonSubmit): ?>
+        <div class="facets-actions facets-actions-bottom mt-3">
+            <div class="d-grid gap-2">
+                <?php if ($displayButtonSubmit): ?>
+                <button id="facets-apply-bottom" class="btn btn-primary btn-sm facets-apply" type="submit">
+                    <i class="fas fa-check me-1"></i>
+                    <?= $escape($translate($labelSubmit)) ?>
+                </button>
+                <?php endif; ?>
+                <?php if ($displayButtonReset): ?>
+                <button id="facets-reset-bottom" class="btn btn-outline-secondary btn-sm facets-reset" type="reset">
+                    <i class="fas fa-undo me-1"></i>
+                    <?= $escape($translate($labelReset)) ?>
+                </button>
+                <?php endif; ?>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        </form>
+
+        </div>
+    </div>
+</div>

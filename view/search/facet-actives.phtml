@@ -1,0 +1,40 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var array $activeFacets List of active facets with keys value, count (null),
+ *   label, active (true), url and fieldLabel.
+ * @var array $options
+ */
+
+// Warning: when inactive, don't return anything, in particular don't return any space,
+// else it should be managed in facets.phtml.
+
+$plugins = $this->getHelperPluginManager();
+$escape = $plugins->get('escapeHtml');
+$translate = $plugins->get('translate');
+$escapeAttr = $plugins->get('escapeHtmlAttr');
+
+$texts = [
+    'from' => $translate('from %1$s'), // @translate
+    'to' => $translate('to %1$s'), // @translate
+    'default' => '%1$s',
+];
+?>
+
+<div class="active-filters d-flex flex-wrap gap-2 mb-3">
+    <?php foreach ($activeFacets as $name => $facetValues) foreach ($facetValues as $facetKey => $facetValue): ?>
+    <div class="active-filter">
+        <span class="badge bg-primary py-2 px-3">
+            <span class="text-white-50"><?= $escape($translate($facetValue['fieldLabel'])) ?>:</span>
+            <strong class="ms-1"><?= $escape(sprintf($texts[$facetKey] ?? $texts['default'], $facetValue['label'])) ?></strong>
+            <a href="<?= $escapeAttr($facetValue['url']) ?>" 
+               class="text-white text-decoration-none ms-2" 
+               data-facet-name="facet[<?= $escapeAttr($name) ?>][<?= is_numeric($facetKey) ? '' : $escapeAttr($facetKey) ?>]" 
+               data-facet-value="<?= $escapeAttr($facetValue['value']) ?>"
+               title="<?= $escapeAttr($translate('Remove filter')) ?>">
+                <i class="fas fa-times"></i>
+            </a>
+        </span>
+    </div>
+    <?php endforeach; ?>
+</div>

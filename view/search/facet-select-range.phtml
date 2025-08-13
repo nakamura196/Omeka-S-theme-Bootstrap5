@@ -1,0 +1,38 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var string $name
+ * @var array $facetValues With value, count, active, label and url when needed, and is_from and is_to.
+ * @var array $options
+ * @var int $total Total resources matching range.
+ */
+
+$plugins = $this->getHelperPluginManager();
+$escape = $plugins->get('escapeHtml');
+$translate = $plugins->get('translate');
+$escapeAttr = $plugins->get('escapeHtmlAttr');
+
+$isFacetModeDirect = in_array($options['mode'] ?? null, ['link', 'js']);
+$displayCount = !empty($options['display_count']);
+?>
+
+<div class="facet-select-range">
+    <span><?= $translate('Between') ?></span>
+    <select name="facet[<?= $name ?>][from]" class="facet-items chosen-select" data-placeholder="<?= $translate('Select below…') ?>">
+        <option value=""></option>
+        <?php foreach ($facetValues as $facetValue): ?>
+        <option value="<?= $escapeAttr($facetValue['value']) ?>"<?= $isFacetModeDirect ? ' data-url="' . $escapeAttr($facetValue['url_from']) . '"' : '' ?><?= $facetValue['is_from'] ? ' selected="selected"' : '' ?>>
+            <?= $displayCount ? sprintf('%1$s (<span class="count">%2$s</span>)', $escape($facetValue['value']), $facetValue['count']) : $escape($facetValue['value']) ?>
+        </option>
+        <?php endforeach; ?>
+    </select>
+    <span><?= $translate('and') ?></span>
+    <select name="facet[<?= $name ?>][to]" class="facet-items chosen-select" data-placeholder="<?= $translate('Select below…') ?>">
+        <option value=""></option>
+        <?php foreach ($facetValues as $facetValue): ?>
+        <option value="<?= $escapeAttr($facetValue['value']) ?>"<?= $isFacetModeDirect ? ' data-url="' . $escapeAttr($facetValue['url_to']) . '"' : '' ?><?= $facetValue['is_to'] ? ' selected="selected"' : '' ?>>
+            <?= $displayCount ? sprintf('%1$s (<span class="count">%2$s</span>)', $escape($facetValue['value']), $facetValue['count']) : $escape($facetValue['value']) ?>
+        </option>
+        <?php endforeach; ?>
+    </select>
+</div>

@@ -1,0 +1,60 @@
+<?php
+$escape = $this->plugin('escapeHtml');
+$siteTitle = $site->title();
+?>
+<header>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <!-- サイトブランド/ロゴ -->
+            <a class="navbar-brand" href="<?php echo $site->url(); ?>">
+                <?php if ($this->themeSetting('logo')): ?>
+                    <img src="<?php echo $this->themeSettingAssetUrl('logo'); ?>" alt="<?php echo $escape($siteTitle); ?>" height="30" class="d-inline-block align-text-top">
+                <?php else: ?>
+                    <?php echo $escape($siteTitle); ?>
+                <?php endif; ?>
+            </a>
+            
+            <!-- モバイル用トグルボタン -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <!-- ナビゲーションコンテンツ -->
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <!-- Omekaナビゲーションメニュー -->
+                <div class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <?php
+                    $nav = $site->publicNav()->menu();
+                    if ($nav->hasPages()) {
+                        foreach ($nav->getPages() as $page) {
+                            $hasChildren = $page->hasPages();
+                            if ($hasChildren) {
+                                // ドロップダウンメニュー
+                                echo '<div class="nav-item dropdown">';
+                                echo '<a class="nav-link dropdown-toggle" href="' . $escape($page->getHref()) . '" id="navbarDropdown' . $escape($page->getId()) . '" role="button" data-bs-toggle="dropdown" aria-expanded="false">';
+                                echo $escape($page->getLabel());
+                                echo '</a>';
+                                echo '<ul class="dropdown-menu" aria-labelledby="navbarDropdown' . $escape($page->getId()) . '">';
+                                foreach ($page->getPages() as $childPage) {
+                                    echo '<li><a class="dropdown-item" href="' . $escape($childPage->getHref()) . '">' . $escape($childPage->getLabel()) . '</a></li>';
+                                }
+                                echo '</ul>';
+                                echo '</div>';
+                            } else {
+                                // 通常のナビゲーションリンク
+                                $isActive = $page->isActive() ? ' active' : '';
+                                echo '<a class="nav-link' . $isActive . '" href="' . $escape($page->getHref()) . '">' . $escape($page->getLabel()) . '</a>';
+                            }
+                        }
+                    }
+                    ?>
+                </div>
+                
+                <!-- 検索フォーム -->
+                <div class="d-flex">
+                    <?php echo $this->partial('common/search-form'); ?>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>

@@ -1,0 +1,18 @@
+<?php
+/**
+ * Simple Footer Component
+ * 
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ */
+?>
+<footer class="bg-light py-4 mt-5">
+    <div class="container">
+        <div class="text-center">
+            <?php if ($footerContent = $this->themeSetting('footer')): ?>
+                <?php echo $footerContent; ?>
+            <?php else: ?>
+                <p class="mb-0"><?php echo $this->translate('Powered by Omeka S'); ?></p>
+            <?php endif; ?>
+        </div>
+    </div>
+</footer>

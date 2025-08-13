@@ -1,0 +1,23 @@
+<?php
+$translate = $this->plugin('translate');
+$searchType = $this->siteSetting('search_type', 'sitewide');
+switch ($searchType) {
+    case 'cross-site':
+        $searchAction = $this->url('site/cross-site-search', ['action' => 'results'], true);
+        break;
+    case 'sitewide':
+    default:
+        $searchAction = $this->url('site/resource', ['controller' => 'index', 'action' => 'search'], true);
+}
+$searchValue = $this->escapeHtml($this->params()->fromQuery('fulltext_search', ''));
+?>
+
+<form action="<?php echo $this->escapeHtml($searchAction); ?>" id="search-form" class="d-flex" aria-label="<?php echo $translate('Search'); ?>" role="search">
+    <input type="text" id="fulltext-search" name="fulltext_search" value="<?php echo $searchValue; ?>"
+        placeholder="<?php echo $translate('Enter a search term'); ?>"
+        aria-label="<?php echo $translate('Query'); ?>" aria-labelledby="search-form fulltext-search"
+        class="form-control me-2">
+    <button id="search-submit" type="submit" aria-label="<?php echo $translate('Submit'); ?>" title="<?php echo $translate('Submit'); ?>" class="btn btn-outline-primary">
+        <i class="bi bi-search" aria-hidden="true"></i>
+    </button>
+</form>

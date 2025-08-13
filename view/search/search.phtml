@@ -1,0 +1,221 @@
+<?php
+/*
+ * Copyright BibLibre, 2016
+ * Copyright Daniel Berthereau, 2017-2025
+ *
+ * This software is governed by the CeCILL license under French law and abiding
+ * by the rules of distribution of free software.  You can use, modify and/ or
+ * redistribute the software under the terms of the CeCILL license as circulated
+ * by CEA, CNRS and INRIA at the following URL "http://www.cecill.info".
+ *
+ * As a counterpart to the access to the source code and rights to copy, modify
+ * and redistribute granted by the license, users are provided only with a
+ * limited warranty and the software's author, the holder of the economic
+ * rights, and the successive licensors have only limited liability.
+ *
+ * In this respect, the user's attention is drawn to the risks associated with
+ * loading, using, modifying and/or developing or reproducing the software by
+ * the user in light of its specific status of free software, that may mean that
+ * it is complicated to manipulate, and that also therefore means that it is
+ * reserved for developers and experienced professionals having in-depth
+ * computer knowledge. Users are therefore encouraged to load and test the
+ * software's suitability as regards their requirements in conditions enabling
+ * the security of their systems and/or data to be ensured and, more generally,
+ * to use and operate it in the same conditions as regards security.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL license and that you accept its terms.
+ */
+
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\SiteRepresentation|null $site
+ * @var \AdvancedSearch\Api\Representation\SearchConfigRepresentation $searchConfig
+ * @var \Omeka\Api\Representation\ItemSetRepresentation|null $itemSet
+ * @var \AdvancedSearch\Query $query
+ * @var \AdvancedSearch\Response $response
+ *
+ * For block layout:
+ * @var bool $skipFormAction Remove action of the form, so it uses current page.
+ */
+
+$plugins = $this->getHelperPluginManager();
+$url = $plugins->get('url');
+$partial = $plugins->get('partial');
+$escape = $plugins->get('escapeHtml');
+$assetUrl = $plugins->get('assetUrl');
+$translate = $plugins->get('translate');
+$hyperlink = $plugins->get('hyperlink');
+$easyMeta = $plugins->get('easyMeta');
+
+$breadcrumbs = $plugins->has('breadcrumbs') ? $plugins->get('breadcrumbs') : null;
+
+$vars = $this->vars();
+
+$isAdmin = !isset($site);
+$setting = $plugins->get($isAdmin ? 'setting' : 'siteSetting');
+
+$filterLocale = (bool) $setting('filter_locale_values');
+$lang = $this->lang();
+$langValue = $filterLocale ? [$lang, ''] : null;
+
+$variables = $vars->getArrayCopy();
+
+$isPartial = $skipFormAction = !empty($skipFormAction);
+
+$documentCount = $response->getTotalResults();
+$displayParts = $searchConfig->setting('results', []);
+$displayPartsHeader = array_filter($displayParts, fn ($v) => in_array($v, ['header', 'both']));
+$displayPartsFooter = array_filter($displayParts, fn ($v) => in_array($v, ['footer', 'both']));
+$displayFacets = $displayParts ? $displayParts['facets'] ?? 'before' : 'none';
+
+if ($itemSet && $site) {
+    $redirectItemSets = $this->siteSetting('advancedsearch_item_sets_redirects', ['default' => 'browse']);
+    $redirectItemSet = $redirectItemSets[$itemSet->id()] ?? $redirectItemSets['default'] ?? 'browse';
+    $displayItemSet = $redirectItemSet !== 'first' || $response->getCurrentPage() <= 1;
+} else {
+    $displayItemSet = false;
+}
+
+// $this->headLink()
+//     ->appendStylesheet($assetUrl('css/search.css', 'AdvancedSearch'));
+$this->headScript()
+    ->appendFile($assetUrl('js/search.js', 'AdvancedSearch'), 'text/javascript', ['defer' => 'defer']);
+?>
+
+<?php if (empty($isPartial)): ?>
+<?php if ($searchConfig->subSetting('results', 'breadcrumbs')): ?>
+<?php if ($breadcrumbs): ?>
+    <?= $breadcrumbs() ?>
+<?php else: ?>
+<?php // ブレッドクラムナビゲーションをpartialとして読み込み ?>
+<?= $this->partial('common/breadcrumbs', [
+    'site' => $site, 
+    'itemSet' => isset($itemSet) ? $itemSet : null,
+    'isAdmin' => isset($isAdmin) ? $isAdmin : false,
+    'langValue' => isset($langValue) ? $langValue : null
+]) ?>
+<?php endif; ?>
+<?php endif; ?>
+
+<div id="search-page" class="container-fluid">
+<?php endif; // End NOT partial. ?>
+
+<?php if ($displayItemSet): ?>
+
+    <?php
+    $vars->offsetSet('resourceType', 'item_sets'); // TODO Check if really needed.
+    $this->htmlElement('body')->appendAttribute('class', 'search-page item-set resource browse');
+    ?>
+    <?= $this->pageTitle($itemSet->displayTitle(null, $langValue), 2) ?>
+    <h3><?= $translate('Item set') ?></h3>
+    <div class="metadata">
+        <?= $this->resourcePageBlocks($itemSet)->getBlocks() ?>
+    </div>
+    <div class="item-set-items">
+        <h3><?= $translate('Items') ?></h3>
+    </div>
+
+<?php else: ?>
+
+    <!--
+    <?php
+    if ($query->isBrowse()) {
+        // No search query.
+        $mainTitle = $translate($searchConfig->subSetting('results', 'label_default') ?: 'Search');
+    } else {
+        $mainTitle = $response->getTotalResults()
+            ? $translate($searchConfig->subSetting('results', 'label_results') ?: 'Search results')
+            : $translate($searchConfig->subSetting('results', 'label_no_results') ?: 'No results');
+    }
+
+    $this->htmlElement('body')->appendAttribute('class', 'search-page resource browse');
+    ?>
+    <?= $this->pageTitle($mainTitle, 2) ?>
+-->
+
+<h2 class="text-center my-4"><?= $translate('Search') ?></h2>
+
+<?php endif; ?>
+
+<?= $searchConfig->renderForm(['template' => null, 'skip_form_action' => $skipFormAction]) ?>
+
+<div class="search-results-wrapper">
+    <div class="row">
+        
+        <!-- ファセット（フィルター）列 -->
+        <?php if ($displayFacets === 'before' || $displayFacets === 'after'): ?>
+        <div class="col-lg-3 col-md-4 order-2 order-md-1">
+            <aside class="search-facets sticky-top pt-3" style="top: 20px;">
+                <?= $partial('search/facets-list') ?>
+            </aside>
+        </div>
+        <?php endif; ?>
+
+        <!-- メインコンテンツ列 -->
+        <div class="<?= ($displayFacets === 'before' || $displayFacets === 'after') ? 'col-lg-9 col-md-8' : 'col-12' ?> order-1 order-md-2 p-3">
+            <div class="search-results">
+
+                <?php if ($displayPartsHeader): ?>
+                <div class="search-results-part search-results-header">
+                    <?= $partial('search/results-header-footer', $variables + ['resultPart' => 'header']) ?>
+                </div>
+                <?php endif; ?>
+
+                <?php $this->trigger('view.browse.before'); ?>
+
+                <?php if ($documentCount): ?>
+
+                <div class="search-results-part search-results-list">
+                    <?php foreach (array_filter($response->getResourceTotalResults()) as $resourceType => $count): ?>
+                    <div class="mb-4">
+                        <h3 class="border-bottom pb-2">
+                            <i class="fas fa-folder-open me-2 text-primary"></i>
+                            <?= $escape(sprintf($translate('%1$d %2$s'), $count, $translate($easyMeta->resourceLabelCount($resourceType, $count)))) ?>
+                        </h3>
+                        <?= $partial('search/results', $variables + ['resourceType' => $resourceType]) ?>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+
+                <?php else: ?>
+
+                <div class="noresults">
+                    <div class="alert alert-info text-center">
+                        <i class="fas fa-search fa-2x mb-3 text-muted"></i>
+                        <h4><?= $translate('No Results Found') ?></h4>
+                        <?php if (empty($query) && !$itemSet): ?>
+                        <p><?= $translate('Fill a query and get results.') ?></p>
+                        <?php elseif (empty($query) && $itemSet): ?>
+                        <p><?= $translate('This item set has no items.') ?></p>
+                        <?php else: ?>
+                        <?php if (in_array($searchConfig->subSetting('results', 'search_filters', 'header'), ['header', 'both'])): ?>
+                        <div class="search-results-part search-results-header mb-3">
+                            <?= $searchConfig->renderSearchFilters($query, ['template' => 'common/search-filters-links']) ?>
+                        </div>
+                        <?php endif; ?>
+                        <p><?= $translate('The query returned no results') ?></p>
+                        <small class="text-muted"><?= $translate('Try adjusting your search criteria or filters') ?></small>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                <?php endif; ?>
+
+                <?php $this->trigger('view.browse.after'); ?>
+
+                <?php if ($displayPartsFooter): ?>
+                <div class="search-results-part search-results-footer">
+                    <?= $partial('search/results-header-footer', $variables + ['resultPart' => 'footer']) ?>
+                </div>
+                <?php endif; ?>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<?php if (empty($isPartial)): ?>
+</div>
+<?php endif; ?>

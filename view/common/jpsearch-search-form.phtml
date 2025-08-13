@@ -1,0 +1,48 @@
+<?php
+/**
+ * Japan Search Style Search Form Component
+ * 
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\SiteRepresentation $site
+ * @var bool $hero Whether this is the hero version of the form
+ */
+
+$isHero = isset($hero) && $hero;
+$formClass = $isHero ? 'search-form-hero' : 'search-form-standard';
+
+// 検索ページのURLを取得 - Advanced Searchモジュールのルートを使用
+// 直接URLを構築
+$searchUrl = '/s/' . $site->slug() . '/find';
+
+// 現在の検索クエリを取得
+$currentQuery = $this->params()->fromQuery('q', '');
+?>
+
+<form class="<?= $formClass ?>" action="<?= $searchUrl ?>" method="get">
+    <div class="search-input-group">
+        <div class="search-input-wrapper">
+            <input 
+                type="text" 
+                name="q" 
+                value="<?= $this->escapeHtmlAttr($currentQuery) ?>"
+                placeholder="<?= $this->escapeHtmlAttr($this->translate('Enter search keywords...')) ?>"
+                class="search-input"
+                autocomplete="off"
+                aria-label="<?= $this->escapeHtmlAttr($this->translate('Search')) ?>"
+            >
+        </div>
+        
+        <button type="submit" class="search-button">
+            <i class="bi bi-search"></i>
+            <span><?= $this->translate('Search') ?></span>
+        </button>
+    </div>
+    
+    <?php if (!$isHero): ?>
+    <div class="search-advanced-toggle mt-3">
+        <a href="<?= $searchUrl ?>" class="btn btn-link">
+            <i class="bi bi-sliders me-1"></i><?= $this->translate('Advanced Search Options') ?>
+        </a>
+    </div>
+    <?php endif; ?>
+</form>

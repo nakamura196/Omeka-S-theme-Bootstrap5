@@ -1,0 +1,47 @@
+<?php
+/**
+ * Bootstrap 5 Breadcrumbs Navigation Component
+ * 
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\SiteRepresentation $site
+ * @var \Omeka\Api\Representation\ItemSetRepresentation $itemSet (optional)
+ * @var bool $isAdmin (optional)
+ */
+
+$translate = $this->plugin('translate');
+$hyperlink = $this->plugin('hyperlink');
+$escape = $this->plugin('escapeHtml');
+$url = $this->plugin('url');
+
+// 変数の初期化
+$isAdmin = isset($isAdmin) ? $isAdmin : false;
+$itemSet = isset($itemSet) ? $itemSet : null;
+$langValue = isset($langValue) ? $langValue : null;
+?>
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb bg-light p-3">
+        <?php if (!$isAdmin): ?>
+        <li class="breadcrumb-item">
+            <a href="<?= $site->siteUrl() ?>" class="text-decoration-none">
+                <?= $escape($translate('Home')) ?>
+            </a>
+        </li>
+        <?php endif; ?>
+        
+        <?php if ($itemSet): ?>
+        <li class="breadcrumb-item">
+            <a href="<?= $url($isAdmin ? 'admin/default' : 'site/resource', ['controller' => 'item-set', 'action' => 'browse'], true) ?>" class="text-decoration-none">
+                <?= $escape($translate('Collections')) ?>
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <?= $escape($itemSet->displayTitle(null, $langValue)) ?>
+        </li>
+        <?php else: ?>
+        <li class="breadcrumb-item active" aria-current="page">
+            <?= $escape($translate('Search')) ?>
+        </li>
+        <?php endif; ?>
+    </ol>
+</nav>

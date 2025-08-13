@@ -1,0 +1,47 @@
+/* Search View Toggle Styles */
+
+/* デフォルト状態（グリッド表示） */
+.search-results-list .row.g-4 {
+    display: block;
+}
+
+.search-results-list .list-group {
+    display: none;
+}
+
+/* ページロード前に保存された設定を反映するためのCSS */
+/* これらはJavaScriptで動的に<head>に追加される */
+
+/* Grid view強制表示 */
+.search-results-list.view-grid .row.g-4 {
+    display: block;
+}
+
+.search-results-list.view-grid .list-group {
+    display: none;
+}
+
+/* List view強制表示 */
+.search-results-list.view-list .row.g-4 {
+    display: none;
+}
+
+.search-results-list.view-list .list-group {
+    display: block;
+}
+
+/* ボタンのアクティブ状態 */
+.view-toggle-btn.active {
+    background-color: var(--bs-primary);
+    border-color: var(--bs-primary);
+    color: var(--bs-white);
+}
+
+/* 切り替えアニメーション */
+.search-results-list {
+    transition: opacity 0.2s ease-in-out;
+}
+
+.search-results-list.transitioning {
+    opacity: 0.7;
+}

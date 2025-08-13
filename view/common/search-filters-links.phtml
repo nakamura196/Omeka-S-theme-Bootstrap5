@@ -1,0 +1,35 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var array $filters
+ */
+
+if (!count($filters)) return;
+
+$plugins = $this->getHelperPluginManager();
+$escape = $plugins->get('escapeHtml');
+$escapeAttr = $this->plugin('escapeHtmlAttr');
+$translate = $plugins->get('translate');
+?>
+
+<div class="search-filters mb-3">
+    <div class="d-flex flex-wrap gap-2 align-items-center">
+        <span class="text-muted me-2">
+            <i class="fas fa-filter me-1"></i>
+            <?= $escape($translate('Active filters')) ?>:
+        </span>
+        <?php foreach ($filters as $filterLabel => $filterValues): ?>
+        <?php foreach ($filterValues as $urlQuery => $filterValue): ?>
+        <span class="badge bg-info py-2 px-3">
+            <span class="text-white"><?= $escape($filterLabel) ?>:</span>
+            <strong class="ms-1"><?= $escape($filterValue) ?></strong>
+            <a href="<?= $escapeAttr($urlQuery) ?>" 
+               class="text-white text-decoration-none ms-2" 
+               title="<?= $escapeAttr($translate('Remove filter')) ?>">
+                <i class="fas fa-times"></i>
+            </a>
+        </span>
+        <?php endforeach; ?>
+        <?php endforeach; ?>
+    </div>
+</div>

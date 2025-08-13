@@ -1,0 +1,19 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Laminas\Form\Form $form
+ * @var \AdvancedSearch\Api\Representation\SearchConfigRepresentation $searchConfig
+ *
+ * The simple form is similar to the standard search form and keeps only:
+ * - the main field ("q"),
+ * - the hidden elements,
+ * - the button submit.
+ */
+
+$params = $this->params()->fromQuery() ?: [];
+$form
+    ->setData($params)
+    ->prepare();
+?>
+
+<?= $this->form($form) ?>
