@@ -90,8 +90,8 @@ document.addEventListener('DOMContentLoaded', function() {
             dynamicStyleElement = document.createElement('style');
             dynamicStyleElement.id = 'search-view-dynamic-style';
             dynamicStyleElement.textContent = `
-                .search-results-list .row.g-4 { display: none !important; }
-                .search-results-list .list-group { display: block !important; }
+                .resource-list.search-results-list .row.g-4 { display: none !important; }
+                .resource-list.search-results-list .list-group { display: block !important; }
             `;
             document.head.appendChild(dynamicStyleElement);
         }

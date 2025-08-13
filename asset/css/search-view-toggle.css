@@ -1,33 +1,32 @@
 /* Search View Toggle Styles */
 
 /* デフォルト状態（グリッド表示） */
-.search-results-list .row.g-4 {
-    display: block;
+.resource-list.search-results-list .row.g-4 {
+    display: flex !important;
+    flex-wrap: wrap !important;
 }
 
-.search-results-list .list-group {
-    display: none;
+.resource-list.search-results-list .list-group {
+    display: none !important;
 }
-
-/* ページロード前に保存された設定を反映するためのCSS */
-/* これらはJavaScriptで動的に<head>に追加される */
 
 /* Grid view強制表示 */
-.search-results-list.view-grid .row.g-4 {
-    display: block;
+.resource-list.search-results-list.view-grid .row.g-4 {
+    display: flex !important;
+    flex-wrap: wrap !important;
 }
 
-.search-results-list.view-grid .list-group {
-    display: none;
+.resource-list.search-results-list.view-grid .list-group {
+    display: none !important;
 }
 
 /* List view強制表示 */
-.search-results-list.view-list .row.g-4 {
-    display: none;
+.resource-list.search-results-list.view-list .row.g-4 {
+    display: none !important;
 }
 
-.search-results-list.view-list .list-group {
-    display: block;
+.resource-list.search-results-list.view-list .list-group {
+    display: block !important;
 }
 
 /* ボタンのアクティブ状態 */

@@ -73,7 +73,7 @@ $multiMode = isset($displayParts['grid_list']) && !in_array($gridListMode, ['lis
     
     <?php // Pagination ?>
     <?php if (isset($displayParts['paginator'])): ?>
-    <div class="search-results-pagination <?= isset($displayParts['total_results']) ? 'no-total-results' : '' ?>">
+    <div class="search-results-pagination <?= !isset($displayParts['total_results']) ? 'no-total-results' : '' ?>">
         <?= $this->paginationSearch() ?>
     </div>
     <?php endif; ?>

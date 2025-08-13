@@ -12,6 +12,8 @@ $valueLang = $filterLocale ? [$lang, ''] : null;
         <!-- <h3><?php echo $translate('Item'); ?></h3> -->
     </div>
 <?php $this->trigger('view.show.before'); ?>
+
 <?php echo $this->resourcePageBlocks($item)->getBlocks(); ?>
+
 <?php $this->trigger('view.show.after'); ?>
 </div>

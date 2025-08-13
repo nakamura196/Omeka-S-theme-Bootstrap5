@@ -63,9 +63,7 @@ $thumbnailType = $searchConfig->subSetting('results', 'thumbnail_type', 'medium'
             ?>
         <div class="col-lg-4 col-md-6">
             <div class="card h-100 resource <?= $resourceType ?> shadow-sm">
-                <?php if (!$noThumbnail): ?>
                 <?php $resourceThumbnail = $thumbnail($resource, $thumbnailType); ?>
-                <?php if ($resourceThumbnail || $allThumbnail): ?>
                 <div class="card-img-top-wrapper" style="height: 200px; overflow: hidden;">
                     <?php if ($resourceThumbnail): ?>
                     <?= $hyperlink->raw($resourceThumbnail, $resourceUrl, ['class' => 'text-decoration-none d-block h-100']) ?>
@@ -82,8 +80,6 @@ $thumbnailType = $searchConfig->subSetting('results', 'thumbnail_type', 'medium'
                     </a>
                     <?php endif; ?>
                 </div>
-                <?php endif; ?>
-                <?php endif; ?>
                 
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title">
@@ -98,13 +94,8 @@ $thumbnailType = $searchConfig->subSetting('results', 'thumbnail_type', 'medium'
                     </p>
                     <?php endif; ?>
                     
+                    <?php if ($selectionButton || $contactUsSelector): ?>
                     <div class="card-footer bg-transparent border-0 p-0 mt-auto">
-                        <small class="text-muted">
-                            <i class="fas fa-<?= $resourceType === 'items' ? 'file' : ($resourceType === 'item-sets' ? 'folder' : 'globe') ?> me-1"></i>
-                            <?= $translate(ucfirst($resourceType)) ?>
-                        </small>
-                        
-                        <?php if ($selectionButton || $contactUsSelector): ?>
                         <div class="mt-2">
                             <?php if ($selectionButton): ?>
                             <?= $selectionButton($resource) ?>
@@ -113,8 +104,8 @@ $thumbnailType = $searchConfig->subSetting('results', 'thumbnail_type', 'medium'
                             <?= $contactUsSelector($resource) ?>
                             <?php endif; ?>
                         </div>
-                        <?php endif; ?>
                     </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -131,9 +122,7 @@ $thumbnailType = $searchConfig->subSetting('results', 'thumbnail_type', 'medium'
             ?>
         <div class="list-group-item list-group-item-action border-0 border-bottom resource <?= $resourceType ?> py-3">
             <div class="row align-items-center">
-                <?php if (!$noThumbnail): ?>
                 <?php $resourceThumbnail = $thumbnail($resource, $thumbnailType); ?>
-                <?php if ($resourceThumbnail || $allThumbnail): ?>
                 <div class="col-auto">
                     <?php if ($resourceThumbnail): ?>
                     <div class="thumbnail-wrapper" style="width: 80px; height: 80px; overflow: hidden;">
@@ -153,8 +142,6 @@ $thumbnailType = $searchConfig->subSetting('results', 'thumbnail_type', 'medium'
                     </a>
                     <?php endif; ?>
                 </div>
-                <?php endif; ?>
-                <?php endif; ?>
                 
                 <div class="col">
                     <div class="d-flex w-100 justify-content-between align-items-start">
@@ -170,11 +157,6 @@ $thumbnailType = $searchConfig->subSetting('results', 'thumbnail_type', 'medium'
                                 <?= $this->escapeHtml(mb_strimwidth(strip_tags($body), 0, 200, '...')) ?>
                             </p>
                             <?php endif; ?>
-                            
-                            <small class="text-muted">
-                                <i class="fas fa-<?= $resourceType === 'items' ? 'file' : ($resourceType === 'item-sets' ? 'folder' : 'globe') ?> me-1"></i>
-                                <?= $translate(ucfirst($resourceType)) ?>
-                            </small>
                         </div>
                         
                         <?php if ($selectionButton || $contactUsSelector): ?>

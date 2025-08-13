@@ -3,7 +3,7 @@ $escape = $this->plugin('escapeHtml');
 $siteTitle = $site->title();
 ?>
 <header>
-    <nav class="navbar navbar-expand-lg">
+    <nav class="navbar navbar-expand-lg bg-dark border-bottom border-body" data-bs-theme="dark">
         <div class="container-fluid">
             <!-- サイトブランド/ロゴ -->
             <a class="navbar-brand" href="<?php echo $site->url(); ?>">
@@ -21,8 +21,8 @@ $siteTitle = $site->title();
             
             <!-- ナビゲーションコンテンツ -->
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <!-- Omekaナビゲーションメニュー -->
-                <div class="navbar-nav me-auto mb-2 mb-lg-0">
+                <!-- Omekaナビゲーションメニュー（右寄せ） -->
+                <div class="navbar-nav ms-auto mb-2 mb-lg-0">
                     <?php
                     $nav = $site->publicNav()->menu();
                     if ($nav->hasPages()) {
@@ -48,11 +48,6 @@ $siteTitle = $site->title();
                         }
                     }
                     ?>
-                </div>
-                
-                <!-- 検索フォーム -->
-                <div class="d-flex">
-                    <?php echo $this->partial('common/search-form'); ?>
                 </div>
             </div>
         </div>
