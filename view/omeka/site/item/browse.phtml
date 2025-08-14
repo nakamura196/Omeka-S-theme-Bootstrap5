@@ -307,7 +307,10 @@ $sortHeadings = [
     </div>
     <?php endif; ?>
     
-    <?php $this->trigger('view.browse.after'); ?>
+    <!-- view.browse.after トリガーの前にスペースを追加 -->
+    <div class="mt-5">
+        <?php $this->trigger('view.browse.after'); ?>
+    </div>
 </div>
 
 <!-- メインコンテンツとフッターの間隔を確保 -->
