@@ -1,0 +1,256 @@
+<?php
+/**
+ * Item Set Show Page - Bootstrap 5 Modern Design
+ * 
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\ItemSetRepresentation $itemSet
+ */
+
+$translate = $this->plugin('translate');
+$escape = $this->plugin('escapeHtml');
+$thumbnail = $this->plugin('thumbnail');
+
+$filterLocale = (bool) $this->siteSetting('filter_locale_values');
+$lang = $this->lang();
+$valueLang = $filterLocale ? [$lang, ''] : null;
+
+$this->htmlElement('body')->appendAttribute('class', 'item-set resource show');
+
+// Get items in this set
+$itemCount = $itemSet->itemCount();
+// Get items through API
+$items = [];
+if ($itemCount > 0) {
+    $api = $this->api();
+    $itemsResponse = $api->search('items', ['item_set_id' => $itemSet->id(), 'limit' => 12]);
+    $items = $itemsResponse->getContent();
+}
+?>
+
+<!-- アイテムセット詳細ページ（Bootstrap 5） -->
+<div class="item-set-show-wrapper">
+    <!-- ヘッダーセクション -->
+    <div class="item-set-header bg-light py-5 mb-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8">
+                    <h1 class="display-5 fw-bold mb-3">
+                        <i class="bi bi-folder2-open me-3"></i>
+                        <?= $escape($itemSet->displayTitle(null, $valueLang)) ?>
+                    </h1>
+                    
+                    <?php 
+                    $description = $itemSet->displayDescription(null, $valueLang);
+                    if ($description): ?>
+                    <p class="lead text-muted">
+                        <?= $escape($description) ?>
+                    </p>
+                    <?php endif; ?>
+
+                    <!-- メタ情報 -->
+                    <div class="mt-4">
+                        <span class="badge bg-primary me-2">
+                            <i class="bi bi-collection me-1"></i>
+                            <?= sprintf($translate('%d items'), $itemCount) ?>
+                        </span>
+                        <span class="badge bg-secondary">
+                            <i class="bi bi-calendar me-1"></i>
+                            <?= $escape($itemSet->created()->format('Y-m-d')) ?>
+                        </span>
+                    </div>
+                </div>
+                
+                <?php 
+                $thumbnailHtml = $thumbnail($itemSet, 'large');
+                if ($thumbnailHtml): ?>
+                <div class="col-lg-4">
+                    <?= $thumbnailHtml ?>
+                </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+
+    <!-- メインコンテンツ -->
+    <div class="container">
+        <!-- メタデータ -->
+        <?php $values = $itemSet->displayValues(); ?>
+        <?php if ($values): ?>
+        <div class="row mb-5">
+            <div class="col-lg-8">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-white">
+                        <h3 class="h5 mb-0">
+                            <i class="bi bi-info-circle me-2"></i>
+                            <?= $escape($translate('Collection Information')) ?>
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <dl class="row">
+                            <?php foreach ($values as $term => $valueInfo): ?>
+                            <dt class="col-sm-3 text-sm-end">
+                                <?= $escape($valueInfo['alternate_label'] ?: $valueInfo['label']) ?>
+                            </dt>
+                            <dd class="col-sm-9">
+                                <?php foreach ($valueInfo['values'] as $value): ?>
+                                    <?= $value->asHtml() ?>
+                                <?php endforeach; ?>
+                            </dd>
+                            <?php endforeach; ?>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- サイドバー -->
+            <div class="col-lg-4">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="bi bi-tools me-2"></i>
+                            <?= $escape($translate('Actions')) ?>
+                        </h5>
+                        <div class="d-grid gap-2">
+                            <?php
+                            $itemBrowseUrl = $this->url('site/resource', [
+                                'site-slug' => $this->params()->fromRoute('site-slug'),
+                                'controller' => 'item',
+                                'action' => 'browse'
+                            ], ['query' => ['item_set_id' => $itemSet->id()]]);
+                            ?>
+                            <a href="<?= $escape($itemBrowseUrl) ?>" class="btn btn-outline-primary">
+                                <i class="bi bi-collection me-2"></i>
+                                <?= $escape($translate('View all items')) ?>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <!-- このセット内のアイテム -->
+        <?php if ($items): ?>
+        <div class="collection-items mb-5">
+            <h2 class="h3 mb-4">
+                <i class="bi bi-collection me-2"></i>
+                <?= $escape($translate('Items in this collection')) ?>
+            </h2>
+            
+            <div class="row g-4">
+                <?php foreach ($items as $item): ?>
+                <div class="col-md-6 col-lg-3">
+                    <div class="card h-100 shadow-sm item-card">
+                        <?php $primaryMedia = $item->primaryMedia(); ?>
+                        <?php if ($primaryMedia): ?>
+                        <div class="card-img-wrapper">
+                            <img src="<?= $escape($primaryMedia->thumbnailUrl('medium')) ?>" 
+                                 class="card-img-top" 
+                                 alt="<?= $escape($item->displayTitle()) ?>">
+                        </div>
+                        <?php else: ?>
+                        <div class="card-img-placeholder d-flex align-items-center justify-content-center">
+                            <i class="bi bi-file-earmark display-4 text-muted"></i>
+                        </div>
+                        <?php endif; ?>
+                        
+                        <div class="card-body">
+                            <h6 class="card-title">
+                                <a href="<?= $escape($item->url()) ?>" class="text-decoration-none stretched-link">
+                                    <?= $escape($item->displayTitle()) ?>
+                                </a>
+                            </h6>
+                        </div>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+            
+            <?php if ($itemCount > 12): ?>
+            <div class="text-center mt-4">
+                <a href="<?= $escape($itemBrowseUrl) ?>" class="btn btn-primary">
+                    <i class="bi bi-arrow-right-circle me-2"></i>
+                    <?= $escape(sprintf($translate('View all %d items'), $itemCount)) ?>
+                </a>
+            </div>
+            <?php endif; ?>
+        </div>
+        <?php else: ?>
+        <div class="alert alert-info" role="alert">
+            <i class="bi bi-info-circle me-2"></i>
+            <?= $escape($translate('This collection has no items yet.')) ?>
+        </div>
+        <?php endif; ?>
+    </div>
+</div>
+
+<!-- メインコンテンツとフッターの間隔を確保 -->
+<div class="mb-5 pb-5"></div>
+
+<style>
+/* アイテムセット詳細ページのスタイル */
+.item-set-show-wrapper {
+    min-height: 60vh;
+}
+
+/* アイテムカード */
+.item-card {
+    transition: transform 0.2s, box-shadow 0.2s;
+    overflow: hidden;
+}
+
+.item-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+}
+
+/* カード画像 */
+.card-img-wrapper {
+    height: 150px;
+    overflow: hidden;
+    background: #f8f9fa;
+}
+
+.card-img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* プレースホルダー */
+.card-img-placeholder {
+    height: 150px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+/* カードタイトル */
+.item-card .card-title a {
+    color: #212529;
+    font-size: 0.9rem;
+}
+
+.item-card .card-title a:hover {
+    color: #0d6efd;
+}
+
+/* メタデータ */
+.card-body dl {
+    margin-bottom: 0;
+}
+
+.card-body dt {
+    font-weight: 600;
+    color: #495057;
+}
+
+.card-body dd {
+    color: #212529;
+}
+
+/* レスポンシブ調整 */
+@media (max-width: 768px) {
+    .item-set-header .display-5 {
+        font-size: 2rem;
+    }
+}
+</style>

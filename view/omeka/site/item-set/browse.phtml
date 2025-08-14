@@ -1,0 +1,265 @@
+<?php
+/**
+ * Item Sets Browse Page - Bootstrap 5 Modern Design
+ * 
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\ItemSetRepresentation[] $itemSets
+ */
+
+$translate = $this->plugin('translate');
+$escape = $this->plugin('escapeHtml');
+$thumbnail = $this->plugin('thumbnail');
+
+$filterLocale = (bool) $this->siteSetting('filter_locale_values');
+$lang = $this->lang();
+$valueLang = $filterLocale ? [$lang, ''] : null;
+
+$this->htmlElement('body')->appendAttribute('class', 'item-set resource browse');
+$this->headLink()->appendStylesheet($this->assetUrl('css/resource-page-blocks.css', 'Omeka'));
+
+// Get pagination info
+$totalResults = isset($itemSets) ? count($itemSets) : 0;
+$page = $this->params()->fromQuery('page', 1);
+$perPage = $this->params()->fromQuery('per_page', 25);
+$sortBy = $this->params()->fromQuery('sort_by', 'created');
+$sortOrder = $this->params()->fromQuery('sort_order', 'desc');
+
+// Get filter parameters
+$filterQuery = $this->params()->fromQuery();
+?>
+
+<!-- モダンなアイテムセットブラウズページ（Bootstrap 5） -->
+<div class="item-set-browse-wrapper">
+    <!-- ヘッダーセクション -->
+    <div class="browse-header bg-light py-5 mb-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-5 fw-bold mb-3">
+                        <i class="bi bi-folder2-open me-3"></i>
+                        <?= $escape($translate('Item Sets')) ?>
+                    </h1>
+                    <p class="lead text-muted mb-0">
+                        <?= $escape($translate('Browse our curated collections')) ?>
+                    </p>
+                </div>
+                <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
+                    <div class="stats-badge d-inline-block">
+                        <span class="badge bg-primary rounded-pill px-4 py-2">
+                            <i class="bi bi-collection me-2"></i>
+                            <?= sprintf($translate('%s item sets'), $totalResults) ?>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- メインコンテンツ -->
+    <div class="container">
+        <!-- 検索・フィルターバー -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <form method="get" class="row g-3">
+                            <!-- 検索フィールド -->
+                            <div class="col-md-6">
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-search"></i>
+                                    </span>
+                                    <input type="text" 
+                                           name="fulltext_search" 
+                                           class="form-control" 
+                                           placeholder="<?= $escape($translate('Search item sets...')) ?>"
+                                           value="<?= $escape($this->params()->fromQuery('fulltext_search')) ?>">
+                                </div>
+                            </div>
+
+                            <!-- ソート -->
+                            <div class="col-md-3">
+                                <select name="sort_by" class="form-select">
+                                    <option value=""><?= $escape($translate('Sort by')) ?></option>
+                                    <option value="created" <?= $sortBy === 'created' ? 'selected' : '' ?>>
+                                        <?= $escape($translate('Date created')) ?>
+                                    </option>
+                                    <option value="title" <?= $sortBy === 'title' ? 'selected' : '' ?>>
+                                        <?= $escape($translate('Title')) ?>
+                                    </option>
+                                </select>
+                            </div>
+
+                            <!-- 表示件数 -->
+                            <div class="col-md-2">
+                                <select name="per_page" class="form-select">
+                                    <option value="12" <?= $perPage == 12 ? 'selected' : '' ?>>12</option>
+                                    <option value="24" <?= $perPage == 24 ? 'selected' : '' ?>>24</option>
+                                    <option value="48" <?= $perPage == 48 ? 'selected' : '' ?>>48</option>
+                                </select>
+                            </div>
+
+                            <!-- 検索ボタン -->
+                            <div class="col-md-1">
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- アイテムセットグリッド -->
+        <?php if ($itemSets): ?>
+        <div class="row g-4 mb-5">
+            <?php foreach ($itemSets as $itemSet): ?>
+            <?php
+            // Use the itemCount method directly
+            $itemCount = $itemSet->itemCount();
+            ?>
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 shadow-sm item-set-card">
+                    <!-- サムネイル -->
+                    <?php
+                    $thumbnailHtml = $thumbnail($itemSet, 'medium');
+                    if ($thumbnailHtml): ?>
+                    <div class="card-img-top-wrapper">
+                        <?= $thumbnailHtml ?>
+                    </div>
+                    <?php else: ?>
+                    <div class="card-img-placeholder d-flex align-items-center justify-content-center">
+                        <i class="bi bi-folder2-open display-1 text-muted"></i>
+                    </div>
+                    <?php endif; ?>
+
+                    <!-- カード本体 -->
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a href="<?= $escape($itemSet->url()) ?>" class="text-decoration-none stretched-link">
+                                <?= $escape($itemSet->displayTitle(null, $valueLang)) ?>
+                            </a>
+                        </h5>
+                        
+                        <?php 
+                        $description = $itemSet->displayDescription(null, $valueLang);
+                        if ($description): ?>
+                        <p class="card-text text-muted">
+                            <?= $escape(mb_strimwidth($description, 0, 150, '...')) ?>
+                        </p>
+                        <?php endif; ?>
+
+                        <!-- メタ情報 -->
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <span class="badge bg-secondary">
+                                <i class="bi bi-collection me-1"></i>
+                                <?= sprintf($translate('%d items'), $itemCount) ?>
+                            </span>
+                            <small class="text-muted">
+                                <?= $escape($itemSet->created()->format('Y-m-d')) ?>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <?php endforeach; ?>
+        </div>
+
+        <!-- ページネーション -->
+        <?php echo $this->pagination(); ?>
+
+        <?php else: ?>
+        <!-- 結果なし -->
+        <div class="no-results text-center py-5">
+            <i class="bi bi-folder-x display-1 text-muted mb-4"></i>
+            <h3 class="h4 mb-3"><?= $escape($translate('No item sets found')) ?></h3>
+            <p class="text-muted">
+                <?= $escape($translate('Try adjusting your search or filters')) ?>
+            </p>
+        </div>
+        <?php endif; ?>
+    </div>
+</div>
+
+<!-- メインコンテンツとフッターの間隔を確保 -->
+<div class="mb-5 pb-5"></div>
+
+<style>
+/* アイテムセットブラウズページのスタイル */
+.item-set-browse-wrapper {
+    min-height: 60vh;
+}
+
+/* 統計バッジ */
+.stats-badge .badge {
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+/* アイテムセットカード */
+.item-set-card {
+    transition: transform 0.2s, box-shadow 0.2s;
+    overflow: hidden;
+}
+
+.item-set-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+}
+
+/* カード画像 */
+.card-img-top-wrapper {
+    height: 200px;
+    overflow: hidden;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-img-top-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.card-img-top-wrapper .thumbnail {
+    width: 100%;
+    height: 100%;
+}
+
+.card-img-top-wrapper .thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* プレースホルダー */
+.card-img-placeholder {
+    height: 200px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+/* カードタイトル */
+.item-set-card .card-title a {
+    color: #212529;
+    font-weight: 600;
+}
+
+.item-set-card .card-title a:hover {
+    color: #0d6efd;
+}
+
+/* レスポンシブ調整 */
+@media (max-width: 768px) {
+    .browse-header .display-5 {
+        font-size: 2rem;
+    }
+    
+    .stats-badge {
+        display: block !important;
+        text-align: center;
+    }
+}
+</style>
