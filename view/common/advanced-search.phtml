@@ -76,6 +76,10 @@ $partials = $filterResults['partials'];
 
 .advanced-search-content .field-meta {
     margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
 }
 
 .advanced-search-content .field-meta .label,
@@ -84,7 +88,7 @@ $partials = $filterResults['partials'];
     color: #212529;
     font-size: 1rem;
     display: inline-block;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0;
 }
 
 .advanced-search-content .field-description {
@@ -164,36 +168,51 @@ $partials = $filterResults['partials'];
     border: 1px solid transparent;
     transition: all 0.15s ease-in-out;
     cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    white-space: nowrap;
 }
 
 .advanced-search-content button.add-value {
     background-color: #198754;
     color: white;
+    margin-left: auto;
 }
 
 .advanced-search-content button.add-value:hover {
     background-color: #157347;
 }
 
-.advanced-search-content button.add-value::before {
-    content: "\F145";
-    font-family: "bootstrap-icons";
-    margin-right: 0.5rem;
+/* Omeka標準のアイコンを非表示にして、Bootstrap Iconsを使用 */
+.advanced-search-content button.o-icon-add::before,
+.advanced-search-content button.o-icon-delete::before {
+    display: none !important;
+}
+
+/* 追加ボタンにBootstrap Iconsのプラスアイコン */
+.advanced-search-content button.o-icon-add::after {
+    content: "\F64D";  /* bi-plus-circle */
+    font-family: "bootstrap-icons" !important;
+    font-size: 1rem;
 }
 
 .advanced-search-content button.remove-value {
     background-color: #dc3545;
     color: white;
+    margin-left: 0.5rem;
 }
 
 .advanced-search-content button.remove-value:hover {
     background-color: #bb2d3b;
 }
 
-.advanced-search-content button.remove-value::before {
-    content: "\F659";
-    font-family: "bootstrap-icons";
-    margin-right: 0.5rem;
+/* 削除ボタンにBootstrap Iconsのゴミ箱アイコン */
+.advanced-search-content button.o-icon-delete::after {
+    content: "\F5DE";  /* bi-trash */
+    font-family: "bootstrap-icons" !important;
+    font-size: 1rem;
 }
 
 /* 地理的検索セクション */
@@ -276,11 +295,18 @@ $partials = $filterResults['partials'];
     color: #0d6efd;
     text-decoration: none;
     margin-left: 0.5rem;
+    margin-right: auto;
     font-size: 0.875rem;
 }
 
 .advanced-search-content .expand:hover {
     text-decoration: underline;
+}
+
+/* Fix button positioning in field-meta with expand link */
+.advanced-search-content .field-meta button.add-value,
+.advanced-search-content .field-meta button.o-icon-add {
+    margin-left: auto;
 }
 
 /* Has Media フィールド - 他のフィールドと同じスタイルを適用 */
