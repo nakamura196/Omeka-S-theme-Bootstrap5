@@ -60,6 +60,13 @@ $heroButtonSecondaryText = $this->themeSetting('hero_button_secondary_text') ?: 
                         <i class="bi bi-collection me-2"></i>
                         <?php echo $escape($heroButtonText); ?>
                     </a>
+                    <?php else: ?>
+                    <!-- URLが未指定の場合はアイテム一覧へのリンク -->
+                    <a href="<?php echo $escape($this->url('site/resource', ['site-slug' => $site->slug(), 'controller' => 'item', 'action' => 'browse'], [], true)); ?>" 
+                       class="btn btn-primary btn-lg px-4 py-3 rounded-pill shadow">
+                        <i class="bi bi-collection me-2"></i>
+                        <?php echo $escape($translate('Browse')); ?>
+                    </a>
                     <?php endif; ?>
                     
                     <?php if ($heroButtonSecondaryUrl): ?>
