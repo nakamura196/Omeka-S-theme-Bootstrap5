@@ -1,0 +1,313 @@
+<?php
+/**
+ * Media Embeds Block Layout - Bootstrap 5 版
+ * アイテムページでメディアファイルをスライダー形式で表示
+ */
+$translate = $this->plugin('translate');
+$resourceMedia = $resource->media();
+?>
+
+<?php if ($resourceMedia): ?>
+<div class="media-embeds-section my-5">
+    <?php 
+    $mediaCount = count($resourceMedia);
+    $hasMultiple = $mediaCount > 1;
+    ?>
+    
+    <?php if ($hasMultiple): ?>
+    <!-- 複数メディアの場合はカルーセル表示 -->
+    <div id="mediaCarousel" class="carousel slide" data-bs-ride="false">
+        <!-- インジケーター -->
+        <div class="carousel-indicators">
+            <?php foreach ($resourceMedia as $index => $media): ?>
+            <button type="button" 
+                    data-bs-target="#mediaCarousel" 
+                    data-bs-slide-to="<?php echo $index; ?>" 
+                    <?php echo $index === 0 ? 'class="active" aria-current="true"' : ''; ?>
+                    aria-label="<?php echo sprintf($translate('Slide %d'), $index + 1); ?>">
+            </button>
+            <?php endforeach; ?>
+        </div>
+        
+        <!-- カルーセル本体 -->
+        <div class="carousel-inner">
+            <?php foreach ($resourceMedia as $index => $media): ?>
+            <div class="carousel-item <?php echo $index === 0 ? 'active' : ''; ?>">
+                <div class="media-container text-center">
+                    <?php 
+                    // メディアタイプの判定
+                    $mediaType = $media->mediaType();
+                    $isImage = strpos($mediaType, 'image/') === 0;
+                    $isVideo = strpos($mediaType, 'video/') === 0;
+                    $isAudio = strpos($mediaType, 'audio/') === 0;
+                    $isPdf = $mediaType === 'application/pdf';
+                    ?>
+                    
+                    <?php if ($isImage): ?>
+                        <!-- 画像の場合 -->
+                        <div class="image-wrapper">
+                            <?php echo $media->render(['link_type' => 'original']); ?>
+                        </div>
+                    <?php elseif ($isVideo || $isAudio): ?>
+                        <!-- 動画・音声の場合 -->
+                        <div class="media-player-wrapper">
+                            <?php echo $media->render(); ?>
+                        </div>
+                    <?php elseif ($isPdf): ?>
+                        <!-- PDFの場合 -->
+                        <div class="pdf-wrapper">
+                            <?php echo $media->render(); ?>
+                            <div class="mt-3">
+                                <a href="<?php echo $media->originalUrl(); ?>" 
+                                   class="btn btn-outline-primary" 
+                                   target="_blank">
+                                    <i class="bi bi-download me-2"></i><?php echo $translate('Download PDF'); ?>
+                                </a>
+                            </div>
+                        </div>
+                    <?php else: ?>
+                        <!-- その他のファイル -->
+                        <div class="file-wrapper">
+                            <?php echo $media->render(); ?>
+                        </div>
+                    <?php endif; ?>
+                    
+                    <!-- メディア情報 -->
+                    <div class="media-info mt-3">
+                        <h6 class="media-title"><?php echo $media->displayTitle(); ?></h6>
+                        <?php if ($media->displayDescription()): ?>
+                        <p class="text-muted small"><?php echo $media->displayDescription(); ?></p>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+            <?php endforeach; ?>
+        </div>
+        
+        <!-- コントロールボタン -->
+        <button class="carousel-control-prev" type="button" data-bs-target="#mediaCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden"><?php echo $translate('Previous'); ?></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#mediaCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden"><?php echo $translate('Next'); ?></span>
+        </button>
+    </div>
+    
+    <!-- サムネイルナビゲーション -->
+    <div class="media-thumbnails mt-3">
+        <div class="row g-2 justify-content-center">
+            <?php foreach ($resourceMedia as $index => $media): ?>
+            <div class="col-auto">
+                <button class="thumbnail-btn <?php echo $index === 0 ? 'active' : ''; ?>" 
+                        data-bs-target="#mediaCarousel" 
+                        data-bs-slide-to="<?php echo $index; ?>"
+                        type="button">
+                    <?php if ($media->hasThumbnails()): ?>
+                        <img src="<?php echo $media->thumbnailUrl('square'); ?>" 
+                             alt="<?php echo $this->escapeHtml($media->displayTitle()); ?>"
+                             class="img-fluid">
+                    <?php else: ?>
+                        <div class="thumbnail-placeholder">
+                            <i class="bi bi-file-earmark"></i>
+                        </div>
+                    <?php endif; ?>
+                </button>
+            </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+    
+    <?php else: ?>
+    <!-- 単一メディアの場合 -->
+    <div class="single-media-container">
+        <?php $media = $resourceMedia[0]; ?>
+        <?php 
+        $mediaType = $media->mediaType();
+        $isImage = strpos($mediaType, 'image/') === 0;
+        ?>
+        
+        <div class="media-wrapper text-center">
+            <?php if ($isImage): ?>
+                <div class="image-wrapper">
+                    <?php echo $media->render(['link_type' => 'original']); ?>
+                </div>
+            <?php else: ?>
+                <?php echo $media->render(); ?>
+            <?php endif; ?>
+            
+            <!-- メディア情報 -->
+            <div class="media-info mt-3">
+                <h6 class="media-title"><?php echo $media->displayTitle(); ?></h6>
+                <?php if ($media->displayDescription()): ?>
+                <p class="text-muted small"><?php echo $media->displayDescription(); ?></p>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
+</div>
+
+<!-- カスタムスタイル -->
+<style>
+/* メディア埋め込みセクション */
+.media-embeds-section {
+    background-color: #f8f9fa;
+    padding: 2rem;
+    border-radius: 0.5rem;
+}
+
+/* カルーセル */
+.media-embeds-section .carousel {
+    background-color: white;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.media-embeds-section .carousel-inner {
+    min-height: 400px;
+    max-height: 600px;
+}
+
+.media-embeds-section .carousel-item {
+    padding: 2rem;
+}
+
+/* 画像ラッパー */
+.media-embeds-section .image-wrapper img {
+    max-width: 100%;
+    max-height: 500px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+}
+
+.media-embeds-section .image-wrapper a {
+    display: inline-block;
+}
+
+/* メディアプレイヤー */
+.media-embeds-section .media-player-wrapper video,
+.media-embeds-section .media-player-wrapper audio {
+    max-width: 100%;
+}
+
+/* PDFビューワー */
+.media-embeds-section .pdf-wrapper iframe {
+    width: 100%;
+    height: 500px;
+    border: none;
+}
+
+/* サムネイルナビゲーション */
+.media-thumbnails {
+    background-color: white;
+    padding: 1rem;
+    border-radius: 0.5rem;
+}
+
+.thumbnail-btn {
+    width: 80px;
+    height: 80px;
+    padding: 2px;
+    border: 2px solid transparent;
+    background-color: white;
+    border-radius: 0.25rem;
+    transition: all 0.3s;
+    overflow: hidden;
+}
+
+.thumbnail-btn.active,
+.thumbnail-btn:hover {
+    border-color: #0d6efd;
+}
+
+.thumbnail-btn img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.thumbnail-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8f9fa;
+    color: #6c757d;
+    font-size: 1.5rem;
+}
+
+/* 単一メディア */
+.single-media-container {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* メディア情報 */
+.media-info {
+    padding-top: 1rem;
+    border-top: 1px solid #dee2e6;
+}
+
+.media-title {
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+/* カルーセルコントロールのカスタマイズ */
+.media-embeds-section .carousel-control-prev,
+.media-embeds-section .carousel-control-next {
+    width: 5%;
+}
+
+.media-embeds-section .carousel-control-prev-icon,
+.media-embeds-section .carousel-control-next-icon {
+    background-color: rgba(0,0,0,0.5);
+    border-radius: 50%;
+    padding: 1.5rem;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+    .media-embeds-section {
+        padding: 1rem;
+    }
+    
+    .media-embeds-section .carousel-item {
+        padding: 1rem;
+    }
+    
+    .thumbnail-btn {
+        width: 60px;
+        height: 60px;
+    }
+}
+</style>
+
+<!-- サムネイルクリック時のアクティブ状態更新 -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const carousel = document.getElementById('mediaCarousel');
+    if (carousel) {
+        const thumbnailBtns = document.querySelectorAll('.thumbnail-btn');
+        
+        carousel.addEventListener('slide.bs.carousel', function(e) {
+            thumbnailBtns.forEach((btn, index) => {
+                if (index === e.to) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        });
+    }
+});
+</script>
+
+<?php endif; ?>

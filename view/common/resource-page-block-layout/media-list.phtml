@@ -1,0 +1,192 @@
+<?php
+/**
+ * Media List Block Layout - Bootstrap 5 版
+ * アイテムに関連付けられたメディアファイルをギャラリー形式で表示
+ */
+$translate = $this->plugin('translate');
+$resourceMedia = $resource->media();
+?>
+
+<?php if ($resourceMedia): ?>
+<div class="media-list-section my-5">
+    <div class="card">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">
+                <i class="bi bi-images me-2"></i><?php echo $translate('Media'); ?>
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <?php foreach ($resourceMedia as $media): ?>
+                <div class="col-6 col-md-4 col-lg-3">
+                    <div class="media-item position-relative">
+                        <?php
+                        // メディアのサムネイルURL取得
+                        $thumbnailUrl = $media->thumbnailUrl('square');
+                        $mediaUrl = $media->url();
+                        $title = $media->displayTitle();
+                        
+                        // メディアタイプの判定
+                        $mediaType = $media->mediaType();
+                        $isImage = strpos($mediaType, 'image/') === 0;
+                        $isVideo = strpos($mediaType, 'video/') === 0;
+                        $isAudio = strpos($mediaType, 'audio/') === 0;
+                        $isPdf = $mediaType === 'application/pdf';
+                        ?>
+                        
+                        <a href="<?php echo $this->escapeHtml($mediaUrl); ?>" 
+                           class="media-link d-block"
+                           data-bs-toggle="tooltip"
+                           data-bs-placement="bottom"
+                           title="<?php echo $this->escapeHtml($title); ?>">
+                            
+                            <?php if ($thumbnailUrl): ?>
+                            <div class="media-thumbnail ratio ratio-1x1">
+                                <img src="<?php echo $this->escapeHtml($thumbnailUrl); ?>" 
+                                     alt="<?php echo $this->escapeHtml($title); ?>"
+                                     class="img-fluid rounded object-fit-cover">
+                            </div>
+                            <?php else: ?>
+                            <!-- サムネイルがない場合のアイコン表示 -->
+                            <div class="media-placeholder ratio ratio-1x1 bg-light rounded d-flex align-items-center justify-content-center">
+                                <?php if ($isVideo): ?>
+                                    <i class="bi bi-play-circle fs-1 text-muted"></i>
+                                <?php elseif ($isAudio): ?>
+                                    <i class="bi bi-music-note-beamed fs-1 text-muted"></i>
+                                <?php elseif ($isPdf): ?>
+                                    <i class="bi bi-file-pdf fs-1 text-muted"></i>
+                                <?php else: ?>
+                                    <i class="bi bi-file-earmark fs-1 text-muted"></i>
+                                <?php endif; ?>
+                            </div>
+                            <?php endif; ?>
+                            
+                            <!-- メディアタイプアイコンオーバーレイ -->
+                            <?php if ($thumbnailUrl && !$isImage): ?>
+                            <div class="media-type-overlay position-absolute top-0 start-0 m-2">
+                                <span class="badge bg-dark bg-opacity-75">
+                                    <?php if ($isVideo): ?>
+                                        <i class="bi bi-play-circle"></i>
+                                    <?php elseif ($isAudio): ?>
+                                        <i class="bi bi-music-note-beamed"></i>
+                                    <?php elseif ($isPdf): ?>
+                                        <i class="bi bi-file-pdf"></i>
+                                    <?php else: ?>
+                                        <i class="bi bi-file-earmark"></i>
+                                    <?php endif; ?>
+                                </span>
+                            </div>
+                            <?php endif; ?>
+                            
+                            <!-- メディアタイトル -->
+                            <div class="media-title mt-2 text-center">
+                                <small class="text-muted text-truncate d-block">
+                                    <?php echo $this->escapeHtml($title); ?>
+                                </small>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+            
+            <?php if (count($resourceMedia) > 12): ?>
+            <!-- 多数のメディアがある場合の「すべて表示」ボタン -->
+            <div class="text-center mt-4">
+                <button class="btn btn-outline-primary btn-sm" id="show-all-media">
+                    <i class="bi bi-arrows-expand me-1"></i>
+                    <?php echo $translate('Show all media'); ?> (<?php echo count($resourceMedia); ?>)
+                </button>
+            </div>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
+
+<!-- カスタムスタイル -->
+<style>
+.media-list-section .media-item {
+    transition: transform 0.2s;
+}
+
+.media-list-section .media-item:hover {
+    transform: scale(1.05);
+}
+
+.media-list-section .media-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.media-list-section .media-thumbnail img {
+    transition: opacity 0.2s;
+}
+
+.media-list-section .media-link:hover .media-thumbnail img {
+    opacity: 0.9;
+}
+
+.media-list-section .media-placeholder {
+    border: 2px dashed #dee2e6;
+    background-color: #f8f9fa;
+}
+
+.media-list-section .media-type-overlay {
+    pointer-events: none;
+}
+
+.media-list-section .object-fit-cover {
+    object-fit: cover;
+}
+
+/* レスポンシブ調整 */
+@media (max-width: 576px) {
+    .media-list-section .col-6 {
+        padding: 0.25rem;
+    }
+}
+</style>
+
+<!-- 「すべて表示」機能のスクリプト -->
+<?php if (count($resourceMedia) > 12): ?>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const mediaItems = document.querySelectorAll('.media-list-section .col-6.col-md-4.col-lg-3');
+    const showAllBtn = document.getElementById('show-all-media');
+    let showingAll = false;
+    
+    // 初期状態で12個以降を非表示
+    mediaItems.forEach((item, index) => {
+        if (index >= 12) {
+            item.style.display = 'none';
+        }
+    });
+    
+    showAllBtn?.addEventListener('click', function() {
+        showingAll = !showingAll;
+        
+        mediaItems.forEach((item, index) => {
+            if (index >= 12) {
+                item.style.display = showingAll ? 'block' : 'none';
+            }
+        });
+        
+        this.innerHTML = showingAll 
+            ? '<i class="bi bi-arrows-collapse me-1"></i><?php echo $translate('Show less'); ?>'
+            : '<i class="bi bi-arrows-expand me-1"></i><?php echo $translate('Show all media'); ?> (<?php echo count($resourceMedia); ?>)';
+    });
+});
+</script>
+<?php endif; ?>
+
+<!-- ツールチップ初期化 -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('.media-list-section [data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+});
+</script>
+
+<?php endif; ?>
