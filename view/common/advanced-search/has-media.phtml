@@ -1,0 +1,15 @@
+<?php
+$translate = $this->plugin('translate');
+?>
+<div id="has_media_field" class="field">
+    <div class="field-meta">
+        <label for="has_media"><?php echo $translate('Search by media presence'); ?></label>
+    </div>
+    <div class="inputs">
+        <select name="has_media" id="has_media">
+            <option value=""><?php echo $translate('Select media presence…'); ?></option>
+            <option value="1" <?php echo (isset($query['has_media']) && $query['has_media'] == '1') ? 'selected' : ''; ?>><?php echo $translate('Has media'); ?></option>
+            <option value="0" <?php echo (isset($query['has_media']) && $query['has_media'] == '0') ? 'selected' : ''; ?>><?php echo $translate('Has no media'); ?></option>
+        </select>
+    </div>
+</div>

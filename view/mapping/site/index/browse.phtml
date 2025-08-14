@@ -1,0 +1,255 @@
+<?php
+/**
+ * Mapping browse page - モダン版
+ * 
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ */
+
+$translate = $this->plugin('translate');
+$escape = $this->plugin('escapeHtml');
+
+// Mappingモジュールのリソースを読み込み
+$this->headLink()->appendStylesheet($this->assetUrl('node_modules/leaflet/dist/leaflet.css', 'Mapping'));
+$this->headLink()->appendStylesheet($this->assetUrl('node_modules/leaflet.markercluster/dist/MarkerCluster.css', 'Mapping'));
+$this->headLink()->appendStylesheet($this->assetUrl('node_modules/leaflet.markercluster/dist/MarkerCluster.Default.css', 'Mapping'));
+$this->headLink()->appendStylesheet($this->assetUrl('node_modules/leaflet.fullscreen/Control.FullScreen.css', 'Mapping'));
+$this->headLink()->appendStylesheet($this->assetUrl('css/mapping.css', 'Mapping'));
+
+$this->headScript()->appendFile($this->assetUrl('node_modules/leaflet/dist/leaflet.js', 'Mapping'));
+$this->headScript()->appendFile($this->assetUrl('node_modules/leaflet.markercluster/dist/leaflet.markercluster-src.js', 'Mapping'));
+$this->headScript()->appendFile($this->assetUrl('node_modules/leaflet-providers/leaflet-providers.js', 'Mapping'));
+$this->headScript()->appendFile($this->assetUrl('node_modules/leaflet.fullscreen/Control.FullScreen.js', 'Mapping'));
+$this->headScript()->appendFile($this->assetUrl('node_modules/Leaflet.Deflate/dist/L.Deflate.js', 'Mapping'));
+
+$this->headScript()->appendFile($this->assetUrl('js/MappingModule.js', 'Mapping'));
+$this->headScript()->appendFile($this->assetUrl('js/control.fit-bounds.js', 'Mapping'));
+$this->headScript()->appendFile($this->assetUrl('js/mapping-browse.js', 'Mapping'));
+$this->headScript()->appendFile($this->assetUrl('js/advanced-search.js', 'Omeka'));
+
+$query['mapping_basemap_provider'] = $query['mapping_basemap_provider'] ?? '';
+
+// カスタムスタイル
+?>
+<style>
+/* マップコンテナのスタイル */
+.map-container {
+    position: relative;
+    background: #fff;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
+}
+
+.map-wrapper {
+    position: relative;
+    height: 700px;
+    width: 100%;
+}
+
+/* 検索フォームのスタイル */
+.map-search-panel {
+    background: #fff;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
+    padding: 1.5rem;
+}
+
+.map-search-panel h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--bs-dark);
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+    .map-wrapper {
+        height: 400px;
+    }
+}
+
+/* Leafletコントロールのカスタマイズ */
+.leaflet-control-zoom,
+.leaflet-control-fullscreen {
+    border: none !important;
+    box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075) !important;
+}
+
+.leaflet-control-zoom a,
+.leaflet-control-fullscreen a {
+    color: var(--bs-primary) !important;
+}
+
+.leaflet-control-zoom a:hover,
+.leaflet-control-fullscreen a:hover {
+    background-color: var(--bs-light) !important;
+}
+
+/* マーカークラスターのスタイル */
+.marker-cluster-small {
+    background-color: rgba(110, 204, 57, 0.6);
+}
+.marker-cluster-small div {
+    background-color: rgba(110, 204, 57, 0.9);
+}
+
+.marker-cluster-medium {
+    background-color: rgba(240, 194, 12, 0.6);
+}
+.marker-cluster-medium div {
+    background-color: rgba(240, 194, 12, 0.9);
+}
+
+.marker-cluster-large {
+    background-color: rgba(241, 128, 23, 0.6);
+}
+.marker-cluster-large div {
+    background-color: rgba(241, 128, 23, 0.9);
+}
+
+/* ポップアップのスタイル */
+.leaflet-popup-content-wrapper {
+    border-radius: 0.5rem !important;
+    box-shadow: 0 0.25rem 0.5rem rgba(0,0,0,0.15) !important;
+}
+
+.leaflet-popup-content {
+    margin: 1rem !important;
+    max-width: 300px;
+}
+
+.leaflet-popup-content h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--bs-primary);
+}
+
+.leaflet-popup-content .description {
+    color: var(--bs-secondary);
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+</style>
+
+<div class="container py-5">
+    <!-- ページヘッダー -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="page-header text-center">
+                <h1 class="display-5 fw-bold mb-3">
+                    <i class="bi bi-map me-3 text-primary"></i><?= $escape($translate('Interactive Map')) ?>
+                </h1>
+                <p class="lead text-muted">
+                    <?= $escape($translate('Explore our collection through an interactive map interface')) ?>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- マップセクション -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="map-container">
+                <div id="mapping-map" class="map-wrapper"
+                    data-disable-clustering="<?= $this->siteSetting('mapping_disable_clustering') ? '1' : '0'; ?>"
+                    data-basemap-provider="<?= $escape($this->siteSetting('mapping_basemap_provider')); ?>"
+                    data-features-url="<?= $escape($this->url('site/mapping', ['controller' => 'index', 'action' => 'get-features'], true)); ?>"
+                    data-feature-popup-content-url="<?= $escape($this->url('site/mapping', ['controller' => 'index', 'action' => 'get-feature-popup-content'], true)); ?>"
+                    data-items-query="<?= $escape(json_encode($itemsQuery)); ?>"
+                    data-features-query="<?= $escape(json_encode($featuresQuery)); ?>">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 検索セクション -->
+    <div class="row">
+        <div class="col-12">
+            <div class="map-search-panel">
+                <h3>
+                    <i class="bi bi-funnel me-2"></i><?= $escape($translate('Search Map')) ?>
+                </h3>
+                <form id="advanced-search" class="needs-validation" novalidate>
+                    <div class="mb-3">
+                        <?= $this->partial('common/advanced-search', ['query' => $query, 'resourceType' => 'item']); ?>
+                    </div>
+                    
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-8">
+                            <label for="basemap-provider" class="form-label">
+                                <?= $escape($translate('Base Map Provider')) ?>
+                            </label>
+                            <select class="form-select" id="basemap-provider" name="mapping_basemap_provider">
+                                <option value=""><?= $escape($translate('Default')) ?></option>
+                                <?php
+                                $providers = [
+                                    'OpenStreetMap.Mapnik' => 'OpenStreetMap',
+                                    'CartoDB.Positron' => 'CartoDB Positron',
+                                    'CartoDB.DarkMatter' => 'CartoDB Dark Matter',
+                                    'Esri.WorldStreetMap' => 'Esri World Street Map',
+                                    'Esri.WorldImagery' => 'Esri World Imagery',
+                                    'Esri.NatGeoWorldMap' => 'Esri National Geographic',
+                                ];
+                                foreach ($providers as $value => $label):
+                                ?>
+                                <option value="<?= $escape($value) ?>" <?= $query['mapping_basemap_provider'] == $value ? 'selected' : '' ?>>
+                                    <?= $escape($label) ?>
+                                </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="bi bi-search me-2"></i><?= $escape($translate('Search Map')) ?>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <input type="hidden" name="mapping_basemap_provider_original" value="<?= $escape($query['mapping_basemap_provider']); ?>">
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 使い方ガイド -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="alert alert-info">
+                <h5 class="alert-heading">
+                    <i class="bi bi-info-circle me-2"></i><?= $escape($translate('How to use')) ?>
+                </h5>
+                <ul class="mb-0">
+                    <li><?= $escape($translate('Click on markers to view item details')) ?></li>
+                    <li><?= $escape($translate('Use the zoom controls or scroll to zoom in/out')) ?></li>
+                    <li><?= $escape($translate('Click the fullscreen button for a larger view')) ?></li>
+                    <li><?= $escape($translate('Use the search form below to filter items on the map')) ?></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// フォームの送信処理を改善
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('advanced-search');
+    const basemapSelect = document.getElementById('basemap-provider');
+    
+    // ベースマップ変更時の処理
+    basemapSelect.addEventListener('change', function() {
+        // 必要に応じてマップを更新
+        const event = new CustomEvent('basemapChanged', { detail: this.value });
+        document.dispatchEvent(event);
+    });
+    
+    // フォームバリデーション
+    form.addEventListener('submit', function(event) {
+        if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+    });
+});
+</script>

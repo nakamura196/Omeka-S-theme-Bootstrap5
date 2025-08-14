@@ -534,3 +534,139 @@ msgstr ""
 #: view/common/pagination.phtml:54
 msgid "0 results"
 msgstr ""
+
+#: view/mapping/site/index/browse.phtml:141
+msgid "Interactive Map"
+msgstr ""
+
+#: view/mapping/site/index/browse.phtml:144
+msgid "Explore our collection through an interactive map interface"
+msgstr ""
+
+#: view/mapping/site/index/browse.phtml:171 view/mapping/site/index/browse.phtml:204
+msgid "Search Map"
+msgstr ""
+
+#: view/mapping/site/index/browse.phtml:181
+msgid "Base Map Provider"
+msgstr ""
+
+#: view/mapping/site/index/browse.phtml:184
+msgid "Default"
+msgstr ""
+
+#: view/mapping/site/index/browse.phtml:220
+msgid "How to use"
+msgstr ""
+
+#: view/mapping/site/index/browse.phtml:223
+msgid "Click on markers to view item details"
+msgstr ""
+
+#: view/mapping/site/index/browse.phtml:224
+msgid "Use the zoom controls or scroll to zoom in/out"
+msgstr ""
+
+#: view/mapping/site/index/browse.phtml:225
+msgid "Click the fullscreen button for a larger view"
+msgstr ""
+
+#: view/mapping/site/index/browse.phtml:226
+msgid "Use the search form below to filter items on the map"
+msgstr ""
+
+#: view/common/advanced-search/resource-class.phtml:24
+msgid "Search by class"
+msgstr ""
+
+#: view/common/advanced-search/resource-class.phtml:27
+msgid "Searches for resources that are any of these classes."
+msgstr ""
+
+#: view/common/advanced-search/resource-class.phtml:29
+msgid "Add new class"
+msgstr ""
+
+#: view/common/advanced-search/properties.phtml:22
+msgid "Search by value"
+msgstr ""
+
+#: view/common/advanced-search/properties.phtml:24
+msgid "Add new value"
+msgstr ""
+
+#: view/common/advanced-search/ids.phtml:15
+msgid "Searches for resources by Omeka S ID. You can search for more than one ID by separating them by commas."
+msgstr ""
+
+#: view/common/advanced-search/ids.phtml:14
+msgid "Search by ID"
+msgstr ""
+
+#: view/common/advanced-search/item-sets.phtml:46
+msgid "Searches for items that are assigned to any of these item sets."
+msgstr ""
+
+#: view/common/advanced-search/item-sets.phtml:44
+msgid "Search by item set"
+msgstr ""
+
+#: view/common/advanced-search/resource-template.phtml:19
+msgid "Searches for resources that use any of these templates."
+msgstr ""
+
+#: view/common/advanced-search/has-media.phtml:3
+msgid "Search by media presence"
+msgstr ""
+
+#: view/common/advanced-search/has-media.phtml:6
+msgid "Select media presence…"
+msgstr ""
+
+#: view/common/advanced-search/has-media.phtml:7
+msgid "Has media"
+msgstr ""
+
+#: view/common/advanced-search/has-media.phtml:8
+msgid "Has no media"
+msgstr ""
+
+#: view/common/advanced-search/fulltext.phtml:3
+msgid "Search full-text"
+msgstr ""
+
+#: view/common/advanced-search/properties.phtml:44
+msgid "Remove value"
+msgstr ""
+
+#: view/common/advanced-search/resource-class.phtml:44
+msgid "Remove value"
+msgstr ""
+
+#: view/common/advanced-search/resource-class.phtml:25
+msgid "Expand"
+msgstr ""
+
+#: view/common/advanced-search/mapping-item-geographic-location.phtml:27
+msgid "Search by geographic location"
+msgstr ""
+
+#: view/common/advanced-search/mapping-item-geographic-location.phtml:5
+msgid "Address"
+msgstr ""
+
+#: view/common/advanced-search/mapping-item-geographic-location.phtml:9
+msgid "Radius"
+msgstr ""
+
+#: view/common/advanced-search/mapping-item-geographic-location.phtml:14
+msgid "Unit"
+msgstr ""
+
+#: view/common/advanced-search/mapping-item-geographic-location.phtml:16
+msgid "Kilometers"
+msgstr ""
+
+#: view/common/advanced-search/mapping-item-geographic-location.phtml:17
+msgid "Miles"
+msgstr ""

@@ -423,3 +423,102 @@ msgstr "アイテムが見つかりません"
 
 msgid "Try adjusting your search or filters"
 msgstr "検索条件やフィルターを調整してください"
+
+msgid "Interactive Map"
+msgstr "インタラクティブマップ"
+
+msgid "Explore our collection through an interactive map interface"
+msgstr "インタラクティブな地図でコレクションを探索してください"
+
+msgid "Search Map"
+msgstr "地図を検索"
+
+msgid "Base Map Provider"
+msgstr "ベースマップ プロバイダー"
+
+msgid "Default"
+msgstr "デフォルト"
+
+msgid "How to use"
+msgstr "使い方"
+
+msgid "Click on markers to view item details"
+msgstr "マーカーをクリックしてアイテムの詳細を表示"
+
+msgid "Use the zoom controls or scroll to zoom in/out"
+msgstr "ズームコントロールまたはスクロールで拡大/縮小"
+
+msgid "Click the fullscreen button for a larger view"
+msgstr "フルスクリーンボタンで大きく表示"
+
+msgid "Use the search form below to filter items on the map"
+msgstr "下の検索フォームで地図上のアイテムを絞り込み"
+
+msgid "Search by class"
+msgstr "クラスで検索"
+
+msgid "Searches for resources that are any of these classes."
+msgstr "これらのクラスのいずれかに該当するリソースを検索します。"
+
+msgid "Add new class"
+msgstr "新規クラスを追加"
+
+msgid "Search by value"
+msgstr "値で検索"
+
+msgid "Add new value"
+msgstr "新規の値を追加"
+
+msgid "Searches for resources by Omeka S ID. You can search for more than one ID by separating them by commas."
+msgstr "Omeka S IDでリソースを検索します。カンマで区切って複数のIDを検索できます。"
+
+msgid "Search by ID"
+msgstr "IDで検索"
+
+msgid "Searches for items that are assigned to any of these item sets."
+msgstr "これらのアイテムセットのいずれかに割り当てられているアイテムを検索します。"
+
+msgid "Search by item set"
+msgstr "アイテムセットで検索"
+
+msgid "Searches for resources that use any of these templates."
+msgstr "これらのテンプレートのいずれかを使用しているリソースを検索します。"
+
+msgid "Search by media presence"
+msgstr "メディアの有無で検索"
+
+msgid "Select media presence…"
+msgstr "メディアの有無を選択..."
+
+msgid "Has media"
+msgstr "メディアあり"
+
+msgid "Has no media"
+msgstr "メディアなし"
+
+msgid "Search full-text"
+msgstr "全文検索"
+
+msgid "Remove value"
+msgstr "値を削除"
+
+msgid "Expand"
+msgstr "展開"
+
+msgid "Search by geographic location"
+msgstr "地理的位置で検索"
+
+msgid "Address"
+msgstr "住所"
+
+msgid "Radius"
+msgstr "半径"
+
+msgid "Unit"
+msgstr "単位"
+
+msgid "Kilometers"
+msgstr "キロメートル"
+
+msgid "Miles"
+msgstr "マイル"

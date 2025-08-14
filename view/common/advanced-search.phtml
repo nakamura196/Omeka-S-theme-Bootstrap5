@@ -1,0 +1,330 @@
+<?php
+/**
+ * Advanced Search Form - Bootstrap 5版
+ * 
+ * This template accepts three variables:
+ *   - $query: The query array
+ *   - $resourceType: The resource type; options are item, media, itemSet
+ *   - $partialExcludelist: An array of partials to exclude
+ */
+$query = isset($query) ? $query : null;
+$resourceType = isset($resourceType) ? $resourceType : 'item';
+$partialExcludelist = (isset($partialExcludelist) && is_array($partialExcludelist)) ? $partialExcludelist : [];
+
+$this->headLink()->prependStylesheet($this->assetUrl('css/advanced-search.css', 'Omeka'));
+$this->headScript()->appendFile($this->assetUrl('js/advanced-search.js', 'Omeka'));
+
+$partials = [];
+$addPartial = function($partial) use (&$partials, $partialExcludelist) {
+    if (!in_array($partial, $partialExcludelist)) {
+        // Add the partial if it is not in the exclude list.
+        $partials[] = $partial;
+    }
+};
+
+$addPartial('common/advanced-search/sort');
+$addPartial('common/advanced-search/fulltext');
+$addPartial('common/advanced-search/properties');
+$addPartial('common/advanced-search/resource-class');
+if ($this->status()->isAdminRequest()) {
+    $addPartial('common/advanced-search/resource-template');
+}
+switch ($resourceType) {
+    case 'item':
+        $addPartial('common/advanced-search/item-sets');
+        if ($this->status()->isAdminRequest()) {
+            $addPartial('common/advanced-search/site');
+        }
+        $addPartial('common/advanced-search/has-media');
+        break;
+    case 'media':
+        $addPartial('common/advanced-search/media-type');
+        break;
+    case 'itemSet':
+        break;
+}
+if ($this->status()->isAdminRequest()) {
+    $addPartial('common/advanced-search/owner');
+    $addPartial('common/advanced-search/visibility');
+}
+if ($this->status()->isSiteRequest()) {
+    $addPartial('common/advanced-search/resource-template-restrict');
+}
+$addPartial('common/advanced-search/ids');
+
+$filterResults = $this->trigger(
+    'view.advanced_search',
+    [
+        'query' => $query,
+        'resourceType' => $resourceType,
+        'partials' => $partials,
+    ],
+    true
+);
+$partials = $filterResults['partials'];
+?>
+
+<style>
+/* Advanced Search フォームのBootstrap 5カスタマイズ */
+.advanced-search-content .field {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 0.375rem;
+    border: 1px solid #dee2e6;
+}
+
+.advanced-search-content .field-meta {
+    margin-bottom: 0.75rem;
+}
+
+.advanced-search-content .field-meta .label,
+.advanced-search-content .field-meta label {
+    font-weight: 600;
+    color: #212529;
+    font-size: 1rem;
+    display: inline-block;
+    margin-bottom: 0.5rem;
+}
+
+.advanced-search-content .field-description {
+    color: #6c757d;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.advanced-search-content .inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.advanced-search-content .inputs > div {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.advanced-search-content input[type="text"],
+.advanced-search-content input[type="number"],
+.advanced-search-content select,
+.advanced-search-content textarea {
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #212529;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: 0.375rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.advanced-search-content input[type="text"]:focus,
+.advanced-search-content input[type="number"]:focus,
+.advanced-search-content select:focus,
+.advanced-search-content textarea:focus {
+    color: #212529;
+    background-color: #fff;
+    border-color: #86b7fe;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.advanced-search-content select {
+    cursor: pointer;
+}
+
+.advanced-search-content .query-property {
+    min-width: 200px;
+    max-width: 300px;
+}
+
+.advanced-search-content .query-type {
+    min-width: 150px;
+}
+
+.advanced-search-content .query-text {
+    flex: 1;
+    min-width: 200px;
+}
+
+.advanced-search-content .joiner {
+    width: 80px;
+}
+
+/* ボタンスタイル */
+.advanced-search-content button.add-value,
+.advanced-search-content button.remove-value {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+    border-radius: 0.25rem;
+    border: 1px solid transparent;
+    transition: all 0.15s ease-in-out;
+    cursor: pointer;
+}
+
+.advanced-search-content button.add-value {
+    background-color: #198754;
+    color: white;
+}
+
+.advanced-search-content button.add-value:hover {
+    background-color: #157347;
+}
+
+.advanced-search-content button.add-value::before {
+    content: "\F145";
+    font-family: "bootstrap-icons";
+    margin-right: 0.5rem;
+}
+
+.advanced-search-content button.remove-value {
+    background-color: #dc3545;
+    color: white;
+}
+
+.advanced-search-content button.remove-value:hover {
+    background-color: #bb2d3b;
+}
+
+.advanced-search-content button.remove-value::before {
+    content: "\F659";
+    font-family: "bootstrap-icons";
+    margin-right: 0.5rem;
+}
+
+/* 地理的検索セクション */
+#mapping-geographic-location {
+    background: #e7f3ff;
+    border-color: #b3d7ff;
+}
+
+#mapping-geographic-location .field-meta .label {
+    color: #0056b3;
+}
+
+#mapping-geographic-location .inputs > div {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+#mapping-geographic-location label {
+    font-weight: 500;
+    margin-bottom: 0;
+    min-width: 80px;
+}
+
+#mapping-geographic-location input[type="text"] {
+    flex: 1;
+}
+
+#mapping-geographic-location #mapping_radius {
+    width: 100px;
+}
+
+#mapping-geographic-location #mapping_radius_unit {
+    width: 150px;
+}
+
+/* マルチバリューフィールド */
+.advanced-search-content .multi-value .value {
+    padding: 0.75rem;
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.advanced-search-content .multi-value .value:hover {
+    border-color: #adb5bd;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+    .advanced-search-content .inputs > div {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .advanced-search-content .query-property,
+    .advanced-search-content .query-type,
+    .advanced-search-content .query-text {
+        width: 100%;
+        max-width: none;
+    }
+    
+    #mapping-geographic-location .inputs > div {
+        flex-direction: column;
+    }
+    
+    #mapping-geographic-location label {
+        min-width: auto;
+    }
+}
+
+/* アクセシビリティ向上 */
+.advanced-search-content .field:focus-within {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.1rem rgba(13, 110, 253, 0.1);
+}
+
+.advanced-search-content .expand {
+    color: #0d6efd;
+    text-decoration: none;
+    margin-left: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.advanced-search-content .expand:hover {
+    text-decoration: underline;
+}
+
+/* Has Media フィールド - 他のフィールドと同じスタイルを適用 */
+#has_media_field {
+    /* 他のフィールドと同じスタイルが自動的に適用される */
+}
+
+/* IDフィールドの特別処理 */
+.advanced-search-content .field:last-child {
+    margin-bottom: 0;
+}
+</style>
+
+<div class="advanced-search-content">
+<?php
+foreach ($partials as $partial) {
+    echo $this->partial($partial, ['query' => $query, 'resourceType' => $resourceType]);
+}
+?>
+</div>
+<script>
+// Bootstrap 5対応のJavaScript初期化
+document.addEventListener('DOMContentLoaded', function() {
+    // Omeka標準の初期化
+    if (typeof Omeka !== 'undefined' && typeof Omeka.prepareSearchForm === 'function') {
+        Omeka.prepareSearchForm($('#advanced-search'));
+    }
+    
+    // Bootstrap 5のツールチップ初期化
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+    
+    // フォームバリデーション
+    var forms = document.querySelectorAll('.needs-validation');
+    Array.prototype.slice.call(forms).forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        }, false);
+    });
+});
+</script>
