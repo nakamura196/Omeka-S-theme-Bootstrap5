@@ -396,3 +396,30 @@ msgstr "有効なフィルター"
 
 msgid "Remove filter"
 msgstr "フィルターを削除"
+
+msgid "Browse Items"
+msgstr "アイテム一覧"
+
+msgid "Explore our collection of items"
+msgstr "コレクションのアイテムをご覧ください"
+
+msgid "%s items"
+msgstr "%s 件のアイテム"
+
+msgid "Search items..."
+msgstr "アイテムを検索..."
+
+msgid "Title"
+msgstr "タイトル"
+
+msgid "Identifier"
+msgstr "識別子"
+
+msgid "Class"
+msgstr "クラス"
+
+msgid "No items found"
+msgstr "アイテムが見つかりません"
+
+msgid "Try adjusting your search or filters"
+msgstr "検索条件やフィルターを調整してください"
