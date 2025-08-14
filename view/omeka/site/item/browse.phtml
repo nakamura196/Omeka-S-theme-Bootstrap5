@@ -58,10 +58,20 @@ $sortHeadings = [
             </div>
             <div class="col-lg-4 text-lg-end">
                 <div class="browse-stats">
-                    <div class="badge bg-primary fs-6 px-3 py-2">
+                    <div class="badge bg-primary fs-6 px-3 py-2 me-2">
                         <i class="bi bi-grid-3x3-gap me-2"></i>
                         <?= sprintf($translate('%s items'), isset($items) ? count($items) : 0) ?>
                     </div>
+                    <!-- 詳細検索へのリンク -->
+                    <?php 
+                    // Omeka Sのデフォルト詳細検索ページへのリンク
+                    $advancedSearchUrl = $this->url('site/resource', ['site-slug' => $site->slug(), 'controller' => 'item', 'action' => 'search'], ['query' => ['advanced' => 1]], true);
+                    ?>
+                    <a href="<?= $escape($advancedSearchUrl) ?>" 
+                       class="btn btn-outline-primary">
+                        <i class="bi bi-funnel me-2"></i>
+                        <?= $translate('Advanced Search') ?>
+                    </a>
                 </div>
             </div>
         </div>

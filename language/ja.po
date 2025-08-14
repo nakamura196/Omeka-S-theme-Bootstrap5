@@ -522,3 +522,33 @@ msgstr "キロメートル"
 
 msgid "Miles"
 msgstr "マイル"
+
+msgid "Advanced Item Search"
+msgstr "アイテム詳細検索"
+
+msgid "Search for items using detailed criteria"
+msgstr "詳細な条件でアイテムを検索"
+
+msgid "Search Tips"
+msgstr "検索のヒント"
+
+msgid "Use multiple criteria to narrow your search"
+msgstr "複数の条件を使用して検索を絞り込む"
+
+msgid "Leave fields empty to exclude them from search"
+msgstr "空のフィールドは検索から除外されます"
+
+msgid "Use wildcards (*) for partial matches"
+msgstr "部分一致にはワイルドカード（*）を使用"
+
+msgid "Search Options"
+msgstr "検索オプション"
+
+msgid "Search by property values"
+msgstr "プロパティ値で検索"
+
+msgid "Filter by item sets"
+msgstr "アイテムセットでフィルター"
+
+msgid "Select resource classes"
+msgstr "リソースクラスを選択"

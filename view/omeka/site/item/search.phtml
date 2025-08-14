@@ -1,0 +1,241 @@
+<?php
+/**
+ * Modern Advanced Search Page
+ * 
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ */
+$translate = $this->plugin('translate');
+$escape = $this->plugin('escapeHtml');
+$this->htmlElement('body')->appendAttribute('class', 'items search advanced-search-page');
+?>
+
+<!-- モダンな詳細検索ページ -->
+<div class="advanced-search-wrapper">
+    <!-- ヘッダーセクション -->
+    <div class="search-header bg-light py-5 mb-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center">
+                    <h1 class="display-5 fw-bold mb-3">
+                        <i class="bi bi-funnel me-3"></i>
+                        <?= $translate('Advanced Item Search') ?>
+                    </h1>
+                    <p class="lead text-muted">
+                        <?= $translate('Search for items using detailed criteria') ?>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 検索フォーム -->
+    <div class="container mb-5">
+        <div class="row">
+            <div class="col-lg-10 mx-auto">
+                <form id="advanced-search" method="get" action="<?= $escape($this->url(null, ['action' => 'browse'], true)) ?>">
+                    <div class="card shadow-sm">
+                        <div class="card-body p-4">
+                            <!-- 詳細検索フィールド -->
+                            <?= $this->partial(
+                                'common/advanced-search',
+                                ['query' => $this->params()->fromQuery(), 'resourceType' => 'item']
+                            ) ?>
+                        </div>
+                        
+                        <!-- 検索ボタン -->
+                        <div class="card-footer bg-white border-top py-4">
+                            <div class="d-flex justify-content-center gap-3">
+                                <button type="reset" class="btn btn-outline-secondary btn-lg px-5">
+                                    <i class="bi bi-arrow-clockwise me-2"></i>
+                                    <?= $translate('Reset') ?>
+                                </button>
+                                <button type="submit" name="submit" class="btn btn-primary btn-lg px-5">
+                                    <i class="bi bi-search me-2"></i>
+                                    <?= $translate('Search') ?>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ヘルプセクション -->
+    <div class="container mb-5">
+        <div class="row">
+            <div class="col-lg-10 mx-auto">
+                <div class="card border-info">
+                    <div class="card-header bg-info bg-opacity-10">
+                        <h5 class="mb-0">
+                            <i class="bi bi-question-circle me-2"></i>
+                            <?= $translate('Search Tips') ?>
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="fw-bold mb-3"><?= $translate('How to use') ?></h6>
+                                <ul class="list-unstyled">
+                                    <li class="mb-2">
+                                        <i class="bi bi-check-circle text-success me-2"></i>
+                                        <?= $translate('Use multiple criteria to narrow your search') ?>
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="bi bi-check-circle text-success me-2"></i>
+                                        <?= $translate('Leave fields empty to exclude them from search') ?>
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="bi bi-check-circle text-success me-2"></i>
+                                        <?= $translate('Use wildcards (*) for partial matches') ?>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="fw-bold mb-3"><?= $translate('Search Options') ?></h6>
+                                <ul class="list-unstyled">
+                                    <li class="mb-2">
+                                        <i class="bi bi-tag text-primary me-2"></i>
+                                        <?= $translate('Search by property values') ?>
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="bi bi-collection text-primary me-2"></i>
+                                        <?= $translate('Filter by item sets') ?>
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="bi bi-diagram-3 text-primary me-2"></i>
+                                        <?= $translate('Select resource classes') ?>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- メインコンテンツとフッターの間隔を確保 -->
+<div class="mb-5 pb-5"></div>
+
+<style>
+/* 詳細検索ページのカスタムスタイル */
+.advanced-search-page {
+    min-height: 80vh;
+}
+
+/* フォームフィールドのスタイル改善 */
+#advanced-search .field {
+    margin-bottom: 1.5rem;
+}
+
+#advanced-search .field > label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: var(--bs-gray-700);
+}
+
+#advanced-search input[type="text"],
+#advanced-search select,
+#advanced-search textarea {
+    display: block;
+    width: 100%;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--bs-body-color);
+    background-color: var(--bs-body-bg);
+    background-clip: padding-box;
+    border: var(--bs-border-width) solid var(--bs-border-color);
+    appearance: none;
+    border-radius: var(--bs-border-radius);
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+
+#advanced-search input[type="text"]:focus,
+#advanced-search select:focus,
+#advanced-search textarea:focus {
+    color: var(--bs-body-color);
+    background-color: var(--bs-body-bg);
+    border-color: var(--bs-primary);
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+}
+
+/* チェックボックスとラジオボタンのスタイル */
+#advanced-search input[type="checkbox"],
+#advanced-search input[type="radio"] {
+    width: 1em;
+    height: 1em;
+    margin-top: 0.25em;
+    vertical-align: top;
+    background-color: var(--bs-body-bg);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    border: var(--bs-border-width) solid var(--bs-border-color);
+    appearance: none;
+}
+
+#advanced-search input[type="checkbox"] {
+    border-radius: 0.25em;
+}
+
+#advanced-search input[type="radio"] {
+    border-radius: 50%;
+}
+
+#advanced-search input[type="checkbox"]:checked {
+    background-color: var(--bs-primary);
+    border-color: var(--bs-primary);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e");
+}
+
+#advanced-search input[type="radio"]:checked {
+    background-color: var(--bs-primary);
+    border-color: var(--bs-primary);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='2' fill='%23fff'/%3e%3c/svg%3e");
+}
+
+/* フィールドセットのスタイル */
+#advanced-search fieldset {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    border: 1px solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
+    background-color: var(--bs-gray-100);
+}
+
+#advanced-search fieldset legend {
+    float: none;
+    width: auto;
+    padding: 0 0.5rem;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--bs-primary);
+}
+
+/* ボタンのホバーエフェクト */
+.advanced-search-wrapper .btn {
+    transition: all 0.3s ease;
+}
+
+.advanced-search-wrapper .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+/* レスポンシブ調整 */
+@media (max-width: 768px) {
+    .advanced-search-wrapper .display-5 {
+        font-size: 2rem;
+    }
+    
+    #advanced-search fieldset {
+        padding: 1rem;
+    }
+}
+</style>
