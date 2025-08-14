@@ -1,0 +1,437 @@
+<?php
+/**
+ * Media Show Page - Bootstrap 5 Modern Design
+ * 
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\MediaRepresentation $media
+ */
+
+$translate = $this->plugin('translate');
+$escape = $this->plugin('escapeHtml');
+$thumbnail = $this->plugin('thumbnail');
+
+$filterLocale = (bool) $this->siteSetting('filter_locale_values');
+$lang = $this->lang();
+$valueLang = $filterLocale ? [$lang, ''] : null;
+
+$this->htmlElement('body')->appendAttribute('class', 'media resource show');
+$this->headLink()->appendStylesheet($this->assetUrl('css/resource-page-blocks.css', 'Omeka'));
+
+// Get the parent item
+$item = $media->item();
+$mediaType = $media->mediaType();
+$renderer = $media->renderer();
+?>
+
+<!-- メディア詳細ページ（Bootstrap 5） -->
+<div class="media-show-wrapper">
+    <!-- パンくずリスト -->
+    <nav aria-label="breadcrumb" class="bg-light py-2">
+        <div class="container">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item">
+                    <a href="<?= $escape($this->url('site', [], true)) ?>">
+                        <i class="bi bi-house-door"></i>
+                        <?= $escape($translate('Home')) ?>
+                    </a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="<?= $escape($this->url('site/resource', ['site-slug' => $this->params()->fromRoute('site-slug'), 'controller' => 'item', 'action' => 'browse'], [], true)) ?>">
+                        <?= $escape($translate('Items')) ?>
+                    </a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="<?= $escape($item->url()) ?>">
+                        <?= $escape($item->displayTitle(null, $valueLang)) ?>
+                    </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    <?= $escape($media->displayTitle(null, $valueLang)) ?>
+                </li>
+            </ol>
+        </div>
+    </nav>
+
+    <!-- ヘッダーセクション -->
+    <div class="media-header bg-white py-4 border-bottom mb-4">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="h2 fw-bold mb-2">
+                        <i class="bi bi-file-earmark-play me-2"></i>
+                        <?= $escape($media->displayTitle(null, $valueLang)) ?>
+                    </h1>
+                    
+                    <?php $description = $media->displayDescription(null, $valueLang); ?>
+                    <?php if ($description): ?>
+                    <p class="text-muted mb-0">
+                        <?= $escape($description) ?>
+                    </p>
+                    <?php endif; ?>
+                </div>
+                
+                <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+                    <!-- メディアアクション -->
+                    <div class="btn-group" role="group">
+                        <a href="<?= $escape($media->originalUrl()) ?>" 
+                           class="btn btn-outline-primary" 
+                           target="_blank">
+                            <i class="bi bi-download me-2"></i>
+                            <?= $escape($translate('Download')) ?>
+                        </a>
+                        <a href="<?= $escape($item->url()) ?>" 
+                           class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-2"></i>
+                            <?= $escape($translate('Back to Item')) ?>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- メインコンテンツ -->
+    <div class="container">
+        <div class="row">
+            <!-- メディアビューアー -->
+            <div class="col-lg-8 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-body p-0">
+                        <div class="media-viewer">
+                            <?php
+                            // Render the media based on its type
+                            if (strpos($mediaType, 'image/') === 0): ?>
+                                <!-- 画像の表示 -->
+                                <div class="image-viewer text-center p-3">
+                                    <img src="<?= $escape($media->originalUrl()) ?>" 
+                                         class="img-fluid" 
+                                         alt="<?= $escape($media->displayTitle(null, $valueLang)) ?>">
+                                </div>
+                            <?php elseif (strpos($mediaType, 'video/') === 0): ?>
+                                <!-- ビデオの表示 -->
+                                <div class="video-viewer">
+                                    <video controls class="w-100">
+                                        <source src="<?= $escape($media->originalUrl()) ?>" 
+                                                type="<?= $escape($mediaType) ?>">
+                                        <?= $escape($translate('Your browser does not support the video tag.')) ?>
+                                    </video>
+                                </div>
+                            <?php elseif (strpos($mediaType, 'audio/') === 0): ?>
+                                <!-- オーディオの表示 -->
+                                <div class="audio-viewer p-4">
+                                    <audio controls class="w-100">
+                                        <source src="<?= $escape($media->originalUrl()) ?>" 
+                                                type="<?= $escape($mediaType) ?>">
+                                        <?= $escape($translate('Your browser does not support the audio tag.')) ?>
+                                    </audio>
+                                </div>
+                            <?php elseif ($mediaType === 'application/pdf'): ?>
+                                <!-- PDFの表示 -->
+                                <div class="pdf-viewer">
+                                    <iframe src="<?= $escape($media->originalUrl()) ?>" 
+                                            class="w-100" 
+                                            style="height: 600px;">
+                                    </iframe>
+                                </div>
+                            <?php else: ?>
+                                <!-- その他のメディアタイプ -->
+                                <div class="default-viewer p-5 text-center">
+                                    <?php echo $media->render(); ?>
+                                    <?php if (!$media->render()): ?>
+                                    <i class="bi bi-file-earmark display-1 text-muted mb-3"></i>
+                                    <h4><?= $escape($translate('Preview not available')) ?></h4>
+                                    <p class="text-muted">
+                                        <?= $escape($translate('This file type cannot be previewed directly.')) ?>
+                                    </p>
+                                    <a href="<?= $escape($media->originalUrl()) ?>" 
+                                       class="btn btn-primary mt-3" 
+                                       target="_blank">
+                                        <i class="bi bi-download me-2"></i>
+                                        <?= $escape($translate('Download file')) ?>
+                                    </a>
+                                    <?php endif; ?>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- サムネイルナビゲーション（同じアイテムの他のメディア） -->
+                <?php 
+                $itemMedia = $item->media();
+                if (count($itemMedia) > 1): 
+                ?>
+                <div class="card shadow-sm mt-4">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0">
+                            <i class="bi bi-images me-2"></i>
+                            <?= $escape($translate('Other Media in this Item')) ?>
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="media-thumbnails">
+                            <div class="row g-2">
+                                <?php foreach ($itemMedia as $otherMedia): ?>
+                                <div class="col-3 col-md-2">
+                                    <a href="<?= $escape($otherMedia->url()) ?>" 
+                                       class="thumbnail-link <?= $otherMedia->id() === $media->id() ? 'active' : '' ?>">
+                                        <?php 
+                                        $thumbnailHtml = $thumbnail($otherMedia, 'square');
+                                        if ($thumbnailHtml): 
+                                            echo $thumbnailHtml;
+                                        else: ?>
+                                        <div class="thumbnail-placeholder">
+                                            <i class="bi bi-file-earmark"></i>
+                                        </div>
+                                        <?php endif; ?>
+                                    </a>
+                                </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <?php endif; ?>
+            </div>
+
+            <!-- サイドバー -->
+            <div class="col-lg-4">
+                <!-- メディア情報 -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0">
+                            <i class="bi bi-info-circle me-2"></i>
+                            <?= $escape($translate('Media Information')) ?>
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <dl class="row mb-0">
+                            <dt class="col-5"><?= $escape($translate('Type')) ?></dt>
+                            <dd class="col-7">
+                                <span class="badge bg-secondary">
+                                    <?= $escape($mediaType ?: $translate('Unknown')) ?>
+                                </span>
+                            </dd>
+
+                            <?php if ($media->size()): ?>
+                            <dt class="col-5"><?= $escape($translate('File size')) ?></dt>
+                            <dd class="col-7">
+                                <?php
+                                $size = $media->size();
+                                if ($size < 1024) {
+                                    echo $size . ' B';
+                                } elseif ($size < 1048576) {
+                                    echo round($size / 1024, 2) . ' KB';
+                                } else {
+                                    echo round($size / 1048576, 2) . ' MB';
+                                }
+                                ?>
+                            </dd>
+                            <?php endif; ?>
+
+                            <?php if ($media->created()): ?>
+                            <dt class="col-5"><?= $escape($translate('Added')) ?></dt>
+                            <dd class="col-7">
+                                <?= $escape($media->created()->format('Y-m-d')) ?>
+                            </dd>
+                            <?php endif; ?>
+
+                            <?php if ($media->source()): ?>
+                            <dt class="col-5"><?= $escape($translate('Source')) ?></dt>
+                            <dd class="col-7">
+                                <?= $escape($media->source()) ?>
+                            </dd>
+                            <?php endif; ?>
+                        </dl>
+                    </div>
+                </div>
+
+                <!-- メタデータ -->
+                <?php 
+                $values = $media->displayValues();
+                if ($values && is_array($values) && count($values) > 0): 
+                ?>
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0">
+                            <i class="bi bi-tags me-2"></i>
+                            <?= $escape($translate('Metadata')) ?>
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <dl class="row mb-0">
+                            <?php foreach ($values as $term => $valueInfo): ?>
+                                <?php if (isset($valueInfo['values']) && is_array($valueInfo['values'])): ?>
+                                <dt class="col-12 text-muted small">
+                                    <?= $escape($valueInfo['alternate_label'] ?? ($valueInfo['label'] ?? $term)) ?>
+                                </dt>
+                                <dd class="col-12 mb-3">
+                                    <?php foreach ($valueInfo['values'] as $value): ?>
+                                        <?php if (is_object($value) && method_exists($value, 'asHtml')): ?>
+                                            <?= $value->asHtml() ?>
+                                        <?php else: ?>
+                                            <?= $escape((string) $value) ?>
+                                        <?php endif; ?>
+                                    <?php endforeach; ?>
+                                </dd>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </dl>
+                    </div>
+                </div>
+                <?php endif; ?>
+
+                <!-- 親アイテム情報 -->
+                <div class="card shadow-sm">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0">
+                            <i class="bi bi-collection me-2"></i>
+                            <?= $escape($translate('Parent Item')) ?>
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="card-title">
+                            <a href="<?= $escape($item->url()) ?>">
+                                <?= $escape($item->displayTitle(null, $valueLang)) ?>
+                            </a>
+                        </h6>
+                        <?php 
+                        $itemDescription = $item->displayDescription(null, $valueLang);
+                        if ($itemDescription): ?>
+                        <p class="card-text text-muted small">
+                            <?= $escape(mb_strimwidth($itemDescription, 0, 150, '...')) ?>
+                        </p>
+                        <?php endif; ?>
+                        <a href="<?= $escape($item->url()) ?>" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-arrow-right me-1"></i>
+                            <?= $escape($translate('View Item')) ?>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- メインコンテンツとフッターの間隔を確保 -->
+<div class="mb-5 pb-5"></div>
+
+<style>
+/* メディア詳細ページのスタイル */
+.media-show-wrapper {
+    min-height: 60vh;
+}
+
+/* メディアビューアー */
+.media-viewer {
+    background: #f8f9fa;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.image-viewer img {
+    max-width: 100%;
+    height: auto;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.video-viewer video,
+.audio-viewer audio {
+    background: #000;
+}
+
+/* サムネイルナビゲーション */
+.media-thumbnails .thumbnail-link {
+    display: block;
+    position: relative;
+    border: 2px solid transparent;
+    border-radius: 0.25rem;
+    overflow: hidden;
+    transition: all 0.2s;
+}
+
+.media-thumbnails .thumbnail-link:hover {
+    border-color: #0d6efd;
+}
+
+.media-thumbnails .thumbnail-link.active {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.media-thumbnails .thumbnail-link img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.thumbnail-placeholder {
+    width: 100%;
+    padding-top: 100%;
+    position: relative;
+    background: #e9ecef;
+}
+
+.thumbnail-placeholder i {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.5rem;
+    color: #6c757d;
+}
+
+/* カードスタイル */
+.card {
+    border: 1px solid rgba(0,0,0,0.125);
+}
+
+.card-header {
+    border-bottom: 2px solid #f8f9fa;
+    font-weight: 600;
+}
+
+/* メタデータ表示 */
+dl.row dt {
+    font-weight: 600;
+    color: #6c757d;
+}
+
+dl.row dd {
+    color: #212529;
+    word-break: break-word;
+}
+
+/* パンくずリスト */
+.breadcrumb {
+    background: transparent;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+    content: "›";
+    font-weight: bold;
+}
+
+/* レスポンシブ調整 */
+@media (max-width: 768px) {
+    .media-header .btn-group {
+        display: flex;
+        width: 100%;
+    }
+    
+    .media-header .btn {
+        flex: 1;
+    }
+    
+    .media-viewer {
+        min-height: 250px;
+    }
+    
+    .media-thumbnails .col-3 {
+        flex: 0 0 25%;
+        max-width: 25%;
+    }
+}
+</style>

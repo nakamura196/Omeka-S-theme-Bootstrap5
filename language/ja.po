@@ -624,3 +624,54 @@ msgstr "すべての %d アイテムを表示"
 
 msgid "This collection has no items yet."
 msgstr "このコレクションにはまだアイテムがありません。"
+
+msgid "Download"
+msgstr "ダウンロード"
+
+msgid "Back to Item"
+msgstr "アイテムに戻る"
+
+msgid "Your browser does not support the video tag."
+msgstr "お使いのブラウザはビデオタグをサポートしていません。"
+
+msgid "Your browser does not support the audio tag."
+msgstr "お使いのブラウザはオーディオタグをサポートしていません。"
+
+msgid "Preview not available"
+msgstr "プレビューは利用できません"
+
+msgid "This file type cannot be previewed directly."
+msgstr "このファイルタイプは直接プレビューできません。"
+
+msgid "Download file"
+msgstr "ファイルをダウンロード"
+
+msgid "Other Media in this Item"
+msgstr "このアイテムの他のメディア"
+
+msgid "Media Information"
+msgstr "メディア情報"
+
+msgid "Type"
+msgstr "タイプ"
+
+msgid "Unknown"
+msgstr "不明"
+
+msgid "File size"
+msgstr "ファイルサイズ"
+
+msgid "Added"
+msgstr "追加日"
+
+msgid "Source"
+msgstr "ソース"
+
+msgid "Metadata"
+msgstr "メタデータ"
+
+msgid "Parent Item"
+msgstr "親アイテム"
+
+msgid "View Item"
+msgstr "アイテムを表示"
