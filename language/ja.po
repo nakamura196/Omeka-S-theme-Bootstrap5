@@ -552,3 +552,75 @@ msgstr "アイテムセットでフィルター"
 
 msgid "Select resource classes"
 msgstr "リソースクラスを選択"
+
+msgid "Welcome to our digital collection"
+msgstr "デジタルコレクションへようこそ"
+
+msgid "This site contains various digital resources and collections. Please explore using the navigation menu or search function."
+msgstr "このサイトには様々なデジタルリソースとコレクションが含まれています。ナビゲーションメニューまたは検索機能を使用して探索してください。"
+
+msgid "Explore all items in our collection"
+msgstr "コレクション内のすべてのアイテムを探索"
+
+msgid "Find specific items or collections"
+msgstr "特定のアイテムやコレクションを検索"
+
+msgid "Item Sets"
+msgstr "アイテムセット"
+
+msgid "Browse our curated collections"
+msgstr "キュレーションされたコレクションを閲覧"
+
+msgid "View Items"
+msgstr "アイテムを表示"
+
+msgid "View Collections"
+msgstr "コレクションを表示"
+
+msgid "Site Pages"
+msgstr "サイトページ"
+
+msgid "This site has no pages yet."
+msgstr "このサイトにはまだページがありません。"
+
+msgid "Please check back later or explore our items and collections using the options above."
+msgstr "後でもう一度確認するか、上記のオプションを使用してアイテムやコレクションを探索してください。"
+
+msgid "Collection Statistics"
+msgstr "コレクション統計"
+
+msgid "Media Files"
+msgstr "メディアファイル"
+
+msgid "Search item sets..."
+msgstr "アイテムセットを検索..."
+
+msgid "Date created"
+msgstr "作成日"
+
+msgid "%s item sets"
+msgstr "%s 件のアイテムセット"
+
+msgid "No item sets found"
+msgstr "アイテムセットが見つかりません"
+
+msgid "%d items"
+msgstr "%d アイテム"
+
+msgid "Collection Information"
+msgstr "コレクション情報"
+
+msgid "Actions"
+msgstr "アクション"
+
+msgid "View all items"
+msgstr "すべてのアイテムを表示"
+
+msgid "Items in this collection"
+msgstr "このコレクションのアイテム"
+
+msgid "View all %d items"
+msgstr "すべての %d アイテムを表示"
+
+msgid "This collection has no items yet."
+msgstr "このコレクションにはまだアイテムがありません。"

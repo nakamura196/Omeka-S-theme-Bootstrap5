@@ -1,0 +1,236 @@
+<?php
+/**
+ * Site Index Page (No Homepage Set)
+ * 
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\SiteRepresentation $site
+ */
+
+$translate = $this->plugin('translate');
+$escape = $this->plugin('escapeHtml');
+$this->htmlElement('body')->appendAttribute('class', 'site-index no-homepage');
+?>
+
+<!-- サイトインデックスページ -->
+<div class="site-index-wrapper">
+    <!-- ヘッダーセクション -->
+    <div class="index-header bg-light py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center">
+                    <h1 class="display-5 fw-bold mb-3">
+                        <i class="bi bi-house-door me-3"></i>
+                        <?= $escape($site->title()) ?>
+                    </h1>
+                    <?php if ($site->summary()): ?>
+                    <p class="lead text-muted">
+                        <?= $escape($site->summary()) ?>
+                    </p>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- メインコンテンツ -->
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-lg-10 mx-auto">
+                <!-- ウェルカムメッセージ -->
+                <div class="card shadow-sm mb-5">
+                    <div class="card-body text-center py-5">
+                        <i class="bi bi-info-circle display-4 text-primary mb-3"></i>
+                        <h2 class="h3 mb-3"><?= $escape($translate('Welcome to our digital collection')) ?></h2>
+                        <p class="text-muted mb-4">
+                            <?= $escape($translate('This site contains various digital resources and collections. Please explore using the navigation menu or search function.')) ?>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- クイックアクション -->
+                <div class="row g-4 mb-5">
+                    <div class="col-md-4">
+                        <div class="card h-100 text-center">
+                            <div class="card-body">
+                                <i class="bi bi-collection display-4 text-primary mb-3"></i>
+                                <h5 class="card-title"><?= $escape($translate('Browse Items')) ?></h5>
+                                <p class="card-text text-muted">
+                                    <?= $escape($translate('Explore all items in our collection')) ?>
+                                </p>
+                                <a href="<?= $escape($site->url() . '/item') ?>" 
+                                   class="btn btn-primary">
+                                    <?= $escape($translate('View Items')) ?>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="card h-100 text-center">
+                            <div class="card-body">
+                                <i class="bi bi-search display-4 text-success mb-3"></i>
+                                <h5 class="card-title"><?= $escape($translate('Search')) ?></h5>
+                                <p class="card-text text-muted">
+                                    <?= $escape($translate('Find specific items or collections')) ?>
+                                </p>
+                                <a href="<?= $escape($site->url() . '/item/search') ?>" 
+                                   class="btn btn-success">
+                                    <?= $escape($translate('Advanced Search')) ?>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="card h-100 text-center">
+                            <div class="card-body">
+                                <i class="bi bi-folder2-open display-4 text-info mb-3"></i>
+                                <h5 class="card-title"><?= $escape($translate('Item Sets')) ?></h5>
+                                <p class="card-text text-muted">
+                                    <?= $escape($translate('Browse our curated collections')) ?>
+                                </p>
+                                <a href="<?= $escape($site->url() . '/item-set') ?>" 
+                                   class="btn btn-info text-white">
+                                    <?= $escape($translate('View Collections')) ?>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- サイトページリスト（もしあれば） -->
+                <?php
+                $pages = $site->pages();
+                $hasPages = false;
+                foreach ($pages as $page) {
+                    if ($page->isPublic()) {
+                        $hasPages = true;
+                        break;
+                    }
+                }
+                ?>
+                
+                <?php if ($hasPages): ?>
+                <div class="site-pages mb-5">
+                    <h3 class="h4 mb-4">
+                        <i class="bi bi-file-text me-2"></i>
+                        <?= $escape($translate('Site Pages')) ?>
+                    </h3>
+                    <div class="list-group">
+                        <?php foreach ($pages as $page): ?>
+                            <?php if ($page->isPublic()): ?>
+                            <a href="<?= $escape($page->url()) ?>" class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between align-items-center">
+                                    <h6 class="mb-0">
+                                        <i class="bi bi-chevron-right me-2"></i>
+                                        <?= $escape($page->title()) ?>
+                                    </h6>
+                                </div>
+                            </a>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                <?php else: ?>
+                <!-- ページがない場合のメッセージ -->
+                <div class="alert alert-info" role="alert">
+                    <i class="bi bi-info-circle me-2"></i>
+                    <?= $escape($translate('This site has no pages yet.')) ?>
+                    <?= $escape($translate('Please check back later or explore our items and collections using the options above.')) ?>
+                </div>
+                <?php endif; ?>
+
+                <!-- 統計情報 -->
+                <div class="site-stats">
+                    <h3 class="h4 mb-4">
+                        <i class="bi bi-bar-chart me-2"></i>
+                        <?= $escape($translate('Collection Statistics')) ?>
+                    </h3>
+                    <div class="row g-3">
+                        <?php
+                        $itemCount = $this->api()->search('items', ['site_id' => $site->id(), 'limit' => 1])->getTotalResults();
+                        $itemSetCount = $this->api()->search('item_sets', ['site_id' => $site->id(), 'limit' => 1])->getTotalResults();
+                        $mediaCount = $this->api()->search('media', ['site_id' => $site->id(), 'limit' => 1])->getTotalResults();
+                        ?>
+                        <div class="col-md-4">
+                            <div class="card text-center">
+                                <div class="card-body">
+                                    <h3 class="display-6 text-primary"><?= number_format($itemCount) ?></h3>
+                                    <p class="text-muted mb-0"><?= $escape($translate('Items')) ?></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card text-center">
+                                <div class="card-body">
+                                    <h3 class="display-6 text-success"><?= number_format($itemSetCount) ?></h3>
+                                    <p class="text-muted mb-0"><?= $escape($translate('Item Sets')) ?></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card text-center">
+                                <div class="card-body">
+                                    <h3 class="display-6 text-info"><?= number_format($mediaCount) ?></h3>
+                                    <p class="text-muted mb-0"><?= $escape($translate('Media Files')) ?></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- メインコンテンツとフッターの間隔を確保 -->
+<div class="mb-5 pb-5"></div>
+
+<style>
+/* サイトインデックスページのスタイル */
+.site-index-wrapper {
+    min-height: 60vh;
+}
+
+/* カードのホバーエフェクト */
+.site-index-wrapper .card {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.site-index-wrapper .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+}
+
+/* リストグループのスタイル */
+.site-pages .list-group-item {
+    border-left: 3px solid transparent;
+    transition: all 0.2s;
+}
+
+.site-pages .list-group-item:hover {
+    border-left-color: var(--bs-primary);
+    background-color: var(--bs-light);
+}
+
+/* 統計カードのスタイル */
+.site-stats .card {
+    border: none;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.site-stats .display-6 {
+    font-weight: 700;
+}
+
+/* レスポンシブ調整 */
+@media (max-width: 768px) {
+    .index-header .display-5 {
+        font-size: 2rem;
+    }
+    
+    .site-stats .display-6 {
+        font-size: 2rem;
+    }
+}
+</style>
