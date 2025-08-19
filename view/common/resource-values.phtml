@@ -107,10 +107,96 @@ $languageNames = [
                             
                             <div class="value-content">
                                 <?php if ('resource' == $valueType || strpos($valueType, 'resource') !== false): ?>
-                                <a href="<?= $escape($value->valueResource()->siteUrl()) ?>" class="text-decoration-none link-primary">
-                                    <i class="bi bi-box-arrow-up-right me-1"></i>
-                                    <?php echo $filterLocale ? $value->asHtml($lang) : $value->asHtml(); ?>
-                                </a>
+                                <?php 
+                                $linkedResource = $value->valueResource();
+                                $resourceClass = $linkedResource->resourceClass();
+                                $resourceType = $linkedResource->resourceName();
+                                
+                                // サムネイル画像の取得を試みる
+                                $thumbnailUrl = null;
+                                if ($resourceType === 'items' && method_exists($linkedResource, 'primaryMedia')) {
+                                    $primaryMedia = $linkedResource->primaryMedia();
+                                    if ($primaryMedia && $primaryMedia->hasThumbnails()) {
+                                        $thumbnailUrl = $primaryMedia->thumbnailUrl('square');
+                                    }
+                                } elseif ($resourceType === 'media' && $linkedResource->hasThumbnails()) {
+                                    $thumbnailUrl = $linkedResource->thumbnailUrl('square');
+                                } elseif (method_exists($linkedResource, 'thumbnail')) {
+                                    $thumbnail = $linkedResource->thumbnail();
+                                    if ($thumbnail) {
+                                        $thumbnailUrl = $thumbnail->assetUrl();
+                                    }
+                                }
+                                ?>
+                                <div class="resource-link-card">
+                                    <a href="<?= $escape($linkedResource->siteUrl()) ?>" class="text-decoration-none">
+                                        <div class="d-flex align-items-center p-3 border rounded hover-effect">
+                                            <?php if ($thumbnailUrl): ?>
+                                            <div class="flex-shrink-0 me-3">
+                                                <div class="thumbnail-wrapper">
+                                                    <img src="<?= $escape($thumbnailUrl) ?>" 
+                                                         alt="<?= $escape($linkedResource->displayTitle()) ?>" 
+                                                         class="rounded shadow-sm"
+                                                         style="width: 80px; height: 80px; object-fit: cover;">
+                                                </div>
+                                            </div>
+                                            <?php else: ?>
+                                            <div class="flex-shrink-0 me-3">
+                                                <div class="icon-placeholder bg-light rounded d-flex align-items-center justify-content-center"
+                                                     style="width: 80px; height: 80px;">
+                                                    <?php if ($resourceType === 'items'): ?>
+                                                        <i class="bi bi-file-earmark-text fs-3 text-muted"></i>
+                                                    <?php elseif ($resourceType === 'item_sets'): ?>
+                                                        <i class="bi bi-collection fs-3 text-muted"></i>
+                                                    <?php elseif ($resourceType === 'media'): ?>
+                                                        <i class="bi bi-file-image fs-3 text-muted"></i>
+                                                    <?php else: ?>
+                                                        <i class="bi bi-link-45deg fs-3 text-muted"></i>
+                                                    <?php endif; ?>
+                                                </div>
+                                            </div>
+                                            <?php endif; ?>
+                                            
+                                            <div class="flex-grow-1">
+                                                <div class="d-flex align-items-start justify-content-between">
+                                                    <div>
+                                                        <h6 class="mb-1 text-dark resource-title">
+                                                            <?= $escape($linkedResource->displayTitle()) ?>
+                                                        </h6>
+                                                        
+                                                        <?php if ($resourceClass): ?>
+                                                        <span class="badge bg-primary bg-opacity-10 text-primary me-2">
+                                                            <i class="bi bi-tag me-1"></i><?= $escape($translate($resourceClass->label())) ?>
+                                                        </span>
+                                                        <?php endif; ?>
+                                                        
+                                                        <span class="badge bg-secondary bg-opacity-10 text-secondary">
+                                                            <?php if ($resourceType === 'items'): ?>
+                                                                <i class="bi bi-file-earmark me-1"></i><?= $translate('Item') ?>
+                                                            <?php elseif ($resourceType === 'item_sets'): ?>
+                                                                <i class="bi bi-collection me-1"></i><?= $translate('Item Set') ?>
+                                                            <?php elseif ($resourceType === 'media'): ?>
+                                                                <i class="bi bi-image me-1"></i><?= $translate('Media') ?>
+                                                            <?php endif; ?>
+                                                        </span>
+                                                        
+                                                        <?php 
+                                                        $description = $linkedResource->displayDescription();
+                                                        if ($description): 
+                                                        ?>
+                                                        <p class="text-muted small mb-0 mt-2">
+                                                            <?= $escape(mb_substr($description, 0, 150)) ?><?= mb_strlen($description) > 150 ? '...' : '' ?>
+                                                        </p>
+                                                        <?php endif; ?>
+                                                    </div>
+                                                    <div class="ms-2">
+                                                        <i class="bi bi-box-arrow-up-right text-primary"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
                                 <?php elseif ('uri' == $valueType): ?>
                                 <a href="<?= $escape($value->uri()) ?>" target="_blank" class="text-decoration-none link-primary">
                                     <i class="bi bi-link-45deg me-1"></i>
@@ -157,4 +243,43 @@ $languageNames = [
         </div>
     </div>
 </div>
+
+<style>
+.resource-link-card .hover-effect {
+    transition: all 0.3s ease;
+    background-color: #fff;
+}
+
+.resource-link-card:hover .hover-effect {
+    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+    background-color: #f8f9fa;
+}
+
+.resource-link-card .resource-title {
+    transition: color 0.3s ease;
+}
+
+.resource-link-card:hover .resource-title {
+    color: #0d6efd !important;
+}
+
+.resource-link-card .thumbnail-wrapper {
+    position: relative;
+    overflow: hidden;
+    border-radius: 0.25rem;
+}
+
+.resource-link-card .icon-placeholder {
+    border: 2px solid #dee2e6;
+}
+
+.property-value .resource-link-card {
+    margin-bottom: 0.5rem;
+}
+
+.property-value .resource-link-card:last-child {
+    margin-bottom: 0;
+}
+</style>
 <?php endif; ?>
