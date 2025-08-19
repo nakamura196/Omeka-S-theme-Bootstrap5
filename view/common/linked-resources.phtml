@@ -1,0 +1,260 @@
+<?php
+use Laminas\Form\Element\Select;
+
+// Set up pagination.
+$pagination = $this->pagination(null, $totalCount, $page, $perPage);
+$fragment = 'resources-linked';
+$pagination->setFragment($fragment);
+
+// Set up locale.
+$valueLang = null;
+if ($this->status()->isSiteRequest()) {
+    $lang = $this->lang();
+    $filterLocale = (bool) $this->siteSetting('filter_locale_values');
+    $valueLang = $filterLocale ? [$lang, ''] : null;
+}
+
+// Set up resource property select.
+$labelMap = [
+    'items' => 'Items', // @translate
+    'item_sets' => 'Item sets', // @translate
+    'media' => 'Media', // @translate
+];
+$resourcePropertiesSelect = new Select('resource_property');
+$resourcePropertiesSelect->setValue($resourceProperty);
+$resourcePropertiesSelect->setAttributes([
+    'id' => 'resource-property-select',
+    'class' => 'form-select form-select-sm',
+    'data-url' => $this->url(null, [], true),
+    'data-fragment' => $fragment,
+]);
+$valueOptions = [];
+foreach ($resourcePropertiesAll as $type => $resourceProperties) {
+    if (!$resourceProperties) {
+        continue;
+    }
+    $valueOptions[$type] = [
+        'label' => $labelMap[$type],
+        'options' => [sprintf('%s:', $type) => sprintf('%s: All', $labelMap[$type])],
+    ];
+    foreach ($resourceProperties as $resourceProperty) {
+        $label = $resourceProperty['label_is_translatable']
+            ? $this->translate($resourceProperty['label'])
+            : $resourceProperty['label'];
+        $valueOptions[$type]['options'][] = [
+            'value' => $resourceProperty['compound_id'],
+            'label' => sprintf('%s: %s', $labelMap[$type], $label),
+            'attributes' => [
+                'title' => $resourceProperty['term'],
+            ],
+        ];
+    }
+}
+$resourcePropertiesSelect->setValueOptions($valueOptions);
+
+$translate = $this->plugin('translate');
+$escape = $this->plugin('escapeHtml');
+?>
+
+<div id="resources-linked" class="my-5">
+    <div class="card">
+        <div class="card-header bg-secondary bg-opacity-10">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bi bi-link-45deg me-2"></i><?php echo $translate('Linked Resources'); ?>
+                    <?php if ($totalCount > 0): ?>
+                    <span class="badge bg-secondary ms-2"><?php echo $totalCount; ?></span>
+                    <?php endif; ?>
+                </h5>
+            </div>
+        </div>
+        
+        <div class="card-body">
+            <div class="linked-header mb-4">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <div id="linked-filter">
+                            <label class="form-label small text-muted mb-2">
+                                <?php echo $translate('Filter by resource type and property:'); ?>
+                            </label>
+                            <?php echo $this->formElement($resourcePropertiesSelect); ?>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex justify-content-md-end mt-3 mt-md-0">
+                            <?php echo $pagination; ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <?php if ($subjectValues): ?>
+                <?php foreach ($subjectValues as $values): ?>
+                <?php
+                $caption = sprintf(
+                    $translate('%s with "%s: %s"'),
+                    $translate($labelMap[$resourceType]),
+                    $values[0]['property_alternate_label'] ?? $translate($values[0]['property_label']),
+                    $objectResource->displayTitle()
+                );
+                ?>
+                
+                <div class="linked-resource-section mb-4">
+                    <div class="alert alert-info bg-info bg-opacity-10 border-info mb-3">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <strong><?php echo $escape($caption); ?></strong>
+                    </div>
+                    
+                    <div class="row g-3">
+                        <?php foreach ($values as $value): ?>
+                        <?php 
+                        $linkedResource = $value['val']->resource();
+                        $resourceClass = $linkedResource->resourceClass();
+                        $linkedResourceType = $linkedResource->resourceName();
+                        
+                        // サムネイル画像の取得
+                        $thumbnailUrl = null;
+                        if ($linkedResourceType === 'items' && method_exists($linkedResource, 'primaryMedia')) {
+                            $primaryMedia = $linkedResource->primaryMedia();
+                            if ($primaryMedia && $primaryMedia->hasThumbnails()) {
+                                $thumbnailUrl = $primaryMedia->thumbnailUrl('square');
+                            }
+                        } elseif ($linkedResourceType === 'media' && $linkedResource->hasThumbnails()) {
+                            $thumbnailUrl = $linkedResource->thumbnailUrl('square');
+                        }
+                        ?>
+                        
+                        <div class="col-md-6 col-lg-4">
+                            <div class="linked-resource-card h-100">
+                                <a href="<?php echo $escape($linkedResource->siteUrl()); ?>" 
+                                   class="text-decoration-none" 
+                                   target="_blank">
+                                    <div class="card h-100 hover-shadow">
+                                        <?php if ($thumbnailUrl): ?>
+                                        <div class="card-img-top position-relative" style="height: 200px; overflow: hidden;">
+                                            <img src="<?php echo $escape($thumbnailUrl); ?>" 
+                                                 alt="<?php echo $escape($linkedResource->displayTitle()); ?>"
+                                                 class="w-100 h-100"
+                                                 style="object-fit: cover;">
+                                        </div>
+                                        <?php else: ?>
+                                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center" 
+                                             style="height: 200px;">
+                                            <?php if ($linkedResourceType === 'items'): ?>
+                                                <i class="bi bi-file-earmark-text display-1 text-muted"></i>
+                                            <?php elseif ($linkedResourceType === 'item_sets'): ?>
+                                                <i class="bi bi-collection display-1 text-muted"></i>
+                                            <?php elseif ($linkedResourceType === 'media'): ?>
+                                                <i class="bi bi-file-image display-1 text-muted"></i>
+                                            <?php else: ?>
+                                                <i class="bi bi-link-45deg display-1 text-muted"></i>
+                                            <?php endif; ?>
+                                        </div>
+                                        <?php endif; ?>
+                                        
+                                        <div class="card-body">
+                                            <h6 class="card-title text-truncate mb-2">
+                                                <?php echo $escape($linkedResource->displayTitle(null, $valueLang)); ?>
+                                                <i class="bi bi-box-arrow-up-right ms-1 small"></i>
+                                            </h6>
+                                            
+                                            <div class="d-flex flex-wrap gap-1 mb-2">
+                                                <?php if ($resourceClass): ?>
+                                                <span class="badge bg-primary bg-opacity-10 text-primary small">
+                                                    <i class="bi bi-tag me-1"></i>
+                                                    <?php echo $escape($translate($resourceClass->label())); ?>
+                                                </span>
+                                                <?php endif; ?>
+                                                
+                                                <span class="badge bg-secondary bg-opacity-10 text-secondary small">
+                                                    <?php if ($linkedResourceType === 'items'): ?>
+                                                        <i class="bi bi-file-earmark me-1"></i><?php echo $translate('Item'); ?>
+                                                    <?php elseif ($linkedResourceType === 'item_sets'): ?>
+                                                        <i class="bi bi-collection me-1"></i><?php echo $translate('Item Set'); ?>
+                                                    <?php elseif ($linkedResourceType === 'media'): ?>
+                                                        <i class="bi bi-image me-1"></i><?php echo $translate('Media'); ?>
+                                                    <?php endif; ?>
+                                                </span>
+                                            </div>
+                                            
+                                            <?php 
+                                            $description = $linkedResource->displayDescription();
+                                            if ($description): 
+                                            ?>
+                                            <p class="card-text small text-muted">
+                                                <?php echo $escape(mb_substr($description, 0, 100)); ?>
+                                                <?php echo mb_strlen($description) > 100 ? '...' : ''; ?>
+                                            </p>
+                                            <?php endif; ?>
+                                            
+                                            <div class="text-muted small">
+                                                <i class="bi bi-hash me-1"></i>ID: <?php echo $linkedResource->id(); ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+                
+                <?php if ($totalCount > $perPage): ?>
+                <div class="linked-footer mt-4">
+                    <div class="d-flex justify-content-center">
+                        <?php echo $pagination; ?>
+                    </div>
+                </div>
+                <?php endif; ?>
+                
+            <?php else: ?>
+                <div class="alert alert-light text-center">
+                    <i class="bi bi-info-circle me-2"></i>
+                    <?php echo $translate('No linked resources found.'); ?>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
+
+<style>
+.linked-resource-card .hover-shadow {
+    transition: all 0.3s ease;
+}
+
+.linked-resource-card:hover .hover-shadow {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    transform: translateY(-3px);
+}
+
+.linked-resource-card .card-title {
+    color: #212529;
+    transition: color 0.3s ease;
+}
+
+.linked-resource-card:hover .card-title {
+    color: #0d6efd;
+}
+
+#resource-property-select {
+    max-width: 100%;
+}
+
+@media (min-width: 768px) {
+    #resource-property-select {
+        max-width: 400px;
+    }
+}
+</style>
+
+<script>
+const propertySelect = $('#resource-property-select');
+const url = propertySelect.data('url');
+const fragment = propertySelect.data('fragment');
+propertySelect.on('change', function(e) {
+    const selectedOption = propertySelect.find(':selected');
+    const resourceProperty = selectedOption.val();
+    window.location = url + '?' + $.param({resource_property: resourceProperty}) + '#' + fragment;
+});
+</script>

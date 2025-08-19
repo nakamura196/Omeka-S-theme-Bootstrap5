@@ -670,3 +670,39 @@ msgstr ""
 #: view/common/advanced-search/mapping-item-geographic-location.phtml:17
 msgid "Miles"
 msgstr ""
+
+#: view/common/resource-page-block-layout/item-sets.phtml:21
+msgid "Item Sets"
+msgstr ""
+
+#: view/common/resource-values.phtml:160
+msgid "Item"
+msgstr ""
+
+#: view/common/resource-values.phtml:162
+msgid "Item Set"
+msgstr ""
+
+#: view/common/resource-values.phtml:164
+msgid "Media"
+msgstr ""
+
+#: view/common/linked-resources.phtml:64
+msgid "Linked Resources"
+msgstr ""
+
+#: view/common/linked-resources.phtml:76
+msgid "Filter by resource type and property:"
+msgstr ""
+
+#: view/common/linked-resources.phtml:196
+msgid "No linked resources found."
+msgstr ""
+
+#: view/common/linked-resources.phtml:100
+msgid "%s with \"%s: %s\""
+msgstr ""
+
+#: view/common/resource-page-block-layout/linked-resources.phtml:31
+msgid "This item has linked resources. Please view them in the standard interface."
+msgstr ""

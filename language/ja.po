@@ -675,3 +675,27 @@ msgstr "親アイテム"
 
 msgid "View Item"
 msgstr "アイテムを表示"
+
+msgid "Properties"
+msgstr "プロパティ"
+
+msgid "Item"
+msgstr "アイテム"
+
+msgid "Item Set"
+msgstr "アイテムセット"
+
+msgid "Linked Resources"
+msgstr "リンクされたリソース"
+
+msgid "Filter by resource type and property:"
+msgstr "リソースタイプとプロパティでフィルター："
+
+msgid "No linked resources found."
+msgstr "リンクされたリソースが見つかりません。"
+
+msgid "%s with \"%s: %s\""
+msgstr "%s（\"%s: %s\" を持つ）"
+
+msgid "This item has linked resources. Please view them in the standard interface."
+msgstr "このアイテムにはリンクされたリソースがあります。標準インターフェースでご覧ください。"

@@ -18,6 +18,8 @@ $this->headLink()->appendStylesheet('https://cdn.jsdelivr.net/npm/bootstrap-icon
 $this->headLink()->appendStylesheet($this->assetUrl('css/search-view-toggle.css'));
 // Autocomplete styles
 $this->headLink()->appendStylesheet($this->assetUrl('css/autocomplete.css'));
+// Facet Range Slider styles
+$this->headLink()->appendStylesheet($this->assetUrl('css/facet-range-slider.css'));
 
 // Favicon設定 - テーマ設定から取得
 $favicon = $this->themeSettingAssetUrl('favicon');
@@ -33,6 +35,7 @@ $this->headScript()->prependFile($this->assetUrl('vendor/jquery/jquery.min.js', 
 // Bootstrap 5 JS
 $this->headScript()->appendFile('https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js', 'text/javascript', ['integrity' => 'sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz', 'crossorigin' => 'anonymous']);
 $this->headScript()->appendFile($this->assetUrl('js/search-view-toggle.js'));
+$this->headScript()->appendFile($this->assetUrl('js/facet-range-slider.js'));
 $this->jsTranslate();
 $banner = $this->themeSettingAssetUrl('banner');
 $bannerHeight = $this->themeSetting('banner_height');

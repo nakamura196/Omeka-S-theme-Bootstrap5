@@ -1,0 +1,264 @@
+/**
+ * Modern Date Range Slider Styles for Bootstrap 5 Theme
+ */
+
+/* メインコンテナ */
+.facet-range-double {
+    padding: 20px 10px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin: 10px 0;
+}
+
+/* スライダーコンテナ */
+.range-sliders {
+    position: relative;
+    height: 40px;
+    margin-bottom: 30px;
+}
+
+/* 共通スライダースタイル */
+.range-sliders input[type="range"] {
+    position: absolute;
+    width: 100%;
+    height: 6px;
+    background: transparent;
+    pointer-events: none;
+    -webkit-appearance: none;
+    appearance: none;
+    border-radius: 3px;
+}
+
+/* スライダートラック */
+.range-sliders input[type="range"]::-webkit-slider-track {
+    height: 6px;
+    background: #e9ecef;
+    border-radius: 3px;
+}
+
+.range-sliders input[type="range"]::-moz-range-track {
+    height: 6px;
+    background: #e9ecef;
+    border-radius: 3px;
+}
+
+/* スライダーのつまみ */
+.range-sliders input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #0d6efd;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    cursor: pointer;
+    pointer-events: auto;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease;
+}
+
+.range-sliders input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: #0d6efd;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    cursor: pointer;
+    pointer-events: auto;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease;
+}
+
+/* ホバー・フォーカス時のつまみ */
+.range-sliders input[type="range"]:hover::-webkit-slider-thumb,
+.range-sliders input[type="range"]:focus::-webkit-slider-thumb {
+    background: #0a58ca;
+    transform: scale(1.1);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+}
+
+.range-sliders input[type="range"]:hover::-moz-range-thumb,
+.range-sliders input[type="range"]:focus::-moz-range-thumb {
+    background: #0a58ca;
+    transform: scale(1.1);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* From/Toスライダーの重ね順 */
+.range-slider-from {
+    z-index: 2;
+}
+
+.range-slider-to {
+    z-index: 1;
+}
+
+/* 数値入力エリア */
+.range-numerics {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.range-numeric {
+    flex: 1;
+    position: relative;
+}
+
+/* 数値入力フィールド */
+.range-numeric input[type="number"] {
+    width: 100%;
+    padding: 8px 12px;
+    border: 2px solid #dee2e6;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    background: #fff;
+    transition: all 0.2s ease;
+}
+
+.range-numeric input[type="number"]:focus {
+    outline: none;
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+}
+
+/* From/Toラベル（疑似要素で追加） */
+.range-numeric:first-child::before {
+    content: "From";
+    position: absolute;
+    top: -18px;
+    left: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.range-numeric:nth-child(2)::before {
+    content: "To";
+    position: absolute;
+    top: -18px;
+    left: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* 日本語の場合 */
+html[lang="ja"] .range-numeric:first-child::before {
+    content: "開始";
+}
+
+html[lang="ja"] .range-numeric:nth-child(2)::before {
+    content: "終了";
+}
+
+/* OKボタン */
+.button-submit.range-double-submit {
+    padding: 8px 20px;
+    background: #0d6efd;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.button-submit.range-double-submit:hover {
+    background: #0a58ca;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.button-submit.range-double-submit:active {
+    transform: translateY(0);
+}
+
+/* ボタン付きレイアウト */
+.range-numerics-button {
+    margin-top: 20px;
+}
+
+/* 年の範囲表示（オプション） */
+.facet-range-double::after {
+    content: attr(data-range);
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+    font-size: 11px;
+    color: #6c757d;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 576px) {
+    .range-numerics {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .range-numeric {
+        width: 100%;
+    }
+    
+    .button-submit.range-double-submit {
+        width: 100%;
+        margin-top: 10px;
+    }
+}
+
+/* アクティブ範囲の視覚化（JavaScriptで制御） */
+.range-sliders::before {
+    content: '';
+    position: absolute;
+    height: 6px;
+    background: #0d6efd;
+    border-radius: 3px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    transition: all 0.2s ease;
+}
+
+/* ダークモード対応（オプション） */
+@media (prefers-color-scheme: dark) {
+    .facet-range-double {
+        background: #212529;
+    }
+    
+    .range-numeric input[type="number"] {
+        background: #343a40;
+        border-color: #495057;
+        color: #fff;
+    }
+    
+    .range-sliders input[type="range"]::-webkit-slider-track {
+        background: #343a40;
+    }
+    
+    .range-sliders input[type="range"]::-moz-range-track {
+        background: #343a40;
+    }
+}
+
+/* スライダーのアクティブ範囲表示を改善 */
+.range-slider-to {
+    background: transparent;
+    pointer-events: none;
+}
+
+.range-slider-to::-webkit-slider-thumb {
+    pointer-events: auto;
+}
+
+.range-slider-to::-moz-range-thumb {
+    pointer-events: auto;
+}
