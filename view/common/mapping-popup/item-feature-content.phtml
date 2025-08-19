@@ -1,0 +1,223 @@
+<?php
+/**
+ * Custom popup content for map markers
+ * 
+ * @var \Mapping\Api\Representation\FeatureRepresentation $feature
+ */
+
+$label = $feature->label();
+$media = $feature->media();
+$item = $feature->item();
+$title = $item->displayTitle(null, $this->lang());
+
+// 説明文を複数の方法で取得を試みる
+$description = null;
+
+// 方法1: dcterms:description
+if (!$description) {
+    $description = $item->value('dcterms:description', ['type' => 'literal', 'lang' => $this->lang()]);
+}
+
+// 方法2: dcterms:abstract
+if (!$description) {
+    $description = $item->value('dcterms:abstract', ['type' => 'literal', 'lang' => $this->lang()]);
+}
+
+// 方法3: description（基本的なdescriptionプロパティ）
+if (!$description) {
+    $description = $item->value('description', ['type' => 'literal', 'lang' => $this->lang()]);
+}
+
+// 方法4: displayDescription メソッドがある場合
+if (!$description && method_exists($item, 'displayDescription')) {
+    $description = $item->displayDescription();
+}
+?>
+
+<div class="map-popup-content">
+    <div class="popup-header">
+        <h4 class="popup-title">
+            <?php echo $item->link($this->escapeHtml($title), null, ['target' => '_blank']); ?>
+        </h4>
+        <?php if ($label): ?>
+        <small class="text-muted"><?php echo $this->escapeHtml($label); ?></small>
+        <?php endif; ?>
+    </div>
+    
+    <?php 
+    // メディアがない場合、アイテムの最初のメディアを取得
+    if (!$media && $item->media()) {
+        $medias = $item->media();
+        if (count($medias) > 0) {
+            $media = $medias[0];
+        }
+    }
+    
+    if ($media): 
+    ?>
+    <div class="popup-media">
+        <?php 
+        // サムネイル画像のURLを取得（複数の方法を試す）
+        $thumbnailUrl = null;
+        
+        // 方法1: thumbnailUrlメソッドを使用
+        if (method_exists($media, 'thumbnailUrl')) {
+            $thumbnailUrl = $media->thumbnailUrl('medium');
+        }
+        
+        // 方法2: thumbnailメソッドを使用
+        if (!$thumbnailUrl && method_exists($media, 'thumbnail')) {
+            $thumbnailUrl = $media->thumbnail('medium');
+        }
+        
+        // 方法3: primaryMediaを使用
+        if (!$thumbnailUrl && method_exists($media, 'primaryMedia')) {
+            $primaryMedia = $media->primaryMedia();
+            if ($primaryMedia) {
+                $thumbnailUrl = $primaryMedia->thumbnailUrl('medium');
+            }
+        }
+        
+        if ($thumbnailUrl):
+        ?>
+        <a href="<?php echo $this->escapeHtml($item->url()); ?>" target="_blank">
+            <img src="<?php echo $this->escapeHtml($thumbnailUrl); ?>" 
+                 alt="<?php echo $this->escapeHtml($title); ?>" 
+                 class="popup-thumbnail"
+                 onerror="this.style.display='none'">
+        </a>
+        <?php else: ?>
+        <!-- サムネイルが取得できない場合のフォールバック -->
+        <div class="no-thumbnail">
+            <i class="bi bi-image" style="font-size: 48px; color: #ccc;"></i>
+        </div>
+        <?php endif; ?>
+    </div>
+    <?php endif; ?>
+    
+    <?php 
+    // 説明文が存在し、空でない場合に表示
+    if ($description && trim($description)): 
+        $descriptionText = is_object($description) ? (string)$description : $description;
+        $descriptionText = strip_tags($descriptionText); // HTMLタグを除去
+        $descriptionText = trim($descriptionText);
+        
+        if ($descriptionText):
+    ?>
+    <div class="popup-description">
+        <p><?php echo $this->escapeHtml(mb_substr($descriptionText, 0, 150)); ?><?php echo mb_strlen($descriptionText) > 150 ? '...' : ''; ?></p>
+    </div>
+    <?php 
+        endif;
+    endif; 
+    ?>
+    
+    <div class="popup-footer">
+        <a href="<?php echo $this->escapeHtml($item->url()); ?>" 
+           target="_blank" 
+           class="popup-detail-btn">
+            詳細を見る
+        </a>
+    </div>
+</div>
+
+<style>
+.map-popup-content {
+    min-width: 250px;
+    max-width: 300px;
+}
+
+.popup-header {
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.popup-title {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.4;
+}
+
+.popup-title a {
+    color: #333;
+    text-decoration: none;
+}
+
+.popup-title a:hover {
+    color: #0066cc;
+    text-decoration: underline;
+}
+
+.popup-media {
+    margin: 10px 0;
+    text-align: center;
+}
+
+.popup-thumbnail {
+    max-width: 100%;
+    height: auto;
+    max-height: 200px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.no-thumbnail {
+    padding: 20px;
+    text-align: center;
+    background: #f8f9fa;
+    border-radius: 4px;
+}
+
+.popup-description {
+    margin: 10px 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #666;
+}
+
+.popup-description p {
+    margin: 0;
+}
+
+.popup-footer {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #e0e0e0;
+    text-align: center;
+}
+
+.popup-detail-btn {
+    display: inline-block;
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #fff !important;
+    background-color: #0066cc;
+    border: 1px solid #0066cc;
+    border-radius: 4px;
+    text-decoration: none !important;
+    transition: all 0.2s ease;
+}
+
+.popup-detail-btn:hover {
+    background-color: #0052a3;
+    border-color: #0052a3;
+    color: #fff !important;
+}
+
+/* Leafletポップアップのデフォルトスタイルを上書き */
+.leaflet-popup-content-wrapper {
+    padding: 0;
+    border-radius: 8px;
+}
+
+.leaflet-popup-content {
+    margin: 0 !important;
+    padding: 15px !important;
+}
+
+.leaflet-popup-tip {
+    background: white;
+}
+</style>
