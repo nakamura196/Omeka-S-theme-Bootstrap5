@@ -238,7 +238,7 @@ $renderer = $media->renderer();
 
                             <?php if ($media->source()): ?>
                             <dt class="col-5"><?= $escape($translate('Source')) ?></dt>
-                            <dd class="col-7">
+                            <dd class="col-7 text-break">
                                 <?= $escape($media->source()) ?>
                             </dd>
                             <?php endif; ?>
@@ -402,6 +402,7 @@ dl.row dt {
 dl.row dd {
     color: #212529;
     word-break: break-word;
+    overflow-wrap: break-word;
 }
 
 /* パンくずリスト */
