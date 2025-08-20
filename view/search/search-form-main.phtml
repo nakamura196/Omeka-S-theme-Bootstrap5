@@ -8,26 +8,74 @@
 // Scripts are loaded via an event on view.layout and can be managed in search-form-main-header.phtml.
 
 $translate = $this->plugin('translate');
+$escape = $this->plugin('escapeHtml');
 
 $params = $this->params()->fromQuery() ?: [];
 
+// デバッグ用：パラメータの内容を確認（本番環境では削除すること）
+// error_log('Search params before fix: ' . print_r($params, true));
+
 // フォームデータの整形（文字列を配列に変換）
+// 再帰的にデータ型を修正する関数
+$fixDataTypes = function($data) use (&$fixDataTypes) {
+    if (!is_array($data)) {
+        return $data;
+    }
+    
+    foreach ($data as $key => $value) {
+        // filterフィールドの特殊処理
+        if ($key === 'filter' && is_array($value)) {
+            foreach ($value as $filterKey => $filterValue) {
+                // 空文字列の場合のみ配列に変換
+                if ($filterValue === '') {
+                    $data[$key][$filterKey] = [];
+                }
+            }
+        }
+        // 明確に複数選択が必要なフィールドのみ配列に変換
+        elseif (in_array($key, ['item_set_id']) && !is_array($value) && $value !== '' && $value !== null) {
+            $data[$key] = [$value];
+        }
+        // 空文字列やnullの場合の処理（削除または保持）
+        elseif ($value === '' || $value === null) {
+            // フィールドによって処理を分ける
+            if (in_array($key, ['filter', 'facet'])) {
+                $data[$key] = [];
+            }
+            // その他のフィールドは空文字列のまま保持
+        }
+        // ネストされた配列の再帰処理
+        elseif (is_array($value)) {
+            $data[$key] = $fixDataTypes($value);
+        }
+    }
+    
+    return $data;
+};
+
 if (!empty($params)) {
-    foreach ($params as $key => $value) {
-        // filter フィールドが文字列の場合、配列に変換
-        if ($key === 'filter' && is_string($value)) {
-            $params[$key] = [$value];
-        }
-        // その他の配列であるべきフィールドも確認
-        if (in_array($key, ['facet', 'item_set_id']) && is_string($value)) {
-            $params[$key] = [$value];
-        }
+    // エラー処理を追加
+    try {
+        $params = $fixDataTypes($params);
+        // デバッグ用：修正後のパラメータを確認
+        // error_log('Search params after fix: ' . print_r($params, true));
+    } catch (\Exception $e) {
+        // エラーが発生した場合はパラメータをリセット
+        error_log('Error fixing search params: ' . $e->getMessage());
+        $params = [];
     }
 }
 
-$form
-    ->setData($params)
-    ->prepare();
+// フォームデータ設定時のエラー処理
+try {
+    $form->setData($params);
+} catch (\Exception $e) {
+    // エラーが発生した場合は空のデータで初期化
+    error_log('Error setting form data: ' . $e->getMessage());
+    $form->setData([]);
+}
+
+$form->prepare();
 
 $formId = $form->getAttribute('id');
 if (!$formId) {
@@ -83,26 +131,83 @@ if ($filters) {
                     if ($element instanceof \Laminas\Form\Fieldset):
                         // フィールドセットの場合
                         ?>
-                        <div class="mb-4">
-                            <?php if ($element->getLabel()): ?>
-                            <h6 class="fw-bold mb-3 text-secondary">
-                                <i class="bi bi-filter-circle me-1"></i>
-                                <?= $translate($element->getLabel()) ?>
-                            </h6>
+                        <div class="mb-4 filter-fieldset-section">
+                            <?php 
+                            // Check if this is a filter fieldset
+                            $isFilterFieldset = ($element->getName() === 'filter' || strpos($element->getName(), 'filter') !== false);
+                            ?>
+                            <?php 
+                            // ラベルからHTMLタグとボタンを除去
+                            $cleanLabel = $element->getLabel();
+                            if ($cleanLabel) {
+                                // HTMLタグを除去
+                                $cleanLabel = strip_tags($cleanLabel);
+                                // 余分な空白を除去
+                                $cleanLabel = trim($cleanLabel);
+                            }
+                            ?>
+                            <?php if ($cleanLabel): ?>
+                            <div class="filter-header d-flex align-items-center justify-content-between mb-3">
+                                <h6 class="fw-bold mb-0 text-secondary">
+                                    <i class="bi <?= $isFilterFieldset ? 'bi-funnel-fill' : 'bi-filter-circle' ?> me-2"></i>
+                                    <?= $translate($cleanLabel) ?>
+                                </h6>
+                                <?php if ($isFilterFieldset): ?>
+                                <button type="button" class="btn btn-sm btn-outline-success add-filter-btn" title="<?= $translate('Add a filter') ?>">
+                                    <i class="bi bi-plus-circle me-1"></i>
+                                    <?= $translate('Add Filter') ?>
+                                </button>
+                                <?php endif; ?>
+                            </div>
                             <?php endif; ?>
                             
-                            <div class="row g-3">
-                                <?php foreach ($element as $subElement): ?>
-                                <div class="col-md-6">
-                                    <?php
-                                    // Bootstrap 5のフォームコントロールクラスを追加
-                                    $subElement->setAttribute('class', 'form-control');
-                                    if ($subElement->getLabel()): ?>
-                                    <label class="form-label text-muted small">
-                                        <?= $translate($subElement->getLabel()) ?>
-                                    </label>
-                                    <?php endif; ?>
-                                    <?= $this->formElement($subElement) ?>
+                            <div class="filter-fields-container">
+                                <?php 
+                                $fieldIndex = 0;
+                                foreach ($element as $subElement): 
+                                    // ボタンやレジェンド要素をスキップ
+                                    if ($subElement instanceof \Laminas\Form\Element\Button || 
+                                        $subElement->getAttribute('type') === 'button' ||
+                                        strpos($subElement->getAttribute('class'), 'search-filter-action') !== false ||
+                                        $subElement->getName() === 'plus') {
+                                        continue;
+                                    }
+                                    $fieldIndex++;
+                                ?>
+                                <div class="filter-field-row mb-3 <?= $isFilterFieldset ? 'p-3 bg-light rounded border' : '' ?>">
+                                    <div class="row align-items-center g-3">
+                                        <div class="<?= $isFilterFieldset ? 'col-md-10' : 'col-md-6' ?>">
+                                            <?php
+                                            // Bootstrap 5のフォームコントロールクラスを追加
+                                            $currentClass = $subElement->getAttribute('class') ?: '';
+                                            $subElement->setAttribute('class', trim($currentClass . ' form-control'));
+                                            
+                                            if ($subElement->getLabel()): ?>
+                                            <label class="form-label text-muted small">
+                                                <?= $translate($subElement->getLabel()) ?>
+                                            </label>
+                                            <?php endif; ?>
+                                            
+                                            <?php if ($isFilterFieldset): ?>
+                                            <div class="input-group">
+                                                <span class="input-group-text">
+                                                    <i class="bi bi-search"></i>
+                                                </span>
+                                                <?= $this->formElement($subElement) ?>
+                                            </div>
+                                            <?php else: ?>
+                                                <?= $this->formElement($subElement) ?>
+                                            <?php endif; ?>
+                                        </div>
+                                        
+                                        <?php if ($isFilterFieldset && $fieldIndex > 1): ?>
+                                        <div class="col-md-2">
+                                            <button type="button" class="btn btn-sm btn-outline-danger remove-filter-btn w-100" title="<?= $translate('Remove filter') ?>">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+                                        <?php endif; ?>
+                                    </div>
                                 </div>
                                 <?php endforeach; ?>
                             </div>
@@ -110,18 +215,97 @@ if ($filters) {
                         <?php
                     else:
                         // 通常のフォーム要素の場合
-                        $element->setAttribute('class', 'form-control');
-                        ?>
-                        <div class="mb-3">
-                            <?php if ($element->getLabel()): ?>
-                            <label class="form-label">
-                                <?= $translate($element->getLabel()) ?>
-                            </label>
-                            <?php endif; ?>
-                            <?= $this->formElement($element) ?>
-                        </div>
+                        $elementType = $element->getAttribute('type');
+                        $elementName = $element->getName();
+                        
+                        // ラジオボタンの場合の特別処理
+                        if ($elementType === 'radio' || strpos($elementName, 'resource_template_id') !== false):
+                            ?>
+                            <div class="mb-4 radio-group-section">
+                                <?php if ($element->getLabel()): ?>
+                                <h6 class="fw-bold mb-3 text-secondary">
+                                    <i class="bi bi-ui-radios me-2"></i>
+                                    <?= $translate($element->getLabel()) ?>
+                                </h6>
+                                <?php endif; ?>
+                                
+                                <div class="radio-options">
+                                    <?php
+                                    // ラジオボタンオプションの処理
+                                    $options = $element->getValueOptions();
+                                    if ($options):
+                                        foreach ($options as $value => $label):
+                                    ?>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" 
+                                               type="radio" 
+                                               name="<?= $escape($element->getName()) ?>" 
+                                               id="<?= $escape($element->getName() . '_' . $value) ?>" 
+                                               value="<?= $escape($value) ?>"
+                                               <?= ($element->getValue() == $value) ? 'checked' : '' ?>>
+                                        <label class="form-check-label" for="<?= $escape($element->getName() . '_' . $value) ?>">
+                                            <?= $translate($label) ?>
+                                        </label>
+                                    </div>
+                                    <?php 
+                                        endforeach;
+                                    else:
+                                        // フォールバック: 通常のラジオボタン表示
+                                        echo $this->formElement($element);
+                                    endif;
+                                    ?>
+                                </div>
+                            </div>
                         <?php
-                    endif;
+                        // 複数選択セレクトボックスの場合
+                        elseif ($element->getAttribute('multiple') !== null || strpos($elementName, 'item_set_id') !== false || strpos($elementName, 'resource_class_id') !== false):
+                            ?>
+                            <div class="mb-4 multiselect-section">
+                                <?php if ($element->getLabel()): ?>
+                                <h6 class="fw-bold mb-3 text-secondary">
+                                    <i class="bi <?= strpos($elementName, 'item_set') !== false ? 'bi-collection' : 'bi-tags' ?> me-2"></i>
+                                    <?= $translate($element->getLabel()) ?>
+                                </h6>
+                                <?php endif; ?>
+                                
+                                <div class="multiselect-wrapper">
+                                    <?php
+                                    // Bootstrap 5の複数選択に対応したクラスを追加
+                                    $currentClass = $element->getAttribute('class') ?: '';
+                                    $element->setAttribute('class', trim($currentClass . ' form-select'));
+                                    $element->setAttribute('size', '5'); // 5行表示
+                                    $element->setAttribute('data-live-search', 'true');
+                                    ?>
+                                    <div class="multiselect-help-text alert alert-info py-2 px-3 mb-2">
+                                        <small class="d-flex align-items-center mb-0">
+                                            <i class="bi bi-info-circle-fill me-2"></i>
+                                            <span><?= $translate('Hold Ctrl/Cmd to select multiple items') ?></span>
+                                        </small>
+                                    </div>
+                                    <?= $this->formElement($element) ?>
+                                </div>
+                            </div>
+                        <?php
+                        // 通常のセレクトボックスやテキストフィールド
+                        else:
+                            $currentClass = $element->getAttribute('class') ?: '';
+                            if ($element instanceof \Laminas\Form\Element\Select) {
+                                $element->setAttribute('class', trim($currentClass . ' form-select'));
+                            } else {
+                                $element->setAttribute('class', trim($currentClass . ' form-control'));
+                            }
+                            ?>
+                            <div class="mb-3">
+                                <?php if ($element->getLabel()): ?>
+                                <label class="form-label">
+                                    <?= $translate($element->getLabel()) ?>
+                                </label>
+                                <?php endif; ?>
+                                <?= $this->formElement($element) ?>
+                            </div>
+                        <?php
+                        endif; // else条件の終了
+                    endif; // $element instanceof Fieldsetの終了
                 endforeach;
                 ?>
             </div>

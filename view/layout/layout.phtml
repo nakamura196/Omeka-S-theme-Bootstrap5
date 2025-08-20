@@ -20,6 +20,10 @@ $this->headLink()->appendStylesheet($this->assetUrl('css/search-view-toggle.css'
 $this->headLink()->appendStylesheet($this->assetUrl('css/autocomplete.css'));
 // Facet Range Slider styles
 $this->headLink()->appendStylesheet($this->assetUrl('css/facet-range-slider.css'));
+// Advanced Search Date Range styles
+$this->headLink()->appendStylesheet($this->assetUrl('css/advanced-search-date-range.css'));
+// Advanced Search Filters styles
+$this->headLink()->appendStylesheet($this->assetUrl('css/advanced-search-filters.css'));
 
 // Favicon設定 - テーマ設定から取得
 $favicon = $this->themeSettingAssetUrl('favicon');
@@ -36,7 +40,16 @@ $this->headScript()->prependFile($this->assetUrl('vendor/jquery/jquery.min.js', 
 $this->headScript()->appendFile('https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js', 'text/javascript', ['integrity' => 'sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz', 'crossorigin' => 'anonymous']);
 $this->headScript()->appendFile($this->assetUrl('js/search-view-toggle.js'));
 $this->headScript()->appendFile($this->assetUrl('js/facet-range-slider.js'));
+$this->headScript()->appendFile($this->assetUrl('js/advanced-search-filters.js'));
 $this->jsTranslate();
+// Advanced Search Filtersで使用する翻訳文字列を追加
+$this->jsTranslate('Enter filter keyword...');
+$this->jsTranslate('Enter');
+$this->jsTranslate('selected');
+$this->jsTranslate('Select All');
+$this->jsTranslate('Clear All');
+$this->jsTranslate('Add Filter');
+$this->jsTranslate('Remove filter');
 $banner = $this->themeSettingAssetUrl('banner');
 $bannerHeight = $this->themeSetting('banner_height');
 $bannerHeightMobile = $this->themeSetting('banner_height_mobile');

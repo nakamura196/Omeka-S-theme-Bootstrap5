@@ -2,8 +2,9 @@
  * Modern Date Range Slider Styles for Bootstrap 5 Theme
  */
 
-/* メインコンテナ */
-.facet-range-double {
+/* メインコンテナ - facetとadvanced search両方に対応 */
+.facet-range-double,
+.range-doubleform-control {
     padding: 20px 10px;
     background: #f8f9fa;
     border-radius: 8px;
@@ -125,8 +126,8 @@
     box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
 }
 
-/* From/Toラベル（疑似要素で追加） */
-.range-numeric:first-child::before {
+/* From/Toラベル（疑似要素で追加） - facetのみ */
+.facet-range-double .range-numeric:first-child::before {
     content: "From";
     position: absolute;
     top: -18px;
@@ -138,7 +139,7 @@
     letter-spacing: 0.5px;
 }
 
-.range-numeric:nth-child(2)::before {
+.facet-range-double .range-numeric:nth-child(2)::before {
     content: "To";
     position: absolute;
     top: -18px;
@@ -150,12 +151,32 @@
     letter-spacing: 0.5px;
 }
 
-/* 日本語の場合 */
-html[lang="ja"] .range-numeric:first-child::before {
+/* Advanced Search用のラベルスタイル */
+.range-numeric-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 5px;
+}
+
+/* 日本語の場合 - facetのみ */
+html[lang="ja"] .facet-range-double .range-numeric:first-child::before {
     content: "開始";
 }
 
-html[lang="ja"] .range-numeric:nth-child(2)::before {
+html[lang="ja"] .facet-range-double .range-numeric:nth-child(2)::before {
+    content: "終了";
+}
+
+/* Advanced Search用の日本語ラベル */
+html[lang="ja"] .range-numeric-label.range-numeric-from-label {
+    content: "開始";
+}
+
+html[lang="ja"] .range-numeric-label.range-numeric-to-label {
     content: "終了";
 }
 

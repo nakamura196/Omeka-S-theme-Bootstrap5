@@ -3,28 +3,50 @@
  */
 
 document.addEventListener('DOMContentLoaded', function() {
-    // すべての範囲スライダーを初期化
-    const rangeContainers = document.querySelectorAll('.facet-range-double');
-    
-    rangeContainers.forEach(container => {
-        initializeRangeSlider(container);
-    });
+    // 既存のsearch.jsとの競合を避けるため、初期化を遅延
+    setTimeout(function() {
+        // すべての範囲スライダーを初期化（facetとadvanced search両方に対応）
+        const rangeContainers = document.querySelectorAll('.facet-range-double, .range-doubleform-control');
+        
+        rangeContainers.forEach(container => {
+            // 既に初期化されている場合はスキップ
+            if (!container.hasAttribute('data-initialized')) {
+                initializeRangeSlider(container);
+                container.setAttribute('data-initialized', 'true');
+            }
+        });
+    }, 100);
     
     function initializeRangeSlider(container) {
+        // 要素の存在確認を強化
         const fromSlider = container.querySelector('.range-slider-from');
         const toSlider = container.querySelector('.range-slider-to');
         const fromInput = container.querySelector('.range-numeric-from');
         const toInput = container.querySelector('.range-numeric-to');
         
-        if (!fromSlider || !toSlider || !fromInput || !toInput) return;
+        // いずれかの要素が見つからない場合は処理をスキップ
+        if (!fromSlider || !toSlider || !fromInput || !toInput) {
+            console.warn('Range slider elements not found in container:', container);
+            return;
+        }
         
-        const min = parseFloat(fromSlider.min);
-        const max = parseFloat(fromSlider.max);
+        // 既存のイベントリスナーをクリア（重複防止）
+        const newFromSlider = fromSlider.cloneNode(true);
+        const newToSlider = toSlider.cloneNode(true);
+        fromSlider.parentNode.replaceChild(newFromSlider, fromSlider);
+        toSlider.parentNode.replaceChild(newToSlider, toSlider);
+        
+        // 新しい要素を参照
+        const fromSliderEl = newFromSlider;
+        const toSliderEl = newToSlider;
+        
+        const min = parseFloat(fromSliderEl.min);
+        const max = parseFloat(fromSliderEl.max);
         
         // スライダーの背景グラデーションを更新
         function updateSliderBackground() {
-            const fromValue = parseFloat(fromSlider.value);
-            const toValue = parseFloat(toSlider.value);
+            const fromValue = parseFloat(fromSliderEl.value);
+            const toValue = parseFloat(toSliderEl.value);
             
             const fromPercent = ((fromValue - min) / (max - min)) * 100;
             const toPercent = ((toValue - min) / (max - min)) * 100;
@@ -38,19 +60,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 #e9ecef ${toPercent}%, 
                 #e9ecef 100%)`;
             
-            toSlider.style.background = gradient;
+            toSliderEl.style.background = gradient;
         }
         
         // 値の検証と調整
         function validateRange() {
-            let fromValue = parseFloat(fromSlider.value);
-            let toValue = parseFloat(toSlider.value);
+            let fromValue = parseFloat(fromSliderEl.value);
+            let toValue = parseFloat(toSliderEl.value);
             
             // fromがtoより大きい場合は入れ替え
             if (fromValue > toValue) {
                 [fromValue, toValue] = [toValue, fromValue];
-                fromSlider.value = fromValue;
-                toSlider.value = toValue;
+                fromSliderEl.value = fromValue;
+                toSliderEl.value = toValue;
                 fromInput.value = fromValue;
                 toInput.value = toValue;
             }
@@ -65,21 +87,21 @@ document.addEventListener('DOMContentLoaded', function() {
             container.setAttribute('data-range', `${Math.round(fromValue)} - ${Math.round(toValue)}`);
             
             // アクセシビリティ用のaria-label更新
-            fromSlider.setAttribute('aria-valuemin', min);
-            fromSlider.setAttribute('aria-valuemax', max);
-            fromSlider.setAttribute('aria-valuenow', fromValue);
-            toSlider.setAttribute('aria-valuemin', min);
-            toSlider.setAttribute('aria-valuemax', max);
-            toSlider.setAttribute('aria-valuenow', toValue);
+            fromSliderEl.setAttribute('aria-valuemin', min);
+            fromSliderEl.setAttribute('aria-valuemax', max);
+            fromSliderEl.setAttribute('aria-valuenow', fromValue);
+            toSliderEl.setAttribute('aria-valuemin', min);
+            toSliderEl.setAttribute('aria-valuemax', max);
+            toSliderEl.setAttribute('aria-valuenow', toValue);
         }
         
         // スライダーイベント
-        fromSlider.addEventListener('input', function() {
+        fromSliderEl.addEventListener('input', function() {
             fromInput.value = this.value;
             validateRange();
         });
         
-        toSlider.addEventListener('input', function() {
+        toSliderEl.addEventListener('input', function() {
             toInput.value = this.value;
             validateRange();
         });
@@ -89,7 +111,7 @@ document.addEventListener('DOMContentLoaded', function() {
             let value = parseFloat(this.value);
             value = Math.max(min, Math.min(max, value));
             this.value = value;
-            fromSlider.value = value;
+            fromSliderEl.value = value;
             validateRange();
         });
         
@@ -97,7 +119,7 @@ document.addEventListener('DOMContentLoaded', function() {
             let value = parseFloat(this.value);
             value = Math.max(min, Math.min(max, value));
             this.value = value;
-            toSlider.value = value;
+            toSliderEl.value = value;
             validateRange();
         });
         
@@ -119,10 +141,10 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // 初期化
         updateSliderBackground();
-        updateRangeDisplay(container, parseFloat(fromSlider.value), parseFloat(toSlider.value));
+        updateRangeDisplay(container, parseFloat(fromSliderEl.value), parseFloat(toSliderEl.value));
         
         // アニメーション効果を追加
-        addSliderAnimations(fromSlider, toSlider);
+        addSliderAnimations(fromSliderEl, toSliderEl);
     }
     
     // スライダーのアニメーション効果

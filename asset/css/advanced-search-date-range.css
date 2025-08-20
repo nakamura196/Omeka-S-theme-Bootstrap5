@@ -1,0 +1,202 @@
+/**
+ * Advanced Search Date Range Styles
+ * Advanced Searchフォーム内の日付範囲スライダー専用スタイル
+ */
+
+/* Advanced Search内の日付範囲コンテナ */
+.advanced-search-content .range-doubleform-control {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    padding: 25px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* 背景パターン */
+.advanced-search-content .range-doubleform-control::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,.05) 10px, rgba(255,255,255,.05) 20px);
+    pointer-events: none;
+}
+
+/* ラベルのスタイル改善 */
+.advanced-search-content .form-label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* アイコン追加（オプション） */
+.advanced-search-content .form-label::before {
+    content: "📅";
+    font-size: 1.2em;
+}
+
+/* 日付範囲コンテナ内の要素を白背景に */
+.advanced-search-content .range-doubleform-control .range-sliders,
+.advanced-search-content .range-doubleform-control .range-numerics {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 6px;
+    padding: 15px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.advanced-search-content .range-doubleform-control .range-sliders {
+    margin-bottom: 20px;
+}
+
+/* スライダーのスタイル調整 */
+.advanced-search-content .range-sliders input[type="range"]::-webkit-slider-thumb {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    width: 24px;
+    height: 24px;
+}
+
+.advanced-search-content .range-sliders input[type="range"]::-moz-range-thumb {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    width: 24px;
+    height: 24px;
+}
+
+/* アクティブ範囲の色 */
+.advanced-search-content .range-slider-to {
+    background: transparent !important;
+}
+
+/* 数値入力フィールドのスタイル */
+.advanced-search-content .range-numeric input[type="number"] {
+    background: #fff;
+    border: 2px solid #e1e5eb;
+    font-size: 15px;
+    font-weight: 600;
+    color: #495057;
+    transition: all 0.3s ease;
+}
+
+.advanced-search-content .range-numeric input[type="number"]:hover {
+    border-color: #667eea;
+}
+
+.advanced-search-content .range-numeric input[type="number"]:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    background: #f8f9ff;
+}
+
+/* ラベルのスタイル */
+.advanced-search-content .range-numeric-label {
+    color: #667eea;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 1px;
+}
+
+/* 年の範囲表示 */
+.advanced-search-content .range-doubleform-control::after {
+    content: attr(data-range);
+    position: absolute;
+    bottom: 5px;
+    right: 15px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+/* アニメーション効果 */
+.advanced-search-content .range-doubleform-control {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.advanced-search-content .range-doubleform-control:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+}
+
+/* プレースホルダーのスタイル */
+.advanced-search-content input[type="number"]::placeholder {
+    color: #adb5bd;
+    font-size: 13px;
+}
+
+/* バリデーションエラー時のスタイル */
+.advanced-search-content .range-numeric input[type="number"]:invalid {
+    border-color: #dc3545;
+}
+
+.advanced-search-content .range-numeric input[type="number"]:invalid:focus {
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+/* ツールチップ（オプション） */
+.advanced-search-content .range-numeric {
+    position: relative;
+}
+
+.advanced-search-content .range-numeric::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.advanced-search-content .range-numeric:hover::after {
+    opacity: 1;
+}
+
+/* レスポンシブデザイン */
+@media (max-width: 768px) {
+    .advanced-search-content .range-doubleform-control {
+        padding: 20px 15px;
+    }
+    
+    .advanced-search-content .range-numerics {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .advanced-search-content .range-numeric {
+        width: 100%;
+    }
+}
+
+/* ダークモード対応 */
+@media (prefers-color-scheme: dark) {
+    .advanced-search-content .range-doubleform-control {
+        background: linear-gradient(135deg, #434343 0%, #000000 100%);
+    }
+    
+    .advanced-search-content .range-numeric-label {
+        color: #a8b3ff;
+    }
+    
+    .advanced-search-content .range-numeric input[type="number"] {
+        background: #1a1a1a;
+        border-color: #333;
+        color: #fff;
+    }
+    
+    .advanced-search-content .range-numeric input[type="number"]:focus {
+        background: #252525;
+        border-color: #667eea;
+    }
+}

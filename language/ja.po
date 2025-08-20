@@ -699,3 +699,141 @@ msgstr "%s（\"%s: %s\" を持つ）"
 
 msgid "This item has linked resources. Please view them in the standard interface."
 msgstr "このアイテムにはリンクされたリソースがあります。標準インターフェースでご覧ください。"
+
+msgid "Add Filter"
+msgstr "フィルターを追加"
+
+msgid "Add a filter"
+msgstr "フィルターを追加"
+
+msgid "Hold Ctrl/Cmd to select multiple items"
+msgstr "複数選択するにはCtrl/Cmdキーを押しながらクリック"
+
+msgid "Select All"
+msgstr "すべて選択"
+
+msgid "Clear All"
+msgstr "すべてクリア"
+
+msgid "Enter filter keyword..."
+msgstr "フィルターキーワードを入力..."
+
+msgid "Enter"
+msgstr "入力"
+
+msgid "selected"
+msgstr "件選択済み"
+
+msgid "Enter search value..."
+msgstr "検索値を入力..."
+
+msgid "Select resource class..."
+msgstr "リソースクラスを選択..."
+
+msgid "Select item set..."
+msgstr "アイテムセットを選択..."
+
+msgid "Add Class"
+msgstr "クラスを追加"
+
+msgid "Add Item Set"
+msgstr "アイテムセットを追加"
+
+msgid "Add new item set"
+msgstr "新しいアイテムセットを追加"
+
+msgid "Remove class"
+msgstr "クラスを削除"
+
+msgid "Remove item set"
+msgstr "アイテムセットを削除"
+
+msgid "Enter keywords to search within all text content..."
+msgstr "すべてのテキストコンテンツ内を検索するキーワードを入力..."
+
+msgid "Searches all text content including titles, descriptions, and metadata values."
+msgstr "タイトル、説明、メタデータ値を含むすべてのテキストコンテンツを検索します。"
+
+msgid "Search for \"archaeology\"..."
+msgstr "「考古学」を検索..."
+
+msgid "Search for \"digital collection\"..."
+msgstr "「デジタルコレクション」を検索..."
+
+msgid "Search for \"historical documents\"..."
+msgstr "「歴史文書」を検索..."
+
+msgid "Text matching"
+msgstr "テキストマッチング"
+
+msgid "Resource matching"
+msgstr "リソースマッチング"
+
+msgid "Value presence"
+msgstr "値の有無"
+
+msgid "Data type"
+msgstr "データタイプ"
+
+msgid "is exactly"
+msgstr "完全一致"
+
+msgid "is not exactly"
+msgstr "完全一致しない"
+
+msgid "contains"
+msgstr "含む"
+
+msgid "does not contain"
+msgstr "含まない"
+
+msgid "starts with"
+msgstr "で始まる"
+
+msgid "does not start with"
+msgstr "で始まらない"
+
+msgid "ends with"
+msgstr "で終わる"
+
+msgid "does not end with"
+msgstr "で終わらない"
+
+msgid "is resource with ID"
+msgstr "IDがリソース"
+
+msgid "is not resource with ID"
+msgstr "IDがリソースでない"
+
+msgid "has any value"
+msgstr "値がある"
+
+msgid "has no values"
+msgstr "値がない"
+
+msgid "has data type"
+msgstr "データタイプがある"
+
+msgid "does not have data type"
+msgstr "データタイプがない"
+
+msgid "Select data type…"
+msgstr "データタイプを選択..."
+
+msgid "[Any Property]"
+msgstr "[すべてのプロパティ]"
+
+msgid "AND"
+msgstr "かつ"
+
+msgid "OR"
+msgstr "または"
+
+msgid "Query text"
+msgstr "クエリテキスト"
+
+msgid "Query type"
+msgstr "クエリタイプ"
+
+msgid "Joiner"
+msgstr "結合子"
