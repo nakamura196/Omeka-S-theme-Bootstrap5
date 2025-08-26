@@ -15,6 +15,9 @@ $filterLocale = (bool) $this->siteSetting('filter_locale_values');
 $lang = $this->lang();
 $langValue = $filterLocale ? [$lang, ''] : null;
 
+// Get thumbnail display mode from theme settings
+$thumbnailMode = $this->themeSetting('thumbnail_display_mode', 'contain');
+
 $itemSet = isset($itemSet) ? $itemSet : null;
 $itemSetShow = !empty($itemSet);
 $sortHeadings = [
@@ -167,7 +170,7 @@ $sortHeadings = [
             <div class="col-lg-3 col-md-4 col-sm-6">
                 <div class="card h-100 item-card shadow-sm">
                     <!-- サムネイル -->
-                    <div class="card-img-top-wrapper position-relative" style="height: 200px; overflow: hidden; background: #f8f9fa;">
+                    <div class="card-img-top-wrapper position-relative thumbnail-<?= $thumbnailMode ?>" style="height: 200px; overflow: hidden; background: #f8f9fa;">
                         <?php if ($thumbnail): ?>
                             <a href="<?= $escape($item->url()) ?>" class="d-block h-100">
                                 <?= $thumbnail ?>
@@ -371,7 +374,26 @@ document.addEventListener('DOMContentLoaded', function() {
 .card-img-top-wrapper img {
     width: 100%;
     height: 100%;
+}
+
+/* Cover mode (square crop) */
+.thumbnail-cover img {
     object-fit: cover;
+}
+
+/* Contain mode (full image with padding) */
+.thumbnail-contain {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.thumbnail-contain img {
+    object-fit: contain;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
 }
 
 /* リストビューのスタイル */

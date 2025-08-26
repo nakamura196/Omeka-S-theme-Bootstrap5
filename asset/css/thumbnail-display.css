@@ -1,0 +1,111 @@
+/**
+ * Thumbnail Display Modes CSS
+ * Supports both "contain" and "cover" display modes for item thumbnails
+ */
+
+/* Base thumbnail wrapper styles */
+.card-img-top-wrapper {
+    position: relative;
+    background: #f8f9fa;
+    overflow: hidden;
+}
+
+.card-img-top-wrapper a {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* Common image styles */
+.card-img-top-wrapper img {
+    width: 100%;
+    height: 100%;
+}
+
+/* Cover mode - crops image to fill container (square) */
+.thumbnail-cover img {
+    object-fit: cover;
+    object-position: center;
+}
+
+/* Contain mode - shows full image with padding (default) */
+.thumbnail-contain {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+}
+
+.thumbnail-contain a {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.thumbnail-contain img {
+    object-fit: contain;
+    max-width: calc(100% - 20px);
+    max-height: calc(100% - 20px);
+    width: auto !important;
+    height: auto !important;
+    display: block;
+    margin: auto;
+}
+
+/* List view thumbnails */
+.list-group-item .thumbnail-contain,
+.list-group-item .thumbnail-cover {
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fa;
+    overflow: hidden;
+}
+
+.list-group-item .thumbnail-contain img {
+    padding: 5px;
+}
+
+.list-group-item .thumbnail-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Hover effects */
+.thumbnail-contain img,
+.thumbnail-cover img {
+    transition: transform 0.3s ease;
+}
+
+.card:hover .thumbnail-contain img {
+    transform: scale(1.05);
+}
+
+.card:hover .thumbnail-cover img {
+    transform: scale(1.1);
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .card-img-top-wrapper,
+    .thumbnail-contain,
+    .thumbnail-cover {
+        background: #212529;
+    }
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 576px) {
+    .card-img-top-wrapper {
+        height: 150px !important;
+    }
+    
+    .thumbnail-contain img {
+        padding: 5px;
+    }
+}
