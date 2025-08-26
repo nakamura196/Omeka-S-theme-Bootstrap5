@@ -1,0 +1,77 @@
+/**
+ * Facet Badges Styling
+ * Ensures proper text wrapping for long facet names
+ */
+
+/* Active filter badges container */
+.active-filters {
+    max-width: 100%;
+}
+
+/* Individual filter wrapper */
+.active-filter {
+    max-width: 100%;
+}
+
+/* Badge styling with text wrapping */
+.active-filter .badge {
+    display: inline-flex;
+    align-items: center;
+    max-width: 100%;
+    white-space: normal;
+    word-wrap: break-word;
+    word-break: break-word;
+    line-height: 1.4;
+    text-align: left;
+}
+
+/* Label text styling */
+.active-filter .badge .text-white-50 {
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+/* Strong text (facet value) with wrapping */
+.active-filter .badge strong {
+    word-wrap: break-word;
+    word-break: break-word;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    hyphens: auto;
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+/* Close button styling */
+.active-filter .badge a {
+    flex-shrink: 0;
+    align-self: flex-start;
+    margin-top: 2px;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 576px) {
+    .active-filter {
+        width: 100%;
+    }
+    
+    .active-filter .badge {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
+
+/* For very long text, limit maximum width */
+@media (min-width: 577px) {
+    .active-filter {
+        max-width: 500px;
+    }
+}
+
+/* Ensure proper spacing when badges wrap to multiple lines */
+.active-filter .badge {
+    min-height: 36px;
+    align-items: flex-start;
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+}
