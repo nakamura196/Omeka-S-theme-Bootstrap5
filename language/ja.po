@@ -837,3 +837,46 @@ msgstr "クエリタイプ"
 
 msgid "Joiner"
 msgstr "結合子"
+
+# Theme Settings
+msgid "Footer Content"
+msgstr "フッターコンテンツ"
+
+msgid "HTML content to appear in the footer"
+msgstr "フッターに表示するHTMLコンテンツ"
+
+msgid "Hero Background Image"
+msgstr "ヒーロー背景画像"
+
+msgid "Background image for the hero section"
+msgstr "ヒーローセクションの背景画像"
+
+msgid "Hero Button URL"
+msgstr "ヒーローボタンURL"
+
+msgid "URL for the hero section button (leave empty to hide button)"
+msgstr "ヒーローセクションのボタンのURL（空にするとボタンを非表示）"
+
+msgid "Hero Button Text"
+msgstr "ヒーローボタンテキスト"
+
+msgid "Text for the hero section button"
+msgstr "ヒーローセクションのボタンテキスト"
+
+msgid "List Display Properties"
+msgstr "リスト表示プロパティ"
+
+msgid "Property terms to display in list view, one per line (e.g., dcterms:creator, dcterms:date). Leave empty to use default description."
+msgstr "リストビューで表示するプロパティ用語を1行に1つずつ入力（例：dcterms:creator, dcterms:date）。空の場合はデフォルトの説明を使用。"
+
+msgid "Thumbnail Display Mode"
+msgstr "サムネイル表示モード"
+
+msgid "Choose how thumbnails are displayed: 'cover' crops to fill (square), 'contain' shows full image with padding"
+msgstr "サムネイルの表示方法を選択：「カバー」は正方形にクロップ、「全体表示」はパディングで画像全体を表示"
+
+msgid "Contain (Full image with padding)"
+msgstr "全体表示（パディング付き）"
+
+msgid "Cover (Cropped square)"
+msgstr "カバー（正方形クロップ）"
