@@ -75,6 +75,39 @@ msgstr "フィルター"
 msgid "Filters"
 msgstr "フィルター"
 
+msgid "and"
+msgstr "かつ"
+
+msgid "or"
+msgstr "または"
+
+msgid "not"
+msgstr "以外"
+
+msgid "AND"
+msgstr "AND"
+
+msgid "OR"
+msgstr "OR"
+
+msgid "NOT"
+msgstr "NOT"
+
+msgid "Add a filter"
+msgstr "フィルターを追加"
+
+msgid "Remove this filter"
+msgstr "このフィルターを削除"
+
+msgid "Reset fields"
+msgstr "フィールドをリセット"
+
+msgid "Add"
+msgstr "追加"
+
+msgid "Remove"
+msgstr "削除"
+
 msgid "Clear all filters"
 msgstr "すべてのフィルターをクリア"
 

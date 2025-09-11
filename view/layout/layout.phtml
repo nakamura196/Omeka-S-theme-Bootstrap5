@@ -44,7 +44,7 @@ $this->headScript()->prependFile($this->assetUrl('vendor/jquery/jquery.min.js', 
 $this->headScript()->appendFile('https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js', 'text/javascript', ['integrity' => 'sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz', 'crossorigin' => 'anonymous']);
 $this->headScript()->appendFile($this->assetUrl('js/search-view-toggle.js'));
 $this->headScript()->appendFile($this->assetUrl('js/facet-range-slider.js'));
-$this->headScript()->appendFile($this->assetUrl('js/advanced-search-filters.js'));
+// $this->headScript()->appendFile($this->assetUrl('js/advanced-search-filters.js'));
 $this->jsTranslate();
 // Advanced Search Filtersで使用する翻訳文字列を追加
 $this->jsTranslate('Enter filter keyword...');

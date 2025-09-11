@@ -11,71 +11,9 @@ $translate = $this->plugin('translate');
 $escape = $this->plugin('escapeHtml');
 
 $params = $this->params()->fromQuery() ?: [];
-
-// デバッグ用：パラメータの内容を確認（本番環境では削除すること）
-// error_log('Search params before fix: ' . print_r($params, true));
-
-// フォームデータの整形（文字列を配列に変換）
-// 再帰的にデータ型を修正する関数
-$fixDataTypes = function($data) use (&$fixDataTypes) {
-    if (!is_array($data)) {
-        return $data;
-    }
-    
-    foreach ($data as $key => $value) {
-        // filterフィールドの特殊処理
-        if ($key === 'filter' && is_array($value)) {
-            foreach ($value as $filterKey => $filterValue) {
-                // 空文字列の場合のみ配列に変換
-                if ($filterValue === '') {
-                    $data[$key][$filterKey] = [];
-                }
-            }
-        }
-        // 明確に複数選択が必要なフィールドのみ配列に変換
-        elseif (in_array($key, ['item_set_id']) && !is_array($value) && $value !== '' && $value !== null) {
-            $data[$key] = [$value];
-        }
-        // 空文字列やnullの場合の処理（削除または保持）
-        elseif ($value === '' || $value === null) {
-            // フィールドによって処理を分ける
-            if (in_array($key, ['filter', 'facet'])) {
-                $data[$key] = [];
-            }
-            // その他のフィールドは空文字列のまま保持
-        }
-        // ネストされた配列の再帰処理
-        elseif (is_array($value)) {
-            $data[$key] = $fixDataTypes($value);
-        }
-    }
-    
-    return $data;
-};
-
-if (!empty($params)) {
-    // エラー処理を追加
-    try {
-        $params = $fixDataTypes($params);
-        // デバッグ用：修正後のパラメータを確認
-        // error_log('Search params after fix: ' . print_r($params, true));
-    } catch (\Exception $e) {
-        // エラーが発生した場合はパラメータをリセット
-        error_log('Error fixing search params: ' . $e->getMessage());
-        $params = [];
-    }
-}
-
-// フォームデータ設定時のエラー処理
-try {
-    $form->setData($params);
-} catch (\Exception $e) {
-    // エラーが発生した場合は空のデータで初期化
-    error_log('Error setting form data: ' . $e->getMessage());
-    $form->setData([]);
-}
-
-$form->prepare();
+$form
+    ->setData($params)
+    ->prepare();
 
 $formId = $form->getAttribute('id');
 if (!$formId) {
@@ -89,15 +27,13 @@ $submit = null;
 if ($form->has('form-reset')) {
     $reset = $form->get('form-reset');
     $reset
-        ->setAttribute('form', $formId)
-        ->setAttribute('class', 'btn btn-outline-secondary me-2');
+        ->setAttribute('form', $formId);
     $form->remove('form-reset');
 }
 if ($form->has('submit')) {
     $submit = $form->get('submit');
     $submit
-        ->setAttribute('form', $formId)
-        ->setAttribute('class', 'btn btn-primary');
+        ->setAttribute('form', $formId);
     $form->remove('submit');
 }
 
@@ -118,244 +54,692 @@ if ($filters) {
 */
 ?>
 
-<!-- モダンな検索フォーム（Bootstrap 5） -->
-<div id="advanced-search-form-wrapper" class="search-form-modern">
-    <div id="advanced-search-form">
-            <?= $this->form()->openTag($form) ?>
-            
-            <!-- フォームフィールド -->
-            <div class="search-form-fields">
-                <?php
-                // フォームをフィールドごとにカスタマイズ
-                foreach ($form as $element):
-                    if ($element instanceof \Laminas\Form\Fieldset):
-                        // フィールドセットの場合
-                        ?>
-                        <div class="mb-4 filter-fieldset-section">
-                            <?php 
-                            // Check if this is a filter fieldset
-                            $isFilterFieldset = ($element->getName() === 'filter' || strpos($element->getName(), 'filter') !== false);
-                            ?>
-                            <?php 
-                            // ラベルからHTMLタグとボタンを除去
-                            $cleanLabel = $element->getLabel();
-                            if ($cleanLabel) {
-                                // HTMLタグを除去
-                                $cleanLabel = strip_tags($cleanLabel);
-                                // 余分な空白を除去
-                                $cleanLabel = trim($cleanLabel);
-                            }
-                            ?>
-                            <?php if ($cleanLabel): ?>
-                            <div class="filter-header d-flex align-items-center justify-content-between mb-3">
-                                <h6 class="fw-bold mb-0 text-secondary">
-                                    <i class="bi <?= $isFilterFieldset ? 'bi-funnel-fill' : 'bi-filter-circle' ?> me-2"></i>
-                                    <?= $translate($cleanLabel) ?>
-                                </h6>
-                                <?php if ($isFilterFieldset): ?>
-                                <button type="button" class="btn btn-sm btn-outline-success add-filter-btn" title="<?= $translate('Add a filter') ?>">
-                                    <i class="bi bi-plus-circle me-1"></i>
-                                    <?= $translate('Add Filter') ?>
-                                </button>
-                                <?php endif; ?>
-                            </div>
-                            <?php endif; ?>
-                            
-                            <div class="filter-fields-container">
-                                <?php 
-                                $fieldIndex = 0;
-                                foreach ($element as $subElement): 
-                                    // ボタンやレジェンド要素をスキップ
-                                    if ($subElement instanceof \Laminas\Form\Element\Button || 
-                                        $subElement->getAttribute('type') === 'button' ||
-                                        strpos($subElement->getAttribute('class'), 'search-filter-action') !== false ||
-                                        $subElement->getName() === 'plus') {
-                                        continue;
-                                    }
-                                    $fieldIndex++;
-                                ?>
-                                <div class="filter-field-row mb-3 <?= $isFilterFieldset ? 'p-3 bg-light rounded border' : '' ?>">
-                                    <div class="row align-items-center g-3">
-                                        <div class="<?= $isFilterFieldset ? 'col-md-10' : 'col-md-6' ?>">
-                                            <?php
-                                            // Bootstrap 5のフォームコントロールクラスを追加
-                                            $currentClass = $subElement->getAttribute('class') ?: '';
-                                            $subElement->setAttribute('class', trim($currentClass . ' form-control'));
-                                            
-                                            if ($subElement->getLabel()): ?>
-                                            <label class="form-label text-muted small">
-                                                <?= $translate($subElement->getLabel()) ?>
-                                            </label>
-                                            <?php endif; ?>
-                                            
-                                            <?php if ($isFilterFieldset): ?>
-                                            <div class="input-group">
-                                                <span class="input-group-text">
-                                                    <i class="bi bi-search"></i>
-                                                </span>
-                                                <?= $this->formElement($subElement) ?>
-                                            </div>
-                                            <?php else: ?>
-                                                <?= $this->formElement($subElement) ?>
-                                            <?php endif; ?>
-                                        </div>
-                                        
-                                        <?php if ($isFilterFieldset && $fieldIndex > 1): ?>
-                                        <div class="col-md-2">
-                                            <button type="button" class="btn btn-sm btn-outline-danger remove-filter-btn w-100" title="<?= $translate('Remove filter') ?>">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        </div>
-                                        <?php endif; ?>
-                                    </div>
-                                </div>
-                                <?php endforeach; ?>
-                            </div>
-                        </div>
-                        <?php
-                    else:
-                        // 通常のフォーム要素の場合
-                        $elementType = $element->getAttribute('type');
-                        $elementName = $element->getName();
-                        
-                        // ラジオボタンの場合の特別処理
-                        if ($elementType === 'radio' || strpos($elementName, 'resource_template_id') !== false):
-                            ?>
-                            <div class="mb-4 radio-group-section">
-                                <?php if ($element->getLabel()): ?>
-                                <h6 class="fw-bold mb-3 text-secondary">
-                                    <i class="bi bi-ui-radios me-2"></i>
-                                    <?= $translate($element->getLabel()) ?>
-                                </h6>
-                                <?php endif; ?>
-                                
-                                <div class="radio-options">
-                                    <?php
-                                    // ラジオボタンオプションの処理
-                                    $options = $element->getValueOptions();
-                                    if ($options):
-                                        foreach ($options as $value => $label):
-                                    ?>
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input" 
-                                               type="radio" 
-                                               name="<?= $escape($element->getName()) ?>" 
-                                               id="<?= $escape($element->getName() . '_' . $value) ?>" 
-                                               value="<?= $escape($value) ?>"
-                                               <?= ($element->getValue() == $value) ? 'checked' : '' ?>>
-                                        <label class="form-check-label" for="<?= $escape($element->getName() . '_' . $value) ?>">
-                                            <?= $translate($label) ?>
-                                        </label>
-                                    </div>
-                                    <?php 
-                                        endforeach;
-                                    else:
-                                        // フォールバック: 通常のラジオボタン表示
-                                        echo $this->formElement($element);
-                                    endif;
-                                    ?>
-                                </div>
-                            </div>
-                        <?php
-                        // 複数選択セレクトボックスの場合
-                        elseif ($element->getAttribute('multiple') !== null || strpos($elementName, 'item_set_id') !== false || strpos($elementName, 'resource_class_id') !== false):
-                            ?>
-                            <div class="mb-4 multiselect-section">
-                                <?php if ($element->getLabel()): ?>
-                                <h6 class="fw-bold mb-3 text-secondary">
-                                    <i class="bi <?= strpos($elementName, 'item_set') !== false ? 'bi-collection' : 'bi-tags' ?> me-2"></i>
-                                    <?= $translate($element->getLabel()) ?>
-                                </h6>
-                                <?php endif; ?>
-                                
-                                <div class="multiselect-wrapper">
-                                    <?php
-                                    // Bootstrap 5の複数選択に対応したクラスを追加
-                                    $currentClass = $element->getAttribute('class') ?: '';
-                                    $element->setAttribute('class', trim($currentClass . ' form-select'));
-                                    $element->setAttribute('size', '5'); // 5行表示
-                                    $element->setAttribute('data-live-search', 'true');
-                                    ?>
-                                    <div class="multiselect-help-text alert alert-info py-2 px-3 mb-2">
-                                        <small class="d-flex align-items-center mb-0">
-                                            <i class="bi bi-info-circle-fill me-2"></i>
-                                            <span><?= $translate('Hold Ctrl/Cmd to select multiple items') ?></span>
-                                        </small>
-                                    </div>
-                                    <?= $this->formElement($element) ?>
-                                </div>
-                            </div>
-                        <?php
-                        // 通常のセレクトボックスやテキストフィールド
-                        else:
-                            $currentClass = $element->getAttribute('class') ?: '';
-                            if ($element instanceof \Laminas\Form\Element\Select) {
-                                $element->setAttribute('class', trim($currentClass . ' form-select'));
-                            } else {
-                                $element->setAttribute('class', trim($currentClass . ' form-control'));
-                            }
-                            ?>
-                            <div class="mb-3">
-                                <?php if ($element->getLabel()): ?>
-                                <label class="form-label">
-                                    <?= $translate($element->getLabel()) ?>
-                                </label>
-                                <?php endif; ?>
-                                <?= $this->formElement($element) ?>
-                            </div>
-                        <?php
-                        endif; // else条件の終了
-                    endif; // $element instanceof Fieldsetの終了
-                endforeach;
-                ?>
-            </div>
-            
-            <!-- 検索ボタン -->
-            <div class="search-form-buttons d-flex justify-content-center gap-2 mt-4 pt-3 border-top">
-                <?php if ($reset): ?>
-                <button type="button" 
-                        form="<?= $formId ?>" 
-                        class="btn btn-outline-secondary px-4"
-                        onclick="document.getElementById('<?= $formId ?>').reset(); return false;">
-                    <i class="bi bi-arrow-clockwise me-2"></i>
-                    <?= $translate('Reset') ?>
-                </button>
-                <?php endif; ?>
+<!-- Advanced Search Form with Bootstrap 5 Design -->
+<div id="advanced-search-form-wrapper" class="advanced-search-wrapper">
+    <!-- Main Search Form -->
+    <div id="advanced-search-form" class="container-fluid">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <?= $this->form()->openTag($form) ?>
                 
-                <?php if ($submit): 
-                    $submit->setAttribute('class', 'btn btn-primary px-5');
-                    $submit->setLabel('<i class="bi bi-search me-2"></i>' . $translate('Search'));
-                    $submit->setLabelOption('disable_html_escape', true);
-                ?>
-                <?= $this->formButton($submit) ?>
-                <?php endif; ?>
+                <!-- Form Fields - Keep original structure but add Bootstrap styling via CSS -->
+                <div class="search-form-content">
+                    <?= $this->formCollection($form) ?>
+                </div>
+                
+                <?= $this->form()->closeTag() ?>
             </div>
             
-            <?= $this->form()->closeTag() ?>
+            <!-- Action Buttons -->
+            <div class="card-footer bg-white border-top py-3">
+                <div class="search-form-buttons d-flex justify-content-center gap-3">
+                    <?php if ($reset): ?>
+                        <?= $this->formButton($reset->setAttribute('class', 'btn btn-outline-secondary btn-lg px-4')) ?>
+                    <?php endif; ?>
+                    <?php if ($submit): ?>
+                        <?= $this->formButton($submit->setAttribute('class', 'btn btn-primary btn-lg px-4')) ?>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 <style>
-/* 検索フォームのカスタムスタイル */
-.search-form-modern .form-control:focus {
-    border-color: var(--bs-primary);
-    box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+/* Bootstrap 5 styling for Advanced Search Form */
+.search-form-content fieldset {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
 }
 
-/* フィールドセットのスタイル */
-.search-form-fields .form-label {
-    font-weight: 500;
+.search-form-content legend {
+    font-size: 1.1rem;
+    font-weight: 600;
+    padding: 0 0.5rem;
+    margin-bottom: 1rem;
+    width: auto;
+    float: none;
+}
+
+.search-form-content input[type="text"],
+.search-form-content input[type="search"],
+.search-form-content input[type="number"],
+.search-form-content input[type="email"],
+.search-form-content input[type="url"],
+.search-form-content textarea {
+    display: block;
+    width: 100%;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #212529;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: 0.375rem;
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
     margin-bottom: 0.5rem;
 }
 
-/* レスポンシブ調整 */
+.search-form-content select {
+    display: block;
+    width: 100%;
+    padding: 0.375rem 2.25rem 0.375rem 0.75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #212529;
+    background-color: #fff;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 0.375rem;
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    appearance: none;
+    margin-bottom: 0.5rem;
+}
+
+.search-form-content select:focus {
+    border-color: #86b7fe;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.search-form-content input[type="text"]:focus,
+.search-form-content input[type="search"]:focus {
+    border-color: #86b7fe;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.search-form-content input[type="checkbox"],
+.search-form-content input[type="radio"] {
+    margin-right: 0.5rem;
+}
+
+.search-form-content label {
+    display: inline-block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.search-form-content .field {
+    margin-bottom: 1.5rem;
+}
+
+.search-form-content .field-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.search-form-content .field-meta .label {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.search-form-content .field-meta button {
+    margin-left: 1rem;
+}
+
+.search-form-content .inputs {
+    margin-top: 0.5rem;
+}
+
+.search-form-content .value {
+    margin-bottom: 0.75rem;
+    padding: 0.75rem;
+    background-color: #f8f9fa;
+    border-radius: 0.375rem;
+}
+
+/* Horizontal layout for filter fields */
+.search-form-content .value .value-fields,
+.search-form-content .value .value-common {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.search-form-content .value select.joiner {
+    max-width: 100px;
+}
+
+.search-form-content .value .query-filter,
+.search-form-content .value .query-property {
+    flex: 1;
+    min-width: 200px;
+}
+
+.search-form-content .value .query-type {
+    min-width: 150px;
+    max-width: 200px;
+}
+
+.search-form-content .value .query-text {
+    flex: 1;
+    min-width: 150px;
+}
+
+.search-form-content .value button.remove-value,
+.search-form-content .value button.o-icon-delete {
+    margin-left: 0;
+    flex-shrink: 0;
+}
+
+.search-form-content button.add-value,
+.search-form-content button.remove-value {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.875rem;
+    border-radius: 0.25rem;
+    border: 1px solid #dee2e6;
+    background-color: #fff;
+    cursor: pointer;
+    transition: all 0.15s ease-in-out;
+}
+
+.search-form-content button.add-value:hover,
+.search-form-content button.remove-value:hover {
+    background-color: #e9ecef;
+}
+
+.search-form-content button.add-value {
+    color: #198754;
+    border-color: #198754;
+}
+
+.search-form-content button.remove-value {
+    color: #dc3545;
+    border-color: #dc3545;
+}
+
+/* Style for submit and reset buttons */
+.search-form-buttons button,
+button#search-submit,
+button[name="submit"],
+button[name="form-reset"] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+/* Ensure button text is visible */
+.search-form-buttons button i,
+button#search-submit i,
+button[name="submit"] i,
+button[name="form-reset"] i {
+    font-size: 1.2rem;
+    line-height: 1;
+}
+
+/* Filter queries specific styling */
+#filter-queries .field-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+#filter-queries .label {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+#filter-queries .chosen-select,
+#property-queries .chosen-select {
+    min-width: 200px;
+}
+
+/* Fix for empty buttons - add icons and minimum size */
+.search-form-content button.search-filter-plus,
+.search-form-content button.search-filter-minus,
+.search-form-content button.add-value,
+.search-form-content button.remove-value,
+.search-form-content button.o-icon-add,
+.search-form-content button.o-icon-delete {
+    min-width: 38px;
+    height: 38px;
+    padding: 0.375rem 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    align-self: center;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+/* Add text content to empty buttons */
+.search-form-content button.search-filter-plus:empty::after,
+.search-form-content button.add-value:empty::after,
+.search-form-content button.o-icon-add:empty::after {
+    content: "+";
+    font-size: 1.5rem;
+    font-weight: bold;
+    line-height: 1;
+}
+
+.search-form-content button.search-filter-minus:empty::after,
+.search-form-content button.remove-value:empty::after,
+.search-form-content button.o-icon-delete:empty::after {
+    content: "×";
+    font-size: 1.5rem;
+    font-weight: bold;
+    line-height: 1;
+}
+
+/* Add text labels for better accessibility */
+.search-form-content button.button:empty::after {
+    content: attr(aria-label);
+    font-size: 0;
+}
+
+/* Ensure buttons are visible even when empty */
+.search-form-content button:empty {
+    min-width: 40px;
+    min-height: 40px;
+}
+
+/* Style filter action buttons */
+.search-form-content button.search-filter-action {
+    background-color: #0d6efd;
+    color: white;
+    border: 1px solid #0d6efd;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    transition: all 0.15s ease-in-out;
+}
+
+.search-form-content button.search-filter-action:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+}
+
+.search-form-content button.search-filter-minus {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.search-form-content button.search-filter-minus:hover {
+    background-color: #bb2d3b;
+    border-color: #b02a37;
+}
+
+/* Fix spacing for filter queries fieldset */
+#filter-queries fieldset,
+#property-queries fieldset {
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+#filter-queries legend,
+#property-queries legend {
+    display: none;
+}
+
+/* Compact layout for multiple filters */
+#filter-queries .inputs > .value,
+#property-queries .inputs > .value {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+    padding: 0.5rem;
+    background-color: #f8f9fa;
+    border-radius: 0.375rem;
+}
+
+#filter-queries .inputs > .value > *,
+#property-queries .inputs > .value > * {
+    margin: 0;
+}
+
+/* Filter row wrapper for horizontal layout */
+.filter-row-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.filter-row-wrapper > * {
+    margin-bottom: 0 !important;
+    margin-top: 0 !important;
+}
+
+.filter-row-wrapper select:first-child {
+    max-width: 100px;
+    height: 38px;
+}
+
+.filter-row-wrapper select:nth-child(2) {
+    flex: 1;
+    min-width: 150px;
+    height: 38px;
+}
+
+.filter-row-wrapper select:nth-child(3) {
+    min-width: 120px;
+    max-width: 180px;
+    height: 38px;
+}
+
+.filter-row-wrapper input[type="text"] {
+    flex: 1;
+    min-width: 150px;
+    height: 38px;
+}
+
+.filter-row-wrapper button {
+    flex-shrink: 0;
+    align-self: center;
+}
+
+/* Filter legend with add button */
+.filter-legend-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.filter-legend-wrapper legend {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+#search-filters fieldset.filter {
+    border: none;
+    padding: 0.75rem;
+    margin-bottom: 0.75rem;
+    background-color: #f8f9fa;
+    border-radius: 0.375rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .search-form-content .value .value-fields,
+    .search-form-content .value .value-common,
+    #filter-queries .inputs > .value,
+    #property-queries .inputs > .value {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .search-form-content .value select.joiner,
+    .search-form-content .value .query-filter,
+    .search-form-content .value .query-property,
+    .search-form-content .value .query-type,
+    .search-form-content .value .query-text {
+        width: 100%;
+        max-width: none;
+    }
+}
+
 @media (max-width: 768px) {
+    .search-form-content input,
+    .search-form-content select,
+    .search-form-content textarea {
+        font-size: 16px; /* Prevent zoom on iOS */
+    }
+    
     .search-form-buttons {
         flex-direction: column;
     }
     
-    .search-form-buttons .btn {
+    .search-form-buttons button {
         width: 100%;
+        margin-bottom: 0.5rem;
     }
 }
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Translations for JavaScript
+    const translations = {
+        'Filters': <?= json_encode($translate('Filters')) ?>,
+        'Add': <?= json_encode($translate('Add')) ?>,
+        'Remove': <?= json_encode($translate('Remove')) ?>,
+        'Add a filter': <?= json_encode($translate('Add a filter')) ?>,
+        'Remove this filter': <?= json_encode($translate('Remove this filter')) ?>,
+        'Reset fields': <?= json_encode($translate('Reset fields')) ?>,
+        'Search': <?= json_encode($translate('Search')) ?>,
+        'and': <?= json_encode($translate('and')) ?>,
+        'or': <?= json_encode($translate('or')) ?>,
+        'not': <?= json_encode($translate('not')) ?>,
+        'AND': <?= json_encode($translate('AND')) ?>,
+        'OR': <?= json_encode($translate('OR')) ?>,
+        'NOT': <?= json_encode($translate('NOT')) ?>
+    };
+    
+    // Translate function
+    function t(key) {
+        return translations[key] || key;
+    }
+    
+    // Translate select options for join/joiner (and, or, not)
+    function translateSelectOptions() {
+        // Find all select elements with join/joiner in their name
+        const joinSelects = document.querySelectorAll('select[name*="join"], select.joiner');
+        joinSelects.forEach(function(select) {
+            const options = select.querySelectorAll('option');
+            options.forEach(function(option) {
+                const value = option.value.toLowerCase();
+                const text = option.textContent.trim();
+                const textLower = text.toLowerCase();
+                // Translate common logical operators
+                if (value === 'and' || textLower === 'and') {
+                    // Keep original case if uppercase
+                    option.textContent = (text === 'AND') ? t('AND') : t('and');
+                } else if (value === 'or' || textLower === 'or') {
+                    option.textContent = (text === 'OR') ? t('OR') : t('or');
+                } else if (value === 'not' || textLower === 'not') {
+                    option.textContent = (text === 'NOT') ? t('NOT') : t('not');
+                }
+            });
+        });
+    }
+    
+    // Apply translations on page load
+    translateSelectOptions();
+    
+    // Add icons to submit and reset buttons
+    const submitBtn = document.querySelector('button[type="submit"]#search-submit, button[name="submit"]');
+    if (submitBtn && !submitBtn.querySelector('i')) {
+        const icon = document.createElement('i');
+        icon.className = 'bi bi-search me-2';
+        submitBtn.insertBefore(icon, submitBtn.firstChild);
+    }
+    
+    const resetBtn = document.querySelector('button[type="reset"], button[name="form-reset"]');
+    if (resetBtn && !resetBtn.querySelector('i')) {
+        const icon = document.createElement('i');
+        icon.className = 'bi bi-arrow-clockwise me-2';
+        resetBtn.insertBefore(icon, resetBtn.firstChild);
+    }
+    
+    // Fix Bootstrap row/col structure for filter fields
+    function fixFilterLayout() {
+        // Remove Bootstrap row/col structure from filter fields
+        const filterFieldsets = document.querySelectorAll('#search-filters fieldset.filter');
+        filterFieldsets.forEach(function(fieldset) {
+            // Find the row with the remove button
+            const rowDiv = fieldset.querySelector('.row.mb-3');
+            if (rowDiv) {
+                // Extract the button
+                const removeBtn = rowDiv.querySelector('button.search-filter-minus');
+                if (removeBtn) {
+                    // Move button out of row structure
+                    fieldset.appendChild(removeBtn);
+                }
+                // Remove the row div
+                rowDiv.remove();
+            }
+            
+            // Wrap filter elements in a flex container
+            const elements = Array.from(fieldset.children);
+            const wrapper = document.createElement('div');
+            wrapper.className = 'filter-row-wrapper';
+            
+            elements.forEach(function(el) {
+                if (el.tagName !== 'LEGEND' && !el.classList.contains('filter-row-wrapper')) {
+                    wrapper.appendChild(el);
+                }
+            });
+            
+            fieldset.appendChild(wrapper);
+        });
+        
+        // Fix the main filter fieldset structure
+        const mainFilterFieldset = document.querySelector('#search-filters');
+        if (mainFilterFieldset) {
+            // Move the add button to the legend area
+            const addBtn = mainFilterFieldset.querySelector('button.search-filter-plus');
+            const legend = mainFilterFieldset.querySelector('legend:not([hidden])');
+            if (addBtn && legend) {
+                // Translate legend text if it's "Filters"
+                if (legend.textContent.trim() === 'Filters') {
+                    legend.textContent = t('Filters');
+                }
+                const legendWrapper = document.createElement('div');
+                legendWrapper.className = 'filter-legend-wrapper';
+                legendWrapper.appendChild(legend);
+                legendWrapper.appendChild(addBtn);
+                mainFilterFieldset.insertBefore(legendWrapper, mainFilterFieldset.firstChild);
+            }
+        }
+    }
+    
+    // Add Bootstrap Icons to empty buttons
+    const addButtons = document.querySelectorAll('.search-form-content button.search-filter-plus, .search-form-content button.add-value, .search-form-content button.o-icon-add');
+    addButtons.forEach(function(button) {
+        if (button.innerHTML.trim() === '') {
+            button.innerHTML = '<i class="bi bi-plus-circle"></i>';
+            button.title = button.getAttribute('aria-label') || t('Add a filter');
+        }
+    });
+    
+    const removeButtons = document.querySelectorAll('.search-form-content button.search-filter-minus, .search-form-content button.remove-value, .search-form-content button.o-icon-delete');
+    removeButtons.forEach(function(button) {
+        if (button.innerHTML.trim() === '') {
+            button.innerHTML = '<i class="bi bi-trash"></i>';
+            button.title = button.getAttribute('aria-label') || t('Remove this filter');
+        }
+    });
+    
+    // Apply layout fixes
+    fixFilterLayout();
+    
+    // Handle dynamically added buttons and fix their layout
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            mutation.addedNodes.forEach(function(node) {
+                if (node.nodeType === 1) { // Element node
+                    // Check if it's a filter fieldset
+                    if (node.matches && node.matches('fieldset.filter')) {
+                        // Apply layout fix to the new fieldset
+                        setTimeout(function() {
+                            // Find the row with the remove button
+                            const rowDiv = node.querySelector('.row.mb-3');
+                            if (rowDiv) {
+                                // Extract the button
+                                const removeBtn = rowDiv.querySelector('button.search-filter-minus');
+                                if (removeBtn) {
+                                    // Add icon if empty
+                                    if (removeBtn.innerHTML.trim() === '') {
+                                        removeBtn.innerHTML = '<i class="bi bi-trash"></i>';
+                                        removeBtn.title = removeBtn.getAttribute('aria-label') || t('Remove this filter');
+                                    }
+                                    // Move button out of row structure
+                                    node.appendChild(removeBtn);
+                                }
+                                // Remove the row div
+                                rowDiv.remove();
+                            }
+                            
+                            // Wrap filter elements in a flex container
+                            const elements = Array.from(node.children);
+                            const wrapper = document.createElement('div');
+                            wrapper.className = 'filter-row-wrapper';
+                            
+                            elements.forEach(function(el) {
+                                if (el.tagName !== 'LEGEND' && !el.classList.contains('filter-row-wrapper')) {
+                                    wrapper.appendChild(el);
+                                }
+                            });
+                            
+                            node.appendChild(wrapper);
+                            
+                            // Translate options in the new filter
+                            const selects = node.querySelectorAll('select[name*="join"], select.joiner');
+                            selects.forEach(function(select) {
+                                const options = select.querySelectorAll('option');
+                                options.forEach(function(option) {
+                                    const value = option.value.toLowerCase();
+                                    const text = option.textContent.trim();
+                                    const textLower = text.toLowerCase();
+                                    if (value === 'and' || textLower === 'and') {
+                                        option.textContent = (text === 'AND') ? t('AND') : t('and');
+                                    } else if (value === 'or' || textLower === 'or') {
+                                        option.textContent = (text === 'OR') ? t('OR') : t('or');
+                                    } else if (value === 'not' || textLower === 'not') {
+                                        option.textContent = (text === 'NOT') ? t('NOT') : t('not');
+                                    }
+                                });
+                            });
+                        }, 10);
+                    }
+                    
+                    // Check for add buttons
+                    if (node.matches && (node.matches('.search-filter-plus') || node.matches('.add-value') || node.matches('.o-icon-add'))) {
+                        if (node.innerHTML.trim() === '') {
+                            node.innerHTML = '<i class="bi bi-plus-circle"></i>';
+                            node.title = node.getAttribute('aria-label') || t('Add a filter');
+                        }
+                    }
+                    // Check for remove buttons
+                    if (node.matches && (node.matches('.search-filter-minus') || node.matches('.remove-value') || node.matches('.o-icon-delete'))) {
+                        if (node.innerHTML.trim() === '') {
+                            node.innerHTML = '<i class="bi bi-trash"></i>';
+                            node.title = node.getAttribute('aria-label') || t('Remove this filter');
+                        }
+                    }
+                    // Check child elements
+                    const addBtns = node.querySelectorAll ? node.querySelectorAll('.search-filter-plus, .add-value, .o-icon-add') : [];
+                    addBtns.forEach(function(btn) {
+                        if (btn.innerHTML.trim() === '') {
+                            btn.innerHTML = '<i class="bi bi-plus-circle"></i>';
+                            btn.title = btn.getAttribute('aria-label') || t('Add a filter');
+                        }
+                    });
+                    const removeBtns = node.querySelectorAll ? node.querySelectorAll('.search-filter-minus, .remove-value, .o-icon-delete') : [];
+                    removeBtns.forEach(function(btn) {
+                        if (btn.innerHTML.trim() === '') {
+                            btn.innerHTML = '<i class="bi bi-trash"></i>';
+                            btn.title = btn.getAttribute('aria-label') || t('Remove this filter');
+                        }
+                    });
+                }
+            });
+        });
+    });
+    
+    // Observe the form for changes
+    const searchForm = document.querySelector('.search-form-content');
+    if (searchForm) {
+        observer.observe(searchForm, { childList: true, subtree: true });
+    }
+});
+</script>
