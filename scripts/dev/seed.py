@@ -168,6 +168,13 @@ try:
             })
         print(f"{slug}: items imported")
 
+        # Attach this site's item sets to the site (the advanced search lists only those).
+        site_sets = sorted({item_set_map[ref["o:id"]]
+                            for item in live_get("items", site_id=live_id, per_page=LIMIT_ITEMS)
+                            for ref in item.get("o:item_set", [])})
+        for pos, set_id in enumerate(site_sets, 1):
+            sql(f"INSERT INTO site_item_set (site_id, item_set_id, position) VALUES ({sid}, {set_id}, {pos})")
+
         # Pages, with module blocks replaced by a placeholder.
         page_map = {}
         for page in live_get("site_pages", site_id=live_id):

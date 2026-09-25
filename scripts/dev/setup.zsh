@@ -6,6 +6,7 @@
 # 何をするか:
 #   1. Omeka S 4.2.1 の公式 zip を .dev/ に取得し、GitHub が公開しているハッシュと照合して展開
 #   2. .dev/omeka-s/themes/omeka-s-theme-bs5 をこのリポジトリへのリンクにする（編集がそのまま反映される）
+#      あわせて、画像ビューアの代役モジュール（scripts/dev/modules/DevIiifViewers）をつなぐ
 #   3. ddev（プロジェクト名 toyotheme）を起動
 #   4. scripts/dev/seed.py で、インストールと本番（app.toyobunko-lab.jp）からの少量のデータ取り込みを行う
 #      本番へは公開 API の読み取りだけで、書き込みはしない
@@ -27,6 +28,8 @@ fi
 
 # Relative link so it also resolves inside the ddev container (the repo root is mounted).
 ln -sfn ../../.. $DEV/omeka-s/themes/omeka-s-theme-bs5
+# Stand-in for the IIIF viewer modules (see its Module.php).
+ln -sfn ../../../scripts/dev/modules/DevIiifViewers $DEV/omeka-s/modules/DevIiifViewers
 
 cat > $DEV/omeka-s/config/database.ini <<'INI'
 user     = "db"
@@ -43,5 +46,6 @@ ddev start
 
 URL=$(ddev describe -j | jq -r .raw.primary_url)
 python3 $ROOT/scripts/dev/seed.py $URL
+ddev mysql -e "INSERT IGNORE INTO module (id, is_active, version) VALUES ('DevIiifViewers', 1, '1.0.0')"
 
 echo "サイト: $URL/s/main"
