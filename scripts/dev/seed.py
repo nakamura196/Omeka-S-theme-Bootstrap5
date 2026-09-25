@@ -122,17 +122,18 @@ try:
                 out["o:resource_class"] = {"o:id": classes[term]}
         return out
 
-    # Top image asset (the live hero background).
-    top_image = None
-    html = live.get(f"{LIVE}/s/main", timeout=60).text
-    m = re.search(r'url\("([^"]+/files/asset/[^"]+)"\)', html)
-    if m:
+    # Top image asset (the live hero background). Each site has its own.
+    def copy_top_image(slug):
+        html = live.get(f"{LIVE}/s/{slug}", timeout=60).text
+        m = re.search(r'url\("([^"]+/files/asset/[^"]+)"\)', html)
+        if not m:
+            return None
         img = live.get(m.group(1), timeout=60).content
         asset = api("POST", "assets", files={
-            "data": (None, json.dumps({"o:name": "top_image"}), "application/json"),
+            "data": (None, json.dumps({"o:name": f"top_image_{slug}"}), "application/json"),
             "file": ("top.jpg", img, "image/jpeg"),
         })
-        top_image = asset["o:id"]
+        return asset["o:id"]
 
     item_set_map = {}
     for slug, live_id in SITES.items():
@@ -142,8 +143,8 @@ try:
             "o:theme": THEME, "o:is_public": True,
         })
         sid = site["o:id"]
-        # Production sets a footer (and top image) on main only; kanjur shows the default.
-        settings = {"footer": FOOTER if slug == "main" else None, "top_image": top_image if slug == "main" else None}
+        # Production sets a footer on main only; kanjur shows the default.
+        settings = {"footer": FOOTER if slug == "main" else None, "top_image": copy_top_image(slug)}
         sql("INSERT INTO site_setting (id, site_id, value) VALUES "
             f"('theme_settings_{THEME}', {sid}, '{json.dumps(settings)}')")
         # Production has page prev/next links turned off (no .site-page-pagination in its HTML).
