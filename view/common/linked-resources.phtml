@@ -1,0 +1,100 @@
+<?php
+use Laminas\Form\Element\Select;
+
+// Set up pagination.
+$pagination = $this->pagination(null, $totalCount, $page, $perPage);
+$fragment = 'resources-linked';
+$pagination->setFragment($fragment);
+
+// Set up locale.
+$valueLang = null;
+if ($this->status()->isSiteRequest()) {
+    $lang = $this->lang();
+    $filterLocale = (bool) $this->siteSetting('filter_locale_values');
+    $valueLang = $filterLocale ? [$lang, ''] : null;
+}
+
+// Set up resource property select.
+$labelMap = [
+    'items' => 'Items', // @translate
+    'item_sets' => 'Item sets', // @translate
+    'media' => 'Media', // @translate
+];
+$resourcePropertiesSelect = new Select('resource_property');
+$resourcePropertiesSelect->setValue($resourceProperty);
+$resourcePropertiesSelect->setAttributes([
+    'id' => 'resource-property-select',
+    'data-url' => $this->url(null, [], true),
+    'data-fragment' => $fragment,
+]);
+$valueOptions = [];
+foreach ($resourcePropertiesAll as $type => $resourceProperties) {
+    if (!$resourceProperties) {
+        continue;
+    }
+    $valueOptions[$type] = [
+        'label' => $labelMap[$type],
+        'options' => [sprintf('%s:', $type) => sprintf('%s: All', $labelMap[$type])],
+    ];
+    foreach ($resourceProperties as $resourceProperty) {
+        $label = $resourceProperty['label_is_translatable']
+            ? $this->translate($resourceProperty['label'])
+            : $resourceProperty['label'];
+        $valueOptions[$type]['options'][] = [
+            'value' => $resourceProperty['compound_id'],
+            'label' => sprintf('%s: %s', $labelMap[$type], $label),
+            'attributes' => [
+                'title' => $resourceProperty['term'],
+            ],
+        ];
+    }
+}
+$resourcePropertiesSelect->setValueOptions($valueOptions);
+?>
+<div id="linked-resources">
+
+<div class="linked-header">
+    <div id="linked-filter">
+        <label>
+            <?php echo $this->translate('Filter by resource type and property:'); ?>
+            <?php echo $this->formElement($resourcePropertiesSelect); ?>
+        </label>
+    </div>
+    <?php echo $pagination; ?>
+</div>
+
+<?php foreach ($subjectValues as $values): ?>
+<?php
+$caption = sprintf(
+    $this->translate('%s with "%s: %s"'),
+    $this->translate($labelMap[$resourceType]),
+    $values[0]['property_alternate_label'] ?? $this->translate($values[0]['property_label']),
+    $objectResource->displayTitle()
+);
+?>
+<table>
+    <caption class="linked-resource-property"><?php echo $this->escapeHtml($caption); ?></caption>
+    <thead>
+        <tr>
+            <th><?php echo $this->translate('Title'); ?></th>
+            <th><?php echo $this->translate('Class'); ?></th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach ($values as $value): ?>
+        <tr class="linked-resource">
+            <td><?php echo $value['val']->resource()->linkPretty('square', null, null, ['target' => '_blank'], $valueLang); ?></td>
+            <td>
+                <?php if ($value['val']->resource()->resourceClass()): ?>
+                <span class="resource-class"><?php echo $this->escapeHtml($this->translate($value['val']->resource()->resourceClass()->label())); ?></span>
+                <?php endif; ?>
+            </td>
+        </tr>
+        <?php endforeach; ?>
+    </tbody>
+</table>
+<?php endforeach; ?>
+
+<?php echo ($totalCount > $perPage) ? '<div class="linked-footer">' . $pagination . '</div>' : ''; ?>
+
+</div>

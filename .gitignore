@@ -1,0 +1,16 @@
+# env / secret files
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials.json
+.npmrc
+
+# editor / OS
+.DS_Store
+.idea/
+.vscode/settings.json
+
+node_modules/
+vendor/

@@ -1,0 +1,9 @@
+<?php
+$siteId = null;
+if ($this->siteSetting('exclude_resources_not_in_site')) {
+    $siteId = $this->currentSite()->id();
+}
+?>
+<?php if ($resource->subjectValueTotalCount(null, null, $siteId)): ?>
+<?php echo $this->linkedResources($resource); ?>
+<?php endif; ?>
