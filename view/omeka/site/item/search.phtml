@@ -1,15 +1,29 @@
 <?php
 $translate = $this->plugin('translate');
+$escape = $this->plugin('escapeHtml');
 $this->htmlElement('body')->appendAttribute('class', 'items search');
+$this->headTitle($translate('Advanced search'));
+// Same fields as the old theme: values, item sets and media presence.
+$exclude = [
+    'common/advanced-search/sort',
+    'common/advanced-search/fulltext',
+    'common/advanced-search/resource-class',
+    'common/advanced-search/ids',
+];
 ?>
-
-<h2><?php echo $translate('Advanced item search'); ?></h2>
-<form id="advanced-search" method="get" action="<?php echo $this->escapeHtml($this->url(null, ['action' => 'browse'], true)); ?>">
-<?php echo $this->partial(
-    'common/advanced-search',
-    ['query' => $this->params()->fromQuery(), 'resourceType' => 'item']
-); ?>
-<div id="page-actions">
-    <input type="submit" name="submit" value="<?php echo $this->escapeHtml($translate('Search')); ?>">
+<div class="container mt-4 mb-5">
+    <div class="page-heading">
+        <h2><?php echo $escape($translate('Advanced search')); ?></h2>
+    </div>
+    <form id="advanced-search" class="advanced-search-form" method="get" action="<?php echo $escape($this->url(null, ['action' => 'browse'], true)); ?>">
+        <?php echo $this->partial('common/advanced-search', [
+            'query' => $this->params()->fromQuery(),
+            'resourceType' => 'item',
+            'partialExcludelist' => $exclude,
+        ]); ?>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary px-4"><i class="fa-solid fa-magnifying-glass me-2" aria-hidden="true"></i><?php echo $escape($translate('Search')); ?></button>
+            <a class="btn btn-link" href="<?php echo $escape($this->url(null, [], true)); ?>"><?php echo $escape($translate('Reset')); ?></a>
+        </div>
+    </form>
 </div>
-</form>

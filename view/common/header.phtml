@@ -2,7 +2,8 @@
 $escape = $this->plugin('escapeHtml');
 $translate = $this->plugin('translate');
 ?>
-<nav class="navbar navbar-light bg-light navbar-expand-lg" aria-label="<?php echo $escape($translate('Main navigation')); ?>">
+<header class="site-header">
+<nav class="navbar navbar-expand-xl" aria-label="<?php echo $escape($translate('Main navigation')); ?>">
     <div class="container-fluid">
         <a href="<?php echo $escape($site->url()); ?>" class="navbar-brand"><?php echo $escape($site->title()); ?></a>
         <button class="navbar-toggler" type="button" aria-controls="site-nav" aria-expanded="false" aria-label="<?php echo $escape($translate('Toggle Menu')); ?>">
@@ -16,3 +17,4 @@ $translate = $this->plugin('translate');
         </div>
     </div>
 </nav>
+</header>

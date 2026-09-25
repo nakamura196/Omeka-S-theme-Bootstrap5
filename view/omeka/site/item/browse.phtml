@@ -1,4 +1,6 @@
 <?php
+// Item browse, also used for an item set's page (Omeka passes $itemSet then).
+// Cards can be shown as a grid or a list; the viewer's choice is kept by asset/js/theme.js.
 $translate = $this->plugin('translate');
 $escape = $this->plugin('escapeHtml');
 $thumbnail = $this->plugin('thumbnail');
@@ -11,54 +13,124 @@ $valueLang = $filterLocale ? [$lang, ''] : null;
 $query = $this->params()->fromQuery();
 $itemSetShow = isset($itemSet);
 if ($itemSetShow):
-    $this->headLink()->appendStylesheet($this->assetUrl('css/resource-page-blocks.css', 'Omeka'));
     $this->htmlElement('body')->appendAttribute('class', 'item-set');
     $query['item_set_id'] = $itemSet->id();
 endif;
+
+// Sort options: "Created" plus the theme setting "sort_property" (one "term,Label" per line),
+// or "Title" when that is empty. Same as the old theme; core 4.2's default list would also
+// offer "Resource class", which means nothing to visitors of this site.
+$sortHeadings = [['label' => $translate('Created'), 'value' => 'created']];
+foreach (preg_split('/\R/', trim((string) $this->themeSetting('sort_property'))) as $row) {
+    $parts = array_map('trim', explode(',', $row, 2));
+    if (count($parts) === 2 && $parts[0] !== '') {
+        $sortHeadings[] = ['label' => $translate($parts[1]), 'value' => $parts[0]];
+    }
+}
+if (count($sortHeadings) === 1) {
+    $sortHeadings[] = ['label' => $translate('Title'), 'value' => 'dcterms:title'];
+}
+
+// Text under the title in list view: the theme setting "body_property" (one "term,Label" per
+// line), else the site's browse body property, else the description.
+$bodyFields = [];
+foreach (preg_split('/\R/', trim((string) $this->themeSetting('body_property'))) as $row) {
+    $parts = array_map('trim', explode(',', $row, 2));
+    if (count($parts) === 2 && $parts[0] !== '') {
+        $bodyFields[$parts[0]] = $translate($parts[1]);
+    }
+}
+$headingTerm = $this->siteSetting('browse_heading_property_term');
+$bodyTerm = $this->siteSetting('browse_body_property_term');
+
+$layout = $this->themeSetting('browse_layout') === 'list' ? 'list' : 'grid';
+
+$advancedSearchUrl = trim(strip_tags((string) $this->themeSetting('advanced_search_url')));
+$advancedSearchUrl = $advancedSearchUrl
+    ? $advancedSearchUrl . '?' . http_build_query($query)
+    : $this->url('site/resource', ['controller' => 'item', 'action' => 'search'], ['query' => $query], true);
+
+// As in the old theme, an item set's metadata is open on the first page and folded after that.
+$metadataOpen = (int) $this->params()->fromQuery('page', 1) <= 1;
 ?>
 
+<div class="container-xxl mt-4 mb-5">
+
 <?php if ($itemSetShow): ?>
-    <?php echo $this->pageTitle($itemSet->displayTitle(null, $valueLang), 2); ?>
-    <h3><?php echo $translate('Item set'); ?></h3>
-    <div class="metadata">
-        <?php echo $this->resourcePageBlocks($itemSet)->getBlocks(); ?>
-    </div>
-    <div class="item-set-items">
-    <?php echo '<h3>' . $escape($translate('Items')) . '</h3>'; ?>
+    <header class="item-set-header">
+        <span class="eyebrow"><?php echo $escape($translate('Item set')); ?></span>
+        <?php echo $this->pageTitle($itemSet->displayTitle(null, $valueLang), 2); ?>
+        <details class="item-set-metadata"<?php echo $metadataOpen ? ' open' : ''; ?>>
+            <summary>
+                <span class="summary-closed"><?php echo $escape($translate('Show metadata')); ?></span>
+                <span class="summary-open"><?php echo $escape($translate('Hide metadata')); ?></span>
+            </summary>
+            <div class="mt-3">
+                <?php echo $this->resourcePageBlocks($itemSet)->getBlocks(); ?>
+            </div>
+        </details>
+    </header>
 <?php else: ?>
-    <?php echo $this->pageTitle($translate('Items'), 2); ?>
+    <div class="page-heading"><?php echo $this->pageTitle($translate('Items'), 2); ?></div>
 <?php endif; ?>
 
 <?php echo $this->searchFilters(); ?>
 
-<div class="browse-controls">
+<div class="browse-toolbar">
     <?php echo $this->pagination(); ?>
-    <?php echo $this->hyperlink($translate('Advanced search'), $this->url('site/resource', ['controller' => 'item', 'action' => 'search'], ['query' => $query], true), ['class' => 'advanced-search']); ?>
-    <?php echo $this->browse()->renderSortSelector('items'); ?>
+    <div class="toolbar-end">
+        <?php echo $this->sortSelector($sortHeadings); ?>
+        <div class="view-toggle btn-group" role="group" aria-label="<?php echo $escape($translate('Layout')); ?>" data-target="resource-list">
+            <button type="button" class="btn btn-sm btn-outline-primary" data-layout="grid" aria-pressed="<?php echo $layout === 'grid' ? 'true' : 'false'; ?>" title="<?php echo $escape($translate('Grid')); ?>">
+                <i class="fa-solid fa-table-cells-large" aria-hidden="true"></i><span class="visually-hidden"><?php echo $escape($translate('Grid')); ?></span>
+            </button>
+            <button type="button" class="btn btn-sm btn-outline-primary" data-layout="list" aria-pressed="<?php echo $layout === 'list' ? 'true' : 'false'; ?>" title="<?php echo $escape($translate('List')); ?>">
+                <i class="fa-solid fa-list" aria-hidden="true"></i><span class="visually-hidden"><?php echo $escape($translate('List')); ?></span>
+            </button>
+        </div>
+        <?php echo $this->hyperlink($translate('Advanced search'), $advancedSearchUrl, ['class' => 'advanced-search btn btn-sm btn-link']); ?>
+    </div>
 </div>
 
 <?php $this->trigger('view.browse.before'); ?>
-<ul class="resource-list">
-<?php
-$headingTerm = $this->siteSetting('browse_heading_property_term');
-$bodyTerm = $this->siteSetting('browse_body_property_term');
-foreach ($items as $item):
-    $heading = $headingTerm ? $item->value($headingTerm, ['default' => $translate('[Untitled]'), 'lang' => $valueLang]) : $item->displayTitle(null, $valueLang);
-    $body = $bodyTerm ? $item->value($bodyTerm, ['lang' => $valueLang]) : $item->displayDescription(null, $valueLang);
+<ul class="resource-list is-<?php echo $layout; ?>" id="resource-list">
+<?php foreach ($items as $item):
+    $heading = $headingTerm
+        ? $item->value($headingTerm, ['default' => $translate('[Untitled]'), 'lang' => $valueLang])
+        : $item->displayTitle(null, $valueLang);
+    $bodyParts = [];
+    if ($bodyFields) {
+        foreach ($bodyFields as $term => $label) {
+            $value = $item->value($term, ['lang' => $valueLang]);
+            if ($value) {
+                $bodyParts[] = '<b>' . $escape($label) . ':</b> ' . $escape(mb_strimwidth((string) $value, 0, 100, '…'));
+            }
+        }
+    } else {
+        $body = $bodyTerm ? $item->value($bodyTerm, ['lang' => $valueLang]) : $item->displayDescription(null, $valueLang);
+        if ($body) {
+            $bodyParts[] = $escape(mb_strimwidth((string) $body, 0, 240, '…'));
+        }
+    }
+    $thumb = $thumbnail($item, 'medium', ['alt' => '', 'loading' => 'lazy']);
 ?>
-    <li class="item resource">
-        <?php
-        $linkContent = sprintf('%s<span class="resource-name">%s</span>',
-            $thumbnail($item, 'medium'),
-            $escape($heading));
-        echo $item->linkRaw($linkContent, null, ['class' => 'resource-link']);
-        ?>
-        <?php if ($body): ?>
-        <div class="description"><?php echo $escape($body); ?></div>
-        <?php endif; ?>
+    <li class="resource-card item resource">
+        <div class="resource-thumb">
+            <?php echo $thumb ?: '<i class="no-thumb fa-regular fa-image" aria-hidden="true"></i>'; ?>
+        </div>
+        <div>
+            <h3 class="resource-title"><?php echo $item->link($heading); ?></h3>
+            <?php if ($bodyParts): ?>
+            <div class="resource-body"><?php echo implode(', ', $bodyParts); ?></div>
+            <?php endif; ?>
+        </div>
     </li>
 <?php endforeach; ?>
 </ul>
-<?php echo ($itemSetShow) ? '</div>' : ''; ?>
 <?php $this->trigger('view.browse.after'); ?>
-<?php echo $this->pagination(); ?>
+
+<div class="browse-footer">
+    <?php echo $this->pagination(); ?>
+</div>
+
+</div>

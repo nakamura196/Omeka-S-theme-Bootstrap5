@@ -44,14 +44,14 @@ $topImage = $this->themeSettingAssetUrl('top_image');
             <div class="row py-5 text-white text-center">
                 <div class="col-xl-9 mx-auto my-5">
                     <?php if ($siteSubTitle = $this->themeSetting('site_sub_title')): ?>
-                    <p class="h4 mb-3"><?php echo $siteSubTitle; ?></p>
+                    <p class="top-hero-sub mb-3"><?php echo $siteSubTitle; ?></p>
                     <?php endif; ?>
                     <h1><?php echo $escape($siteTitle); ?></h1>
                     <?php if ($siteSummary = $site->summary()): ?>
-                    <p class="mt-3"><?php echo $siteSummary; ?></p>
+                    <p class="top-hero-summary mt-3"><?php echo $siteSummary; ?></p>
                     <?php endif; ?>
                     <?php if ($topUrl = $this->themeSetting('top_url')): ?>
-                    <a href="<?php echo $escape(trim(strip_tags($topUrl))); ?>" class="mt-3 btn btn-danger px-3">
+                    <a href="<?php echo $escape(trim(strip_tags($topUrl))); ?>" class="mt-4 btn btn-accent">
                         <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> <?php echo $translate('Browse'); ?>
                     </a>
                     <?php endif; ?>
@@ -67,9 +67,9 @@ $topImage = $this->themeSettingAssetUrl('top_image');
     <?php echo $this->content; ?>
 </div>
 
-<footer class="py-5 bg-dark text-center">
+<footer class="site-footer py-5 text-center">
     <div class="container-fluid">
-        <p class="my-0 text-white">
+        <p class="my-0">
             <small>
                 <?php if ($footerContent = $this->themeSetting('footer')): ?>
                 <?php echo $footerContent; ?>
@@ -81,7 +81,7 @@ $topImage = $this->themeSettingAssetUrl('top_image');
     </div>
 </footer>
 
-<button type="button" class="btn btn-danger btn-lg" id="btn-back-to-top" hidden aria-label="<?php echo $escape($translate('Back to top')); ?>">
+<button type="button" class="btn btn-primary" id="btn-back-to-top" hidden aria-label="<?php echo $escape($translate('Back to top')); ?>">
     <i class="fa-solid fa-arrow-up" aria-hidden="true"></i>
 </button>
 </body>

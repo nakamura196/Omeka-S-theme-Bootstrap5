@@ -1,8 +1,115 @@
-/* Theme styles on top of Bootstrap 5.3 (bundled in asset/vendor/bootstrap). */
+/* Theme styles on top of Bootstrap 5.3 (bundled in asset/vendor/bootstrap).
+   Layout follows the old Bootstrap5 theme (menu on top, photo banner on the
+   home page, footer at the bottom); colours, type and spacing are refreshed. */
+
+:root {
+    --tb-ink: #1f2328;
+    --tb-muted: #5b6470;
+    --tb-primary: #1e3a5f;        /* indigo: buttons, active states */
+    --tb-primary-hover: #152b47;
+    --tb-link: #1f4f8a;
+    --tb-accent: #a8322d;         /* vermilion: home banner button, active menu bar */
+    --tb-accent-hover: #8c2924;
+    --tb-surface: #f6f5f2;        /* warm paper tone behind images */
+    --tb-border: #e3e1dc;
+    --tb-footer: #1c222b;
+    --tb-radius: 0.5rem;
+
+    --bs-body-font-family: system-ui, -apple-system, "Segoe UI", "Hiragino Sans", "Hiragino Kaku Gothic ProN",
+        "Noto Sans JP", "Yu Gothic UI", Meiryo, sans-serif;
+    --bs-body-color: var(--tb-ink);
+    --bs-body-line-height: 1.75;
+    --bs-link-color: var(--tb-link);
+    --bs-link-color-rgb: 31, 79, 138;
+    --bs-link-hover-color: var(--tb-primary-hover);
+    --bs-link-hover-color-rgb: 21, 43, 71;
+    --bs-primary: var(--tb-primary);
+    --bs-primary-rgb: 30, 58, 95;
+    --bs-border-color: var(--tb-border);
+    --bs-focus-ring-color: rgba(31, 79, 138, 0.35);
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+#content {
+    flex: 1 0 auto;
+}
+
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: 0.02em;
+}
 
 a,
 .btn-link {
     text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+}
+
+/* Links inside running text are underlined, so they are not told apart by colour alone. */
+.blocks a,
+.resource-values a,
+.item-set-metadata a {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+}
+
+:focus-visible {
+    outline: 3px solid var(--bs-focus-ring-color);
+    outline-offset: 2px;
+}
+
+/* Buttons: Bootstrap reads colours from per-class variables. */
+.btn-primary {
+    --bs-btn-bg: var(--tb-primary);
+    --bs-btn-border-color: var(--tb-primary);
+    --bs-btn-hover-bg: var(--tb-primary-hover);
+    --bs-btn-hover-border-color: var(--tb-primary-hover);
+    --bs-btn-active-bg: var(--tb-primary-hover);
+    --bs-btn-active-border-color: var(--tb-primary-hover);
+    --bs-btn-disabled-bg: var(--tb-primary);
+    --bs-btn-disabled-border-color: var(--tb-primary);
+}
+
+.btn-outline-primary {
+    --bs-btn-color: var(--tb-primary);
+    --bs-btn-border-color: var(--tb-border);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: var(--tb-primary);
+    --bs-btn-hover-border-color: var(--tb-primary);
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: var(--tb-primary);
+    --bs-btn-active-border-color: var(--tb-primary);
+    --bs-btn-disabled-color: #9aa3ad;
+    --bs-btn-disabled-border-color: var(--tb-border);
+}
+
+.btn-accent {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: var(--tb-accent);
+    --bs-btn-border-color: var(--tb-accent);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: var(--tb-accent-hover);
+    --bs-btn-hover-border-color: var(--tb-accent-hover);
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: var(--tb-accent-hover);
+    --bs-btn-active-border-color: var(--tb-accent-hover);
+}
+
+.form-control,
+.form-select {
+    border-color: var(--tb-border);
 }
 
 /* Skip link: Bootstrap's .visually-hidden-focusable shows it on focus; place it above the navbar. */
@@ -13,14 +120,98 @@ a,
     z-index: 1080;
     padding: 0.5rem 1rem;
     background: var(--bs-body-bg);
-    border: 2px solid var(--bs-primary);
+    border: 2px solid var(--tb-primary);
 }
 
 #content:focus {
     outline: none;
 }
 
-/* Home page banner (theme setting "top_image"). */
+/* ---------- Header ---------- */
+
+.site-header {
+    background: #fff;
+    border-bottom: 1px solid var(--tb-border);
+}
+
+.site-header .navbar {
+    --bs-navbar-padding-y: 0.75rem;
+    --bs-navbar-color: var(--tb-muted);
+    --bs-navbar-hover-color: var(--tb-ink);
+    --bs-navbar-active-color: var(--tb-ink);
+    --bs-navbar-brand-color: var(--tb-ink);
+    --bs-navbar-brand-hover-color: var(--tb-ink);
+}
+
+.site-header .navbar-brand {
+    font-weight: 600;
+    letter-spacing: 0.01em;
+}
+
+.site-header .nav-link {
+    position: relative;
+    font-size: 0.9375rem;
+    white-space: nowrap;
+}
+
+.site-header .nav-link:hover {
+    text-decoration: none;
+}
+
+@media (min-width: 1200px) {
+    .site-header .navbar-nav .nav-link {
+        padding-inline: 0.6rem;
+    }
+
+    /* Current page: a short bar under the label. */
+    .site-header .nav-link.active::after {
+        content: "";
+        position: absolute;
+        left: 0.6rem;
+        right: 0.6rem;
+        bottom: -0.8rem;
+        height: 3px;
+        border-radius: 3px 3px 0 0;
+        background: var(--tb-accent);
+    }
+
+    #search-form {
+        width: 12rem;
+    }
+}
+
+@media (max-width: 1199.98px) {
+    .site-header .navbar-nav {
+        padding-top: 0.5rem;
+    }
+
+    .site-header .nav-link.active {
+        font-weight: 600;
+    }
+
+    #search-form {
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+}
+
+#search-form .form-control {
+    border-radius: 999px 0 0 999px;
+    padding-left: 1rem;
+    background: var(--tb-surface);
+}
+
+#search-form .form-control:focus {
+    background: #fff;
+}
+
+#search-form .btn {
+    border-radius: 0 999px 999px 0;
+    padding-inline: 0.9rem;
+}
+
+/* ---------- Home page banner (theme setting "top_image") ---------- */
+
 .top-hero {
     position: relative;
     width: 100%;
@@ -30,15 +221,58 @@ a,
 }
 
 .top-hero-overlay {
-    background: rgba(0, 0, 0, 0.5);
+    background: linear-gradient(180deg, rgba(12, 20, 32, 0.35) 0%, rgba(12, 20, 32, 0.7) 100%);
+}
+
+.top-hero h1 {
+    font-size: clamp(1.75rem, 1.2rem + 2.4vw, 3rem);
+    letter-spacing: 0.04em;
+    text-shadow: 0 1px 12px rgba(0, 0, 0, 0.35);
+}
+
+.top-hero .top-hero-sub {
+    font-size: 1rem;
+    letter-spacing: 0.12em;
+    opacity: 0.9;
+}
+
+.top-hero .top-hero-summary {
+    max-width: 40rem;
+    margin-inline: auto;
+    opacity: 0.95;
+}
+
+.top-hero .btn {
+    border-radius: 999px;
+    padding: 0.6rem 1.75rem;
+    font-weight: 600;
+}
+
+/* ---------- Footer ---------- */
+
+.site-footer {
+    background: var(--tb-footer);
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.875rem;
+}
+
+.site-footer a {
+    color: #fff;
+    text-decoration: underline;
 }
 
 #btn-back-to-top {
     position: fixed;
     right: 20px;
     bottom: 20px;
-    border-radius: 10px;
+    width: 3rem;
+    height: 3rem;
+    padding: 0;
+    border-radius: 50%;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
 }
+
+/* ---------- Page blocks ---------- */
 
 /* Omeka 4.1+ wraps each page block in .block with a 1rem margin (core page-blocks.css).
    The old theme rendered blocks unwrapped, so drop it to keep the same spacing.
@@ -46,4 +280,599 @@ a,
 .blocks .page-layout-normal .block {
     margin-top: 0;
     margin-bottom: 0;
+}
+
+/* Long lines are hard to read: keep running text to a comfortable width. */
+.page .blocks .block-html,
+.page .blocks .block-pageTitle {
+    max-width: 52rem;
+}
+
+.page .blocks h2 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+.page .blocks .block:first-child h2,
+.page .blocks .block-pageTitle h2 {
+    margin-top: 0;
+}
+
+/* ---------- Browse: toolbar, filters, pagination ---------- */
+
+.page-heading {
+    margin-bottom: 1.5rem;
+}
+
+.browse-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.25rem;
+    padding: 0.75rem 0;
+    margin-bottom: 1.5rem;
+    border-top: 1px solid var(--tb-border);
+    border-bottom: 1px solid var(--tb-border);
+}
+
+.browse-toolbar .toolbar-end {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    margin-left: auto;
+}
+
+.browse-toolbar .form-select,
+.browse-toolbar .form-control,
+.browse-toolbar .btn {
+    font-size: 0.875rem;
+}
+
+.row-count {
+    color: var(--tb-muted);
+    font-size: 0.875rem;
+    white-space: nowrap;
+}
+
+.row-count strong {
+    color: var(--tb-ink);
+    font-weight: 600;
+}
+
+.pager {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.875rem;
+}
+
+.pager .page-input {
+    width: 4rem;
+    text-align: center;
+}
+
+.pager .page-count {
+    color: var(--tb-muted);
+    white-space: nowrap;
+}
+
+.pager .btn {
+    width: 2.25rem;
+    padding-inline: 0;
+}
+
+.browse-footer {
+    display: flex;
+    justify-content: center;
+    padding-top: 1rem;
+}
+
+.view-toggle .btn {
+    padding-inline: 0.6rem;
+}
+
+.view-toggle .btn[aria-pressed="true"] {
+    color: #fff;
+    background: var(--tb-primary);
+    border-color: var(--tb-primary);
+}
+
+.search-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    padding: 0;
+    list-style: none;
+}
+
+.search-filters li {
+    display: inline-flex;
+    gap: 0.4rem;
+    align-items: baseline;
+    padding: 0.3rem 0.8rem;
+    font-size: 0.875rem;
+    border-radius: 999px;
+    background: #eaf0f7;
+    color: var(--tb-primary);
+}
+
+.search-filters .filter-label {
+    font-weight: 600;
+}
+
+/* ---------- Browse: resource cards ---------- */
+
+.resource-list {
+    display: grid;
+    gap: 1.5rem 1.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.resource-list.is-grid {
+    grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+}
+
+@media (max-width: 575.98px) {
+    .resource-list.is-grid:not(.with-body) {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1.25rem 0.75rem;
+    }
+}
+
+.resource-list .resource-thumb {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    border-radius: var(--tb-radius);
+    background: var(--tb-surface);
+}
+
+.resource-list .resource-thumb img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    transition: transform 0.2s ease;
+}
+
+.resource-list .resource-thumb .no-thumb {
+    font-size: 2rem;
+    color: #c9c5bd;
+}
+
+.resource-list .resource-card:hover .resource-thumb img {
+    transform: scale(1.03);
+}
+
+.resource-list .resource-title {
+    display: -webkit-box;
+    margin: 0.6rem 0 0;
+    overflow: hidden;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    line-height: 1.5;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+
+.resource-list .resource-title a {
+    color: var(--tb-ink);
+}
+
+.resource-list .resource-card:hover .resource-title a {
+    color: var(--tb-link);
+}
+
+/* The whole card is clickable through the title link. */
+.resource-list .resource-card {
+    position: relative;
+}
+
+.resource-list .resource-title a::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+}
+
+.resource-list .resource-body {
+    display: none;
+    color: var(--tb-muted);
+    font-size: 0.875rem;
+}
+
+.resource-list.is-list {
+    grid-template-columns: 1fr;
+    gap: 0;
+}
+
+.resource-list.is-list .resource-card {
+    display: grid;
+    grid-template-columns: 7rem 1fr;
+    gap: 1.25rem;
+    align-items: start;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--tb-border);
+}
+
+.resource-list.is-list .resource-title {
+    margin-top: 0;
+    font-size: 1rem;
+}
+
+.resource-list.is-list .resource-body {
+    display: block;
+    margin-top: 0.25rem;
+}
+
+@media (min-width: 768px) {
+    .resource-list.is-list .resource-card {
+        grid-template-columns: 9rem 1fr;
+    }
+}
+
+/* Collections: description under the title, clamped so card heights stay even. */
+.resource-list.is-grid.with-body {
+    grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+}
+
+.resource-list.with-body .resource-body {
+    display: -webkit-box;
+    margin-top: 0.35rem;
+    overflow: hidden;
+    line-height: 1.6;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+}
+
+/* ---------- Item set (collection) heading ---------- */
+
+.item-set-header {
+    margin-bottom: 2rem;
+}
+
+.eyebrow {
+    display: inline-block;
+    margin-bottom: 0.5rem;
+    color: var(--tb-accent);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+}
+
+.item-set-metadata {
+    margin-top: 1rem;
+}
+
+.item-set-metadata > summary {
+    display: inline-block;
+    color: var(--tb-link);
+    font-size: 0.875rem;
+    cursor: pointer;
+    list-style: none;
+}
+
+.item-set-metadata > summary::-webkit-details-marker {
+    display: none;
+}
+
+.item-set-metadata > summary::before {
+    content: "\f078";
+    display: inline-block;
+    margin-right: 0.4rem;
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    font-size: 0.75em;
+    transition: transform 0.2s ease;
+}
+
+.item-set-metadata:not([open]) > summary::before {
+    transform: rotate(-90deg);
+}
+
+.item-set-metadata .summary-open { display: none; }
+.item-set-metadata[open] .summary-open { display: inline; }
+.item-set-metadata[open] .summary-closed { display: none; }
+
+/* ---------- Item / media pages ---------- */
+
+.viewer-band {
+    background: var(--tb-surface);
+    border-bottom: 1px solid var(--tb-border);
+}
+
+.viewer-band .viewer-frame {
+    display: block;
+    width: 100%;
+    height: min(70vh, 640px);
+    min-height: 420px;
+    border: 0;
+    background: #fff;
+}
+
+.viewer-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    padding: 0.6rem 0;
+    font-size: 0.875rem;
+}
+
+.viewer-links img {
+    display: block;
+    height: 28px;
+    width: auto;
+}
+
+.resource-header {
+    margin: 2.5rem 0 2rem;
+}
+
+.resource-header h2 {
+    font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2rem);
+    margin: 0;
+    overflow-wrap: anywhere;  /* media titles are often long URLs */
+}
+
+.section-title {
+    margin: 2.5rem 0 1rem;
+    padding-bottom: 0.5rem;
+    font-size: 1rem;
+    color: var(--tb-muted);
+    letter-spacing: 0.08em;
+    border-bottom: 1px solid var(--tb-border);
+}
+
+/* Metadata as a two-column list; one column on phones. */
+.resource-values {
+    margin: 0;
+}
+
+.resource-values .property {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.25rem 2rem;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--tb-border);
+}
+
+.resource-values .property:first-child {
+    border-top: 1px solid var(--tb-border);
+}
+
+.resource-values dt {
+    color: var(--tb-muted);
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.resource-values dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+
+.resource-values .value + .value {
+    margin-top: 0.35rem;
+}
+
+.resource-values .value-lang {
+    display: inline-block;
+    margin-right: 0.4rem;
+    padding: 0 0.5rem;
+    border-radius: 999px;
+    background: #e9ecef;
+    color: var(--tb-muted);
+    font-size: 0.75rem;
+    vertical-align: 0.1em;
+}
+
+.resource-values .field-term {
+    font-weight: normal;
+}
+
+.resource-values .uri-value-link::after {
+    content: "\f35d";
+    margin-left: 0.3rem;
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    font-size: 0.75em;
+}
+
+.resource-values .resource-link img {
+    width: 72px;
+    margin-right: 0.5rem;
+    border-radius: 4px;
+}
+
+@media (min-width: 768px) {
+    .resource-values .property {
+        grid-template-columns: 14rem 1fr;
+    }
+
+    .resource-values dt {
+        font-size: 0.9375rem;
+    }
+}
+
+.resource-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 2rem;
+    margin: 2rem 0 0;
+    color: var(--tb-muted);
+    font-size: 0.875rem;
+}
+
+.resource-meta dt {
+    display: inline;
+    font-weight: 600;
+}
+
+.resource-meta dt::after {
+    content: "：";
+}
+
+.resource-meta dd {
+    display: inline;
+    margin: 0;
+}
+
+.item-set-links {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.item-set-links li + li {
+    margin-top: 0.35rem;
+}
+
+.item-set-links a::before {
+    content: "\f07b";
+    margin-right: 0.5rem;
+    color: var(--tb-muted);
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    font-size: 0.85em;
+}
+
+.media-render {
+    padding: 1rem;
+    border-radius: var(--tb-radius);
+    background: var(--tb-surface);
+    text-align: center;
+}
+
+.media-render img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* ---------- Advanced search ---------- */
+/* Styles Omeka's own markup (common/advanced-search/*), whose script adds and removes rows. */
+
+.advanced-search-form .advanced-search-content > .field,
+.advanced-search-form .advanced-search-content > div > .field {
+    margin-bottom: 1.25rem;
+    padding: 1.25rem 1.5rem;
+    border: 1px solid var(--tb-border);
+    border-radius: var(--tb-radius);
+}
+
+.advanced-search-form .field-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.advanced-search-form .field-meta .label,
+.advanced-search-form .field-meta label {
+    font-weight: 600;
+}
+
+/* Omeka's "expand" toggle needs admin icons; show the description instead. */
+.advanced-search-form .field-meta .expand {
+    display: none;
+}
+
+.advanced-search-form .field-meta .collapsible {
+    display: block !important;
+    flex-basis: 100%;
+    order: 3;
+    color: var(--tb-muted);
+    font-size: 0.875rem;
+}
+
+.advanced-search-form .add-value {
+    margin-left: auto;
+    color: var(--tb-primary);
+    border: 1px solid var(--tb-border);
+}
+
+.advanced-search-form .add-value:hover {
+    color: #fff;
+    background: var(--tb-primary);
+}
+
+.advanced-search-form .add-value::before {
+    content: "\f067";
+    margin-right: 0.4rem;
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+}
+
+.advanced-search-form .add-value::after {
+    content: attr(title);
+}
+
+.advanced-search-form .remove-value {
+    color: var(--tb-muted);
+}
+
+.advanced-search-form .remove-value:hover {
+    color: var(--tb-accent);
+}
+
+.advanced-search-form .remove-value::before {
+    content: "\f00d";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+}
+
+.advanced-search-form#advanced-search .inputs {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.5rem;
+}
+
+.advanced-search-form#advanced-search .inputs .value {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Omeka's advanced-search.css loads after this file and keeps rows on one line; the extra
+   class makes these rules win so rows wrap on phones. */
+.advanced-search-form#advanced-search #property-queries .value,
+.advanced-search-form#advanced-search #item-sets .value {
+    flex-wrap: wrap;
+}
+
+#advanced-search .value > select,
+#advanced-search .value > input {
+    flex: 1 1 10rem;
+    width: auto;
+    min-width: 0;
+    max-width: 100%;
+}
+
+#advanced-search .value > .joiner,
+#advanced-search .value > .item-set-select-type {
+    flex: 0 0 auto;
+}
+
+#advanced-search .value > .query-property {
+    flex: 2 1 14rem;
+}
+
+@media (min-width: 768px) {
+    .advanced-search-form#advanced-search #property-queries .value,
+    .advanced-search-form#advanced-search #item-sets .value {
+        flex-wrap: nowrap;
+    }
+}
+
+.advanced-search-form .form-actions {
+    display: flex;
+    gap: 0.75rem;
+    padding-top: 0.5rem;
 }

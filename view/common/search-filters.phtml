@@ -1,13 +1,17 @@
-<?php $escape = $this->plugin('escapeHtml'); ?>
-<?php if (count($filters) > 0): ?>
-<div class="search-filters">
+<?php
+// The conditions of the current search, shown as chips above the results.
+$escape = $this->plugin('escapeHtml');
+$translate = $this->plugin('translate');
+?>
+<?php if ($filters): ?>
+<ul class="search-filters" aria-label="<?php echo $escape($translate('Filters')); ?>">
     <?php foreach ($filters as $filterLabel => $filterValues): ?>
-    <div class="filter">
+    <li>
         <span class="filter-label"><?php echo $escape($filterLabel); ?></span>
         <?php foreach ($filterValues as $filterValue): ?>
         <span class="filter-value"><?php echo $escape($filterValue); ?></span>
         <?php endforeach; ?>
-    </div>
+    </li>
     <?php endforeach; ?>
-</div>
+</ul>
 <?php endif; ?>

@@ -1,17 +1,19 @@
 <?php
+// Sort field, direction and a submit button. The choice is applied on change by asset/js/theme.js;
+// the button stays for keyboard users and when JavaScript is off.
 $translate = $this->plugin('translate');
 $escape = $this->plugin('escapeHtml');
 ?>
-<form class="sorting" action="">
-    <?php echo $this->queryToHiddenInputs(['sort_by', 'sort_order', 'sort_by_default', 'sort_order_default']); ?>
-    <select name="sort_by" aria-label="<?php echo $translate('Sort by'); ?>">
-    <?php foreach ($sortConfig as $sortBy => $label): ?>
-        <option value="<?php echo $escape($sortBy); ?>"<?php echo ($sortByQuery === $sortBy) ? ' selected' : ''; ?>><?php echo $escape($label); ?></option>
-    <?php endforeach; ?>
+<form action="" class="sort-selector d-flex align-items-center gap-2">
+    <?php echo $this->queryToHiddenInputs(['sort_by', 'sort_order', 'page', 'sort_by_default', 'sort_order_default']); ?>
+    <select class="form-select form-select-sm w-auto" name="sort_by" aria-label="<?php echo $escape($translate('Sort by')); ?>">
+        <?php foreach ($sortConfig as $sortBy => $label): ?>
+        <option value="<?php echo $escape($sortBy); ?>"<?php echo ($sortByQuery === $sortBy) ? ' selected' : ''; ?>><?php echo $escape($translate($label)); ?></option>
+        <?php endforeach; ?>
     </select>
-    <select name="sort_order" aria-label="<?php echo $translate('Sort order'); ?>">
-        <option value="asc"<?php echo ($sortOrderQuery === 'asc') ? ' selected' : ''; ?>><?php echo $translate('Ascending'); ?></option>
-        <option value="desc"<?php echo ($sortOrderQuery === 'desc') ? ' selected' : ''; ?>><?php echo $translate('Descending'); ?></option>
+    <select class="form-select form-select-sm w-auto" name="sort_order" aria-label="<?php echo $escape($translate('Sort order')); ?>">
+        <option value="asc"<?php echo ($sortOrderQuery === 'asc') ? ' selected' : ''; ?>><?php echo $escape($translate('Ascending')); ?></option>
+        <option value="desc"<?php echo ($sortOrderQuery === 'desc') ? ' selected' : ''; ?>><?php echo $escape($translate('Descending')); ?></option>
     </select>
-    <button type="submit"><?php echo $translate('Sort'); ?></button>
+    <button type="submit" class="btn btn-sm btn-outline-primary"><?php echo $escape($translate('Sort')); ?></button>
 </form>

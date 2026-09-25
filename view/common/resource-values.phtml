@@ -1,4 +1,6 @@
 <?php
+// Core 4.2.1 markup, except that all values of a property share one <dd> (so the label / value
+// columns line up) and value annotations open with <details> instead of Omeka's admin script.
 $translate = $this->plugin('translate');
 $escape = $this->plugin('escapeHtml');
 
@@ -14,7 +16,7 @@ $filterLocaleCallback = function ($value) use ($lang) {
 };
 ?>
 <?php if (count($values) > 0): ?>
-<dl>
+<dl class="resource-values">
 <?php
 foreach ($values as $term => $propertyData):
     $propertyValues = $propertyData['values'];
@@ -41,6 +43,7 @@ foreach ($values as $term => $propertyData):
         <span class="field-term">(<?php echo $escape($propertyTerm); ?>)</span>
         <?php endif; ?>
         </dt>
+        <dd>
         <?php foreach ($propertyValues as $value): ?>
         <?php
         $valueType = $value->type();
@@ -56,25 +59,24 @@ foreach ($values as $term => $propertyData):
             $class[] = $escape(str_replace(['_', ':'], '-', $valueType));
         }
         ?>
-        <dd class="<?php echo implode(' ', $class); ?>" lang="<?php echo $escape($valueLang); ?>">
+        <div class="<?php echo implode(' ', $class); ?>" lang="<?php echo $escape($valueLang); ?>">
             <?php if ($showLocale && $valueLang): ?>
-            <span class="language"><?php echo $valueLang; ?></span>
+            <span class="value-lang"><?php echo $escape($valueLang); ?></span>
             <?php endif; ?>
             <span class="value-content"><?php echo $filterLocale ? $value->asHtml($lang) : $value->asHtml(); ?></span>
             <?php if (!$value->isPublic()): ?>
-                <span class="o-icon-private" role="img" title="<?php echo $this->escapeHtml($translate('Private')); ?>" aria-label="<?php echo $this->escapeHtml($translate('Private')); ?>"></span>
+            <i class="fa-solid fa-lock text-body-secondary" role="img" title="<?php echo $escape($translate('Private')); ?>" aria-label="<?php echo $escape($translate('Private')); ?>"></i>
             <?php endif; ?>
             <?php if ($valueAnnotation && $showValueAnnotations): ?>
-                <a href="#" class="<?php echo ('expanded' === $showValueAnnotations) ? 'collapse' : 'expand'; ?>" aria-label="<?php echo ('expanded' === $showValueAnnotations) ? $this->escapeHtml($translate('Collapse')) : $this->escapeHtml($translate('Expand')); ?>">
-                    <span class="has-annotation o-icon-annotation" role="img" title="<?php echo $this->escapeHtml($translate('Has annotation')); ?>" aria-label="<?php echo $this->escapeHtml($translate('Has annotation')); ?>"></span>
-                </a>
-                <div class="collapsible annotation">
-                    <?php echo $valueAnnotation->displayValues(); ?>
-                </div>
+            <details class="value-annotation"<?php echo ('expanded' === $showValueAnnotations) ? ' open' : ''; ?>>
+                <summary><i class="fa-regular fa-comment" aria-hidden="true"></i> <?php echo $escape($translate('Has annotation')); ?></summary>
+                <?php echo $valueAnnotation->displayValues(); ?>
+            </details>
             <?php endif; ?>
             <?php $this->trigger('view.show.value', ['value' => $value]); ?>
-        </dd>
+        </div>
         <?php endforeach; ?>
+        </dd>
     </div>
 <?php endforeach; ?>
 </dl>

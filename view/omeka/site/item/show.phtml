@@ -1,13 +1,35 @@
 <?php
 $translate = $this->plugin('translate');
+$escape = $this->plugin('escapeHtml');
 $this->headLink()->appendStylesheet($this->assetUrl('css/resource-page-blocks.css', 'Omeka'));
 $this->htmlElement('body')->appendAttribute('class', 'item resource show');
 $filterLocale = (bool) $this->siteSetting('filter_locale_values');
 $lang = $this->lang();
 $valueLang = $filterLocale ? [$lang, ''] : null;
 ?>
-<?php echo $this->pageTitle($item->displayTitle(null, $valueLang), 2); ?>
-<h3><?php echo $translate('Item'); ?></h3>
+<?php // Before the container, so a viewer printed here (module IiifViewers) spans the page width. ?>
 <?php $this->trigger('view.show.before'); ?>
-<?php echo $this->resourcePageBlocks($item)->getBlocks(); ?>
-<?php $this->trigger('view.show.after'); ?>
+
+<div class="container mb-5">
+    <header class="resource-header">
+        <span class="eyebrow"><?php echo $escape($translate('Item')); ?></span>
+        <?php echo $this->pageTitle($item->displayTitle(null, $valueLang), 2); ?>
+    </header>
+
+    <?php echo $this->resourcePageBlocks($item)->getBlocks(); ?>
+
+    <dl class="resource-meta">
+        <div>
+            <dt><?php echo $escape($translate('Date Created')); ?></dt>
+            <dd><?php echo $escape($this->i18n()->dateFormat($item->created())); ?></dd>
+        </div>
+        <?php if ($item->modified()): ?>
+        <div>
+            <dt><?php echo $escape($translate('Date Modified')); ?></dt>
+            <dd><?php echo $escape($this->i18n()->dateFormat($item->modified())); ?></dd>
+        </div>
+        <?php endif; ?>
+    </dl>
+
+    <?php $this->trigger('view.show.after'); ?>
+</div>

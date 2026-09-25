@@ -1,4 +1,6 @@
 <?php
+// Item set (collection) browse: the same cards as the item browse, with the description
+// shown under the title (clamped to a few lines).
 $translate = $this->plugin('translate');
 $escape = $this->plugin('escapeHtml');
 $thumbnail = $this->plugin('thumbnail');
@@ -8,38 +10,51 @@ $lang = $this->lang();
 $valueLang = $filterLocale ? [$lang, ''] : null;
 
 $this->htmlElement('body')->appendAttribute('class', 'item-set resource browse');
+$headingTerm = $this->siteSetting('browse_heading_property_term');
+$bodyTerm = $this->siteSetting('browse_body_property_term');
 ?>
+<div class="container-xxl mt-4 mb-5">
 
-<?php echo $this->pageTitle($translate('Item sets'), 2); ?>
+<div class="page-heading"><?php echo $this->pageTitle($translate('Item sets'), 2); ?></div>
 
 <?php echo $this->searchFilters(); ?>
 
-<div class="browse-controls">
+<div class="browse-toolbar">
     <?php echo $this->pagination(); ?>
-    <?php echo $this->hyperlink($translate('Advanced search'), $this->url(null, ['action' => 'search'], true), ['class' => 'advanced-search']); ?>
+    <div class="toolbar-end">
+        <?php echo $this->sortSelector([
+            ['label' => $translate('Created'), 'value' => 'created'],
+            ['label' => $translate('Title'), 'value' => 'dcterms:title'],
+        ]); ?>
+    </div>
 </div>
 
 <?php $this->trigger('view.browse.before'); ?>
-<ul class="resource-list">
-<?php
-$headingTerm = $this->siteSetting('browse_heading_property_term');
-$bodyTerm = $this->siteSetting('browse_body_property_term');
-foreach ($itemSets as $itemSet):
-    $heading = $headingTerm ? $itemSet->value($headingTerm, ['default' => $translate('[Untitled]'), 'lang' => $valueLang]) : $itemSet->displayTitle(null, $valueLang);
+<ul class="resource-list is-grid with-body">
+<?php foreach ($itemSets as $itemSet):
+    $heading = $headingTerm
+        ? $itemSet->value($headingTerm, ['default' => $translate('[Untitled]'), 'lang' => $valueLang])
+        : $itemSet->displayTitle(null, $valueLang);
     $body = $bodyTerm ? $itemSet->value($bodyTerm, ['lang' => $valueLang]) : $itemSet->displayDescription(null, $valueLang);
+    $thumb = $thumbnail($itemSet, 'medium', ['alt' => '', 'loading' => 'lazy']);
 ?>
-    <li class="item-set resource">
-        <?php
-        $linkContent = sprintf('%s<span class="resource-name">%s</span>',
-            $thumbnail($itemSet, 'medium'),
-            $escape($heading));
-        echo $itemSet->linkRaw($linkContent, null, ['class' => 'resource-link']);
-        ?>
-        <?php if ($body): ?>
-        <div class="description"><?php echo $escape($body); ?></div>
-        <?php endif; ?>
+    <li class="resource-card item-set resource">
+        <div class="resource-thumb">
+            <?php echo $thumb ?: '<i class="no-thumb fa-regular fa-folder-open" aria-hidden="true"></i>'; ?>
+        </div>
+        <div>
+            <h3 class="resource-title"><?php echo $itemSet->link($heading); ?></h3>
+            <?php if ($body): ?>
+            <div class="resource-body"><?php echo $escape($body); ?></div>
+            <?php endif; ?>
+        </div>
     </li>
 <?php endforeach; ?>
 </ul>
 <?php $this->trigger('view.browse.after'); ?>
-<?php echo $this->pagination(); ?>
+
+<div class="browse-footer">
+    <?php echo $this->pagination(); ?>
+</div>
+
+</div>

@@ -6,7 +6,8 @@ $properties = array_filter($properties, function ($value) {
     return isset($value['text']) ? '' !== trim($value['text']) : true;
 });
 if (!$properties) {
-    $properties[] = [];
+    // Default to "contains", as the old theme did (core defaults to the first option, "is exactly").
+    $properties[] = ['type' => 'in'];
 }
 
 if (isset($query['search'])) {

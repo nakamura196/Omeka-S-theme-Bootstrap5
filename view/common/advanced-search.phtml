@@ -69,4 +69,11 @@ foreach ($partials as $partial) {
 }
 ?>
 </div>
-<script>Omeka.prepareSearchForm($('#advanced-search'));</script>
+<script>
+// Bootstrap classes are added before Omeka copies the first row of each field as the template
+// for "add" (prepareSearchForm), so added rows look the same.
+$('#advanced-search .advanced-search-content').find('select').addClass('form-select form-select-sm');
+$('#advanced-search .advanced-search-content').find('input[type=text], input[type=number]').addClass('form-control form-control-sm');
+$('#advanced-search .advanced-search-content').find('button.add-value, button.remove-value').addClass('btn btn-sm');
+Omeka.prepareSearchForm($('#advanced-search'));
+</script>

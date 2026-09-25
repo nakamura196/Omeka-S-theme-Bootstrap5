@@ -1,0 +1,72 @@
+<?php
+// Overrides the template of the module IiifViewers: the embedded viewer (Mirador or Universal
+// Viewer) and the links to the manifest and to external viewers under it.
+// $config: 'asset' (module asset base URL), 'iiifResourceUri' (manifest URL), 'setting' (module settings).
+$translate = $this->plugin('translate');
+$escape = $this->plugin('escapeHtml');
+$escapeAttr = $this->plugin('escapeHtmlAttr');
+
+$manifest = $config['iiifResourceUri'];
+$setting = $config['setting'] ?? [];
+$viewer = ($setting['viewer_value'] ?? 'mirador') === 'mirador' ? 'mirador' : 'uv';
+$viewerLang = $setting['viewer_lang'] ?? $this->lang();
+$assetBase = rtrim($config['asset'], '/');
+$viewerSrc = $viewer === 'mirador'
+    ? $assetBase . '/vendor/mirador/index.html?manifest=' . $manifest . '&lang=' . $viewerLang
+    : $assetBase . '/vendor/uv/uv.html#?manifest=' . $manifest;
+
+// Icons are stored by the module; a missing one falls back to the text label.
+$api = $this->api();
+$iconUrl = function ($iconId) use ($api) {
+    if (!$iconId) {
+        return null;
+    }
+    try {
+        return $api->read('iiif_viewers_icons', $iconId)->getContent()->assetUrl();
+    } catch (\Exception $e) {
+        return null;
+    }
+};
+
+// "?manifest=" lets the IIIF logo be dragged and dropped into other viewers (as before).
+$links = [[
+    'url' => $manifest . '?manifest=' . $manifest,
+    'label' => $translate('IIIF Manifest'),
+    'icon' => $iconUrl($setting['manifest_icon'] ?? null),
+]];
+for ($i = 1; $i <= 5; $i++) {
+    if (!empty($setting['url_' . $i])) {
+        $links[] = [
+            'url' => $setting['url_' . $i] . $manifest,
+            'label' => $setting['label_' . $i] ?? '',
+            'icon' => $iconUrl($setting['icon_' . $i] ?? null),
+        ];
+    }
+}
+$help = $setting['viewer_help'] ?? '';
+$helpText = ($setting['viewer_help_text'] ?? '') !== '' ? $setting['viewer_help_text'] : $translate('Help');
+?>
+<div class="viewer-band">
+    <div class="container-xxl px-0 px-md-3">
+        <iframe class="viewer-frame" src="<?php echo $escapeAttr($viewerSrc); ?>"
+            title="<?php echo $escapeAttr($translate('Image viewer')); ?>" allowfullscreen></iframe>
+    </div>
+</div>
+<div class="container-xxl">
+    <div class="viewer-links">
+        <?php foreach ($links as $link): ?>
+        <a href="<?php echo $escapeAttr($link['url']); ?>" target="_blank" rel="noopener" title="<?php echo $escapeAttr($link['label']); ?>">
+            <?php if ($link['icon']): ?>
+            <img src="<?php echo $escapeAttr($link['icon']); ?>" alt="<?php echo $escapeAttr($link['label']); ?>">
+            <?php else: ?>
+            <?php echo $escape($link['label']); ?>
+            <?php endif; ?>
+        </a>
+        <?php endforeach; ?>
+        <?php if ($help !== ''): ?>
+        <a class="btn btn-sm btn-outline-primary" href="<?php echo $escapeAttr($help); ?>">
+            <i class="fa-regular fa-circle-question me-1" aria-hidden="true"></i><?php echo $escape($helpText); ?>
+        </a>
+        <?php endif; ?>
+    </div>
+</div>

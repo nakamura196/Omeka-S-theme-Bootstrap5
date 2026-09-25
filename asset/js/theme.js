@@ -1,5 +1,5 @@
-// Replaces the parts of Bootstrap's JavaScript this theme needs:
-// the mobile menu toggle and the back-to-top button.
+// Replaces the parts of Bootstrap's JavaScript this theme needs (the mobile menu toggle and
+// the back-to-top button), plus the grid / list switch and sorting on change on browse pages.
 document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.navbar-toggler[aria-controls]').forEach(function (toggler) {
         var target = document.getElementById(toggler.getAttribute('aria-controls'));
@@ -24,4 +24,45 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('content').focus({ preventScroll: true });
         });
     }
+
+    // Grid / list switch. The choice is remembered in this browser only; if storage is
+    // unavailable (private windows etc.) the theme setting's default is used.
+    var storageKey = 'omeka-s-theme-bs5:browse-layout';
+    document.querySelectorAll('.view-toggle[data-target]').forEach(function (group) {
+        var list = document.getElementById(group.getAttribute('data-target'));
+        if (!list) {
+            return;
+        }
+        var apply = function (layout) {
+            list.classList.toggle('is-grid', layout === 'grid');
+            list.classList.toggle('is-list', layout === 'list');
+            group.querySelectorAll('[data-layout]').forEach(function (button) {
+                button.setAttribute('aria-pressed', button.getAttribute('data-layout') === layout ? 'true' : 'false');
+            });
+        };
+        try {
+            var saved = window.localStorage.getItem(storageKey);
+            if (saved === 'grid' || saved === 'list') {
+                apply(saved);
+            }
+        } catch (e) {}
+        group.addEventListener('click', function (event) {
+            var button = event.target.closest('[data-layout]');
+            if (!button) {
+                return;
+            }
+            var layout = button.getAttribute('data-layout');
+            apply(layout);
+            try {
+                window.localStorage.setItem(storageKey, layout);
+            } catch (e) {}
+        });
+    });
+
+    // Sort as soon as a sort option is picked.
+    document.querySelectorAll('.sort-selector select').forEach(function (select) {
+        select.addEventListener('change', function () {
+            select.form.submit();
+        });
+    });
 });

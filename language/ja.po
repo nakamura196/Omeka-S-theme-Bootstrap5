@@ -1,0 +1,60 @@
+# Japanese strings for omeka-s-theme-bs5 (only those not in Omeka S core).
+# Compile with: msgfmt -o language/ja.mo language/ja.po
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: ja\n"
+
+msgid "%1$s–%2$s of %3$s"
+msgstr "%3$s 件中 %1$s–%2$s 件"
+
+msgid "Show metadata"
+msgstr "説明を表示"
+
+msgid "Hide metadata"
+msgstr "説明を隠す"
+
+msgid "Layout"
+msgstr "表示の切り替え"
+
+msgid "Grid"
+msgstr "グリッド表示"
+
+msgid "List"
+msgstr "リスト表示"
+
+msgid "Image viewer"
+msgstr "画像ビューア"
+
+msgid "Filters"
+msgstr "検索条件"
+
+msgid "Back to top"
+msgstr "ページの先頭へ"
+
+msgid "Main navigation"
+msgstr "メインメニュー"
+
+msgid "Toggle Menu"
+msgstr "メニューを開閉"
+
+msgid "In"
+msgstr "含む"
+
+msgid "Not in"
+msgstr "含まない"
+
+msgid "Search by media presence"
+msgstr "画像の有無"
+
+msgid "Select media presence…"
+msgstr "指定しない"
+
+msgid "Has media"
+msgstr "画像あり"
+
+msgid "Has no media"
+msgstr "画像なし"
+
+msgid "Part of %s"
+msgstr "所属: %s"
