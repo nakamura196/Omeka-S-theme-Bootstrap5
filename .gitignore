@@ -12,8 +12,8 @@ credentials.json
 .idea/
 .vscode/settings.json
 
-node_modules/
-vendor/
+/node_modules/
+/vendor/
 
 # local test environment (scripts/dev/setup.zsh)
 .dev/
