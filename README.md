@@ -12,6 +12,10 @@ The theme's version numbers do not follow those of Omeka S.
 
 日本語の説明は下にあります。
 
+A video guide (15 minutes, Japanese narration with Japanese subtitles) shows installation, the public pages and the settings:
+
+[![Video guide on YouTube](.github/video-cover.jpg)](https://www.youtube.com/watch?v=N2jiDQmq38c)
+
 ## Features
 
 - Light and dark mode. A switch in the header offers light, dark and "same as the device";
@@ -85,6 +89,10 @@ IIIF logo (from iiif.io).
 
 Omeka S 4.1 以降で使える Bootstrap 5 のテーマです。第3版は、Omeka S 4.2.1 の本体テンプレートを土台に作り直しました。
 東洋文庫メディアリポジトリ（app.toyobunko-lab.jp）で使っています。
+
+使い方の動画（15分）: 入れ方、公開サイトでの見え方、管理画面での設定を順に紹介しています。章ごとに区切ってあるので、見たいところから再生できます。
+
+[![使い方の動画](.github/video-cover.jpg)](https://www.youtube.com/watch?v=N2jiDQmq38c)
 
 主な機能:
 
