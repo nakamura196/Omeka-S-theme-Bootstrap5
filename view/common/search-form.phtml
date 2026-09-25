@@ -1,19 +1,20 @@
 <?php
+// Searches all properties of items and shows the item browse page
+// (same behaviour as the old Bootstrap5 theme), instead of core's sitewide search.
 $translate = $this->plugin('translate');
-$searchType = $this->siteSetting('search_type', 'sitewide');
-switch ($searchType) {
-    case 'cross-site':
-        $searchAction = $this->url('site/cross-site-search', ['action' => 'results'], true);
-        break;
-    case 'sitewide':
-    default:
-        $searchAction = $this->url('site/resource', ['controller' => 'index', 'action' => 'search'], true);
-}
-$searchValue = $this->escapeHtml($this->params()->fromQuery('fulltext_search', ''));
+$escape = $this->plugin('escapeHtml');
+$query = $this->params()->fromQuery('property');
+$searchValue = $query[0]['text'] ?? '';
+$searchAction = $this->url('site/resource', ['controller' => 'item', 'action' => 'browse'], true);
 ?>
 
-<form action="<?php echo $this->escapeHtml($searchAction); ?>" id="search-form" aria-label="<?php echo $translate('Search'); ?>" role="search">
-    <input type="text" id="fulltext-search" name="fulltext_search" value="<?php echo $searchValue; ?>"
-        aria-label="<?php echo $translate('Query'); ?>" aria-labelledby="search-form fulltext-search">
-    <button id="search-submit" type="submit" aria-label="<?php echo $translate('Submit'); ?>" title="<?php echo $translate('Submit'); ?>"><span class="o-icon-search" aria-hidden="true"></span></button>
+<form action="<?php echo $escape($searchAction); ?>" id="search-form" class="mb-0 input-group" role="search">
+    <input type="search" id="fulltext-search" name="property[0][text]" class="form-control"
+        value="<?php echo $escape(is_string($searchValue) ? $searchValue : ''); ?>"
+        placeholder="<?php echo $escape($translate('Search')); ?>"
+        aria-label="<?php echo $escape($translate('Search')); ?>">
+    <input type="hidden" name="property[0][joiner]" value="and">
+    <input type="hidden" name="property[0][property]" value="">
+    <input type="hidden" name="property[0][type]" value="in">
+    <button class="btn btn-primary" id="search-submit" type="submit" aria-label="<?php echo $escape($translate('Submit')); ?>" title="<?php echo $escape($translate('Submit')); ?>"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></button>
 </form>

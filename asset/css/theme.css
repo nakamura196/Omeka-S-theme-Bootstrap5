@@ -1,0 +1,41 @@
+/* Theme styles on top of Bootstrap 5.3 (bundled in asset/vendor/bootstrap). */
+
+a,
+.btn-link {
+    text-decoration: none;
+}
+
+/* Skip link: Bootstrap's .visually-hidden-focusable shows it on focus; place it above the navbar. */
+#skipnav:focus {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    z-index: 1080;
+    padding: 0.5rem 1rem;
+    background: var(--bs-body-bg);
+    border: 2px solid var(--bs-primary);
+}
+
+#content:focus {
+    outline: none;
+}
+
+/* Home page banner (theme setting "top_image"). */
+.top-hero {
+    position: relative;
+    width: 100%;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+}
+
+.top-hero-overlay {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+#btn-back-to-top {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    border-radius: 10px;
+}

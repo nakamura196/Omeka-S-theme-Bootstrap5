@@ -1,0 +1,21 @@
+<?php
+// Top level of the site navigation only (the old theme never showed child pages).
+/** @var \Laminas\Navigation\Navigation $container */
+$escape = $this->plugin('escapeHtml');
+$navigation = $this->navigation();
+$textDomain = $navigation($container)->getTranslatorTextDomain();
+?>
+<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+    <?php foreach ($container as $page): ?>
+    <?php if (!$navigation->accept($page)) continue; ?>
+    <?php $isActive = $page->isActive(); ?>
+    <li class="nav-item">
+        <a class="nav-link<?php echo $isActive ? ' active' : ''; ?>"
+            href="<?php echo $escape($page->getHref()); ?>"
+            <?php if ($page->getTarget()): ?>target="<?php echo $escape($page->getTarget()); ?>"<?php endif; ?>
+            <?php if ($isActive): ?>aria-current="page"<?php endif; ?>>
+            <?php echo $escape($this->translate($page->getLabel(), $textDomain)); ?>
+        </a>
+    </li>
+    <?php endforeach; ?>
+</ul>
