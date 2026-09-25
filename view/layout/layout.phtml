@@ -42,12 +42,32 @@ $userBar = $this->userBar();
 // Same rule as Omeka's site index: the configured homepage, else the first linked page.
 $homepage = $site->homepage() ?: current($site->linkedPages());
 $isHomePage = $homepage && $this->params()->fromRoute('page-slug') === $homepage->slug();
-$topImage = $this->themeSettingAssetUrl('top_image');
+// "hero_*" are the names used by Omeka-S-theme-Bootstrap5 2.x; read them when the 3.x names are empty.
+$topImage = $this->themeSettingAssetUrl('top_image') ?: $this->themeSettingAssetUrl('hero_image');
+$topUrl = $this->themeSetting('top_url') ?: $this->themeSetting('hero_button_url');
+$topButtonText = $this->themeSetting('hero_button_text') ?: $translate('Browse');
+
+// Open Graph tags (the card shown when a page is shared). Item and media pages pass their own
+// values through common/og-meta; other pages use the site's title, summary and top image.
+$absolute = fn($url) => $url && $url[0] === '/' ? $this->serverUrl($url) : $url;
+$og = [
+    'og:site_name' => $siteTitle,
+    'og:type' => $this->ogType ?: 'website',
+    'og:title' => $this->ogTitle ?: $this->headTitle()->renderTitle(),
+    'og:description' => $this->ogDescription ?: strip_tags((string) $site->summary()),
+    'og:url' => $this->serverUrl(true),
+    'og:image' => $absolute($this->ogImage ?: $topImage),
+];
+$footerContent = $this->themeSetting('footer');
 ?>
 <?php echo $this->doctype(); ?>
 <?php echo $this->htmlElement('html'); ?>
 <head>
     <?php echo $this->headMeta(); ?>
+    <?php foreach (array_filter($og) as $property => $content): ?>
+    <meta property="<?php echo $property; ?>" content="<?php echo $escape($content); ?>">
+    <?php endforeach; ?>
+    <meta name="twitter:card" content="<?php echo $og['og:image'] ? 'summary_large_image' : 'summary'; ?>">
     <?php echo $this->headTitle(); ?>
     <?php echo $this->headLink(); ?>
     <?php echo $this->headStyle(); ?>
@@ -72,9 +92,9 @@ $topImage = $this->themeSettingAssetUrl('top_image');
                     <?php if ($siteSummary = $site->summary()): ?>
                     <p class="top-hero-summary mt-3"><?php echo $siteSummary; ?></p>
                     <?php endif; ?>
-                    <?php if ($topUrl = $this->themeSetting('top_url')): ?>
+                    <?php if ($topUrl): ?>
                     <a href="<?php echo $escape(trim(strip_tags($topUrl))); ?>" class="mt-4 btn btn-accent">
-                        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> <?php echo $translate('Browse'); ?>
+                        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> <?php echo $escape($topButtonText); ?>
                     </a>
                     <?php endif; ?>
                 </div>
@@ -89,19 +109,24 @@ $topImage = $this->themeSettingAssetUrl('top_image');
     <?php echo $this->content; ?>
 </div>
 
-<footer class="site-footer py-5 text-center">
-    <div class="container-fluid">
-        <p class="my-0">
-            <small>
-                <?php if ($footerContent = $this->themeSetting('footer')): ?>
-                <?php echo $footerContent; ?>
-                <?php else: ?>
-                <?php echo $translate('Powered by Omeka S'); ?>
+<footer class="site-footer">
+    <div class="container-xxl">
+        <div class="footer-main">
+            <div class="footer-about">
+                <a class="footer-site-title" href="<?php echo $escape($site->url()); ?>"><?php echo $escape($siteTitle); ?></a>
+                <?php if ($footerContent && trim(strip_tags($footerContent)) !== 'Powered by Omeka S'): ?>
+                <div class="footer-content"><?php echo $footerContent; ?></div>
                 <?php endif; ?>
-            </small>
-        </p>
+            </div>
+            <nav class="footer-nav" aria-label="<?php echo $escape($translate('Footer navigation')); ?>">
+                <?php echo $site->publicNav()->menu()->renderMenu(null, ['maxDepth' => 0, 'ulClass' => 'footer-links']); ?>
+            </nav>
+        </div>
+        <p class="footer-bottom"><?php echo $translate('Powered by Omeka S'); ?></p>
     </div>
 </footer>
+
+<div class="theme-toast" role="status" aria-live="polite" hidden></div>
 
 <button type="button" class="btn btn-primary" id="btn-back-to-top" hidden aria-label="<?php echo $escape($translate('Back to top')); ?>">
     <i class="fa-solid fa-arrow-up" aria-hidden="true"></i>

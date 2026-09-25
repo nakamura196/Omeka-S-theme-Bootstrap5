@@ -70,3 +70,39 @@ msgstr "アクセントの色"
 
 msgid "Used for the button on the home banner and the mark under the current menu item. The default value is #a8322d."
 msgstr "トップの写真の上のボタンと、今いるメニューの下の印に使います。初期値は #a8322d（朱）です。"
+
+msgid "Copy URL"
+msgstr "URL をコピー"
+
+msgid "Cite"
+msgstr "引用"
+
+msgid "Share"
+msgstr "共有"
+
+msgid "Copied."
+msgstr "コピーしました。"
+
+msgid "Could not copy. Please select the text and copy it."
+msgstr "コピーできませんでした。文字を選んでコピーしてください。"
+
+msgid "Copy"
+msgstr "コピー"
+
+msgid "How to cite this page"
+msgstr "引用するときの書き方"
+
+msgid "Machine-readable data"
+msgstr "機械可読なデータ"
+
+msgid "IIIF Manifest"
+msgstr "IIIF マニフェスト"
+
+msgid "Breadcrumb"
+msgstr "現在の位置"
+
+msgid "Footer navigation"
+msgstr "フッターのメニュー"
+
+msgid "%d per page"
+msgstr "%d 件ずつ"

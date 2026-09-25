@@ -159,6 +159,13 @@ a:hover {
 }
 
 @media (min-width: 1200px) {
+    /* On wide screens the menu stays in view while scrolling. */
+    .site-header {
+        position: sticky;
+        top: 0;
+        z-index: 1020;
+    }
+
     .site-header .navbar-nav .nav-link {
         padding-inline: 0.6rem;
     }
@@ -251,14 +258,76 @@ a:hover {
 /* ---------- Footer ---------- */
 
 .site-footer {
+    padding: 3rem 0 1.5rem;
     background: var(--tb-footer);
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(255, 255, 255, 0.75);
     font-size: 0.875rem;
 }
 
 .site-footer a {
     color: #fff;
+}
+
+.footer-main {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 2rem 3rem;
+}
+
+.footer-site-title {
+    display: inline-block;
+    margin-bottom: 0.5rem;
+    font-size: 1.0625rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.footer-content p:last-child {
+    margin-bottom: 0;
+}
+
+/* Top-level menu items, repeated so they can be reached from the bottom of long pages. */
+.footer-links {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, auto));
+    gap: 0.4rem 2.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.footer-links a {
+    color: rgba(255, 255, 255, 0.75);
+    text-decoration: none;
+}
+
+.footer-links a:hover {
+    color: #fff;
     text-decoration: underline;
+}
+
+.footer-bottom {
+    margin: 2.5rem 0 0;
+    padding-top: 1.25rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.8125rem;
+}
+
+.theme-toast {
+    position: fixed;
+    left: 50%;
+    bottom: 24px;
+    z-index: 1080;
+    transform: translateX(-50%);
+    max-width: calc(100% - 32px);
+    padding: 0.6rem 1.25rem;
+    border-radius: 999px;
+    background: var(--tb-ink);
+    color: #fff;
+    font-size: 0.875rem;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
 }
 
 #btn-back-to-top {
@@ -280,6 +349,11 @@ a:hover {
 .blocks .page-layout-normal .block {
     margin-top: 0;
     margin-bottom: 0;
+}
+
+/* Long URLs typed into page text would otherwise widen the page on phones. */
+.blocks a {
+    overflow-wrap: anywhere;
 }
 
 /* Long lines are hard to read: keep running text to a comfortable width. */
@@ -614,6 +688,139 @@ a:hover {
     margin: 2.5rem 0 2rem;
 }
 
+/* ---------- Breadcrumbs and page actions (item / media pages) ---------- */
+
+.breadcrumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 1rem 0 0;
+    padding: 0;
+    list-style: none;
+    color: var(--tb-muted);
+    font-size: 0.8125rem;
+}
+
+.breadcrumbs li {
+    max-width: 24em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.breadcrumbs li + li::before {
+    content: "›";
+    padding: 0 0.5rem;
+}
+
+.breadcrumbs a {
+    color: inherit;
+}
+
+.breadcrumbs + .viewer-band {
+    margin-top: 1rem;
+}
+
+.resource-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.resource-actions .btn {
+    font-size: 0.8125rem;
+}
+
+.iiif-manifest {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-left: 0.25rem;
+    font-size: 0.8125rem;
+}
+
+.iiif-manifest img {
+    width: auto;
+    height: 22px;
+}
+
+.share-menu {
+    position: relative;
+}
+
+.share-menu > summary {
+    list-style: none;
+}
+
+.share-menu > summary::-webkit-details-marker {
+    display: none;
+}
+
+.share-menu ul {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    z-index: 1000;
+    min-width: 11rem;
+    margin: 0;
+    padding: 0.4rem 0;
+    list-style: none;
+    background: #fff;
+    border: 1px solid var(--tb-border);
+    border-radius: var(--tb-radius);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+}
+
+.share-menu a {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 1rem;
+    color: var(--tb-ink);
+    font-size: 0.875rem;
+    text-decoration: none;
+}
+
+.share-menu a:hover {
+    background: var(--tb-surface);
+}
+
+.share-x {
+    width: 1.25em;
+    height: 0.9em;
+}
+
+.citation-dialog {
+    width: min(40rem, calc(100% - 32px));
+    padding: 1.5rem;
+    border: 0;
+    border-radius: var(--tb-radius);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+}
+
+.citation-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.4);
+}
+
+.citation-dialog h3 {
+    margin: 0 0 1rem;
+    font-size: 1.0625rem;
+}
+
+.citation-dialog-close {
+    float: right;
+}
+
+.citation-text {
+    padding: 1rem;
+    background: var(--tb-surface);
+    border-radius: var(--tb-radius);
+    font-size: 0.9375rem;
+    overflow-wrap: anywhere;
+    user-select: all;
+}
+
 .resource-header h2 {
     font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2rem);
     margin: 0;
@@ -875,4 +1082,28 @@ a:hover {
     display: flex;
     gap: 0.75rem;
     padding-top: 0.5rem;
+}
+
+/* ---------- Print ---------- */
+
+@media print {
+    .site-header,
+    .site-footer,
+    .breadcrumbs,
+    .resource-actions,
+    .viewer-links,
+    .browse-toolbar,
+    .top-hero,
+    #btn-back-to-top,
+    #skipnav {
+        display: none !important;
+    }
+
+    .viewer-band .viewer-frame {
+        height: 60vh;
+    }
+
+    a {
+        text-decoration: none;
+    }
 }

@@ -43,6 +43,9 @@ for ($i = 1; $i <= 5; $i++) {
         ];
     }
 }
+// Kept for common/resource-actions, which shows the manifest with the IIIF logo next to the
+// page's other buttons (this template is printed before them).
+$this->placeholder('iiifManifest')->set($links[0]['url']);
 $help = $setting['viewer_help'] ?? '';
 $helpText = ($setting['viewer_help_text'] ?? '') !== '' ? $setting['viewer_help_text'] : $translate('Help');
 ?>
@@ -54,7 +57,8 @@ $helpText = ($setting['viewer_help_text'] ?? '') !== '' ? $setting['viewer_help_
 </div>
 <div class="container-xxl">
     <div class="viewer-links">
-        <?php foreach ($links as $link): ?>
+        <?php // The manifest itself is shown with the IIIF logo among the page's buttons (common/resource-actions). ?>
+        <?php foreach (array_slice($links, 1) as $link): ?>
         <a href="<?php echo $escapeAttr($link['url']); ?>" target="_blank" rel="noopener" title="<?php echo $escapeAttr($link['label']); ?>">
             <?php if ($link['icon']): ?>
             <img src="<?php echo $escapeAttr($link['icon']); ?>" alt="<?php echo $escapeAttr($link['label']); ?>">

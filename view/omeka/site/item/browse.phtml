@@ -79,6 +79,7 @@ $metadataOpen = (int) $this->params()->fromQuery('page', 1) <= 1;
 <div class="browse-toolbar">
     <?php echo $this->pagination(); ?>
     <div class="toolbar-end">
+        <?php echo $this->partial('common/per-page'); ?>
         <?php echo $this->sortSelector($sortHeadings); ?>
         <div class="view-toggle btn-group" role="group" aria-label="<?php echo $escape($translate('Layout')); ?>" data-target="resource-list">
             <button type="button" class="btn btn-sm btn-outline-primary" data-layout="grid" aria-pressed="<?php echo $layout === 'grid' ? 'true' : 'false'; ?>" title="<?php echo $escape($translate('Grid')); ?>">

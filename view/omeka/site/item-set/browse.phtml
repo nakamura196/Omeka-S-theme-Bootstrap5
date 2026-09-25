@@ -22,6 +22,7 @@ $bodyTerm = $this->siteSetting('browse_body_property_term');
 <div class="browse-toolbar">
     <?php echo $this->pagination(); ?>
     <div class="toolbar-end">
+        <?php echo $this->partial('common/per-page'); ?>
         <?php echo $this->sortSelector([
             ['label' => $translate('Created'), 'value' => 'created'],
             ['label' => $translate('Title'), 'value' => 'dcterms:title'],

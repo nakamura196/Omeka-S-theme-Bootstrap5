@@ -1,5 +1,6 @@
 // Replaces the parts of Bootstrap's JavaScript this theme needs (the mobile menu toggle and
-// the back-to-top button), plus the grid / list switch and sorting on change on browse pages.
+// the back-to-top button), plus the grid / list switch, sorting and page size on change on
+// browse pages, and the copy / cite / share buttons of item and media pages.
 document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.navbar-toggler[aria-controls]').forEach(function (toggler) {
         var target = document.getElementById(toggler.getAttribute('aria-controls'));
@@ -59,10 +60,76 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Sort as soon as a sort option is picked.
-    document.querySelectorAll('.sort-selector select').forEach(function (select) {
+    // Sort, or change the page size, as soon as an option is picked.
+    document.querySelectorAll('.sort-selector select, .per-page select').forEach(function (select) {
         select.addEventListener('change', function () {
             select.form.submit();
+        });
+    });
+
+    // A short notice at the bottom of the screen (read out by screen readers too).
+    var toast = document.querySelector('.theme-toast');
+    var toastTimer;
+    var notify = function (message) {
+        if (!toast) {
+            return;
+        }
+        toast.textContent = message;
+        toast.hidden = false;
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(function () {
+            toast.hidden = true;
+        }, 2500);
+    };
+
+    // Copy buttons (page URL, citation). Messages come from the data attributes of .resource-actions.
+    var messages = document.querySelector('.resource-actions');
+    document.querySelectorAll('[data-copy]').forEach(function (button) {
+        button.addEventListener('click', function () {
+            var text = button.getAttribute('data-copy');
+            var done = function () {
+                notify(messages.getAttribute('data-copied'));
+            };
+            var failed = function () {
+                notify(messages.getAttribute('data-copy-failed'));
+            };
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(done, failed);
+            } else {
+                failed();
+            }
+        });
+    });
+
+    // Citation dialog.
+    document.querySelectorAll('[data-dialog]').forEach(function (button) {
+        var dialog = document.getElementById(button.getAttribute('data-dialog'));
+        if (!dialog || typeof dialog.showModal !== 'function') {
+            return;
+        }
+        button.addEventListener('click', function () {
+            dialog.showModal();
+        });
+        // Close when the backdrop is clicked.
+        dialog.addEventListener('click', function (event) {
+            if (event.target === dialog) {
+                dialog.close();
+            }
+        });
+    });
+
+    // Share menu: close it on a click elsewhere or with Escape.
+    document.querySelectorAll('.share-menu').forEach(function (menu) {
+        document.addEventListener('click', function (event) {
+            if (menu.open && !menu.contains(event.target)) {
+                menu.open = false;
+            }
+        });
+        menu.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape' && menu.open) {
+                menu.open = false;
+                menu.querySelector('summary').focus();
+            }
         });
     });
 });

@@ -7,8 +7,10 @@ $this->htmlElement('body')->appendAttribute('class', 'media resource show');
 $filterLocale = (bool) $this->siteSetting('filter_locale_values');
 $lang = $this->lang();
 $valueLang = $filterLocale ? [$lang, ''] : null;
+$this->partial('common/og-meta', ['resource' => $media, 'valueLang' => $valueLang]);
 ?>
 <div class="container mb-5">
+    <?php echo $this->partial('common/breadcrumbs', ['resource' => $media, 'valueLang' => $valueLang]); ?>
     <header class="resource-header">
         <span class="eyebrow"><?php echo $escape($translate('Media')); ?></span>
         <?php echo $this->pageTitle($media->displayTitle(null, $valueLang), 2); ?>
@@ -16,6 +18,7 @@ $valueLang = $filterLocale ? [$lang, ''] : null;
             <i class="fa-solid fa-arrow-turn-up fa-flip-horizontal text-body-secondary me-1" aria-hidden="true"></i>
             <?php echo sprintf($escape($translate('Part of %s')), $item->link($item->displayTitle(null, $valueLang))); ?>
         </p>
+        <?php echo $this->partial('common/resource-actions', ['resource' => $media, 'valueLang' => $valueLang]); ?>
     </header>
 
     <?php $this->trigger('view.show.before'); ?>

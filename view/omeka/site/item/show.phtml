@@ -6,7 +6,11 @@ $this->htmlElement('body')->appendAttribute('class', 'item resource show');
 $filterLocale = (bool) $this->siteSetting('filter_locale_values');
 $lang = $this->lang();
 $valueLang = $filterLocale ? [$lang, ''] : null;
+$this->partial('common/og-meta', ['resource' => $item, 'valueLang' => $valueLang]);
 ?>
+<div class="container">
+    <?php echo $this->partial('common/breadcrumbs', ['resource' => $item, 'valueLang' => $valueLang]); ?>
+</div>
 <?php // Before the container, so a viewer printed here (module IiifViewers) spans the page width. ?>
 <?php $this->trigger('view.show.before'); ?>
 
@@ -14,6 +18,7 @@ $valueLang = $filterLocale ? [$lang, ''] : null;
     <header class="resource-header">
         <span class="eyebrow"><?php echo $escape($translate('Item')); ?></span>
         <?php echo $this->pageTitle($item->displayTitle(null, $valueLang), 2); ?>
+        <?php echo $this->partial('common/resource-actions', ['resource' => $item, 'valueLang' => $valueLang]); ?>
     </header>
 
     <?php echo $this->resourcePageBlocks($item)->getBlocks(); ?>

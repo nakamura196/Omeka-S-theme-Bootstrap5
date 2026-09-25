@@ -1,0 +1,11 @@
+<?php
+// Hands the title, description and image of an item or media page to the layout, which writes
+// them as Open Graph tags (the card shown when the page is shared on social media).
+// $resource: the item or media; $valueLang: the language filter of the page.
+$description = (string) $resource->displayDescription(null, $valueLang);
+$this->layout()->setVariables([
+    'ogTitle' => $resource->displayTitle(null, $valueLang),
+    'ogDescription' => mb_strimwidth(trim(preg_replace('/\s+/u', ' ', strip_tags($description))), 0, 200, '…'),
+    'ogImage' => $resource->thumbnailDisplayUrl('large'),
+    'ogType' => 'article',
+]);

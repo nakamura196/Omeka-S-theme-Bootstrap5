@@ -1,0 +1,19 @@
+<?php
+// How many results to show on a browse page: the site's default and a few larger counts.
+// Applied on change by asset/js/theme.js; the button stays for keyboard users and without JavaScript.
+$translate = $this->plugin('translate');
+$escape = $this->plugin('escapeHtml');
+$default = (int) ($this->siteSetting('pagination_per_page') ?: $this->setting('pagination_per_page', 25));
+$current = (int) $this->params()->fromQuery('per_page', $default);
+$counts = array_unique([$default, 50, 100, $current]);
+sort($counts);
+?>
+<form action="" class="per-page d-flex align-items-center gap-2">
+    <?php echo $this->queryToHiddenInputs(['per_page', 'page']); ?>
+    <select class="form-select form-select-sm w-auto" name="per_page" aria-label="<?php echo $escape($translate('Results per page')); ?>">
+        <?php foreach ($counts as $count): ?>
+        <option value="<?php echo $count; ?>"<?php echo $count === $current ? ' selected' : ''; ?>><?php echo $escape(sprintf($translate('%d per page'), $count)); ?></option>
+        <?php endforeach; ?>
+    </select>
+    <noscript><button type="submit" class="btn btn-sm btn-outline-primary"><?php echo $escape($translate('Apply')); ?></button></noscript>
+</form>

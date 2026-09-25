@@ -1,0 +1,35 @@
+<?php
+// Where the page sits: home › items › (the item's first item set on this site) › item [› media].
+// $resource: the item or media shown; $valueLang: the language filter of the page.
+$translate = $this->plugin('translate');
+$escape = $this->plugin('escapeHtml');
+$site = $this->currentSite();
+
+$item = $resource->resourceName() === 'media' ? $resource->item() : $resource;
+$crumbs = [
+    [$translate('Home'), $site->url()],
+    [$translate('Items'), $this->url('site/resource', ['site-slug' => $site->slug(), 'controller' => 'item'])],
+];
+$siteItemSetIds = array_map(fn($siteItemSet) => $siteItemSet->itemSet()->id(), $site->siteItemSets());
+foreach ($item->itemSets() as $itemSet) {
+    if (in_array($itemSet->id(), $siteItemSetIds)) {
+        $crumbs[] = [$itemSet->displayTitle(null, $valueLang), $itemSet->siteUrl()];
+        break;
+    }
+}
+if ($item !== $resource) {
+    $crumbs[] = [$item->displayTitle(null, $valueLang), $item->siteUrl()];
+}
+$crumbs[] = [$resource->displayTitle(null, $valueLang), null];
+?>
+<nav class="breadcrumbs" aria-label="<?php echo $escape($translate('Breadcrumb')); ?>">
+    <ol>
+        <?php foreach ($crumbs as [$label, $href]): ?>
+        <?php if ($href): ?>
+        <li><a href="<?php echo $escape($href); ?>"><?php echo $escape($label); ?></a></li>
+        <?php else: ?>
+        <li aria-current="page"><?php echo $escape($label); ?></li>
+        <?php endif; ?>
+        <?php endforeach; ?>
+    </ol>
+</nav>

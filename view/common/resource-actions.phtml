@@ -1,0 +1,73 @@
+<?php
+// Buttons under the title of an item or media page: copy the page URL, a citation to copy,
+// share links and the JSON-LD data. Behaviour is in asset/js/theme.js; without JavaScript the
+// share and JSON-LD links still work.
+// $resource: the item or media; $valueLang: the language filter of the page.
+$translate = $this->plugin('translate');
+$escape = $this->plugin('escapeHtml');
+$escapeAttr = $this->plugin('escapeHtmlAttr');
+
+$url = $resource->siteUrl(null, true);
+$title = $resource->displayTitle(null, $valueLang);
+$creators = array_map('strval', $resource->value('dcterms:creator', ['all' => true, 'lang' => $valueLang]));
+$siteTitle = $this->currentSite()->title();
+$now = new DateTime('now');
+
+// One style per language: Japanese pages get the form used in Japanese humanities papers,
+// other pages a short form close to the Chicago style for web pages.
+if (strncmp($this->lang(), 'ja', 2) === 0) {
+    $citation = ($creators ? implode('・', $creators) : '')
+        . '『' . $title . '』（' . $siteTitle . '）' . $url
+        . '（' . $now->format('Y') . '年' . $now->format('n') . '月' . $now->format('j') . '日閲覧）';
+} else {
+    $citation = ($creators ? implode(', ', $creators) . '. ' : '')
+        . '"' . $title . '." ' . $siteTitle . '. ' . $url
+        . ' (accessed ' . $now->format('F j, Y') . ').';
+}
+
+$shareLinks = [
+    // The bundled Font Awesome 6.0 has no X logo, hence the inline SVG.
+    'X' => ['https://x.com/intent/post?' . http_build_query(['url' => $url, 'text' => $title]), '<svg class="share-x" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M18.9 1.2h3.7l-8 9.2L24 22.8h-7.4l-5.8-7.6-6.6 7.6H.5l8.6-9.8L0 1.2h7.6l5.2 6.9zm-1.3 19.4h2L6.5 3.2H4.3z"/></svg>'],
+    'Facebook' => ['https://www.facebook.com/sharer/sharer.php?' . http_build_query(['u' => $url]), '<i class="fa-brands fa-facebook fa-fw" aria-hidden="true"></i>'],
+    $translate('Email') => ['mailto:?' . http_build_query(['subject' => $title, 'body' => $url], '', '&', PHP_QUERY_RFC3986), '<i class="fa-regular fa-envelope fa-fw" aria-hidden="true"></i>'],
+];
+$dialogId = 'citation-' . $resource->id();
+?>
+<div class="resource-actions" data-copied="<?php echo $escapeAttr($translate('Copied.')); ?>" data-copy-failed="<?php echo $escapeAttr($translate('Could not copy. Please select the text and copy it.')); ?>">
+    <button type="button" class="btn btn-sm btn-outline-primary" data-copy="<?php echo $escapeAttr($url); ?>">
+        <i class="fa-solid fa-link" aria-hidden="true"></i> <?php echo $escape($translate('Copy URL')); ?>
+    </button>
+    <button type="button" class="btn btn-sm btn-outline-primary" data-dialog="<?php echo $escapeAttr($dialogId); ?>">
+        <i class="fa-solid fa-quote-left" aria-hidden="true"></i> <?php echo $escape($translate('Cite')); ?>
+    </button>
+    <details class="share-menu">
+        <summary class="btn btn-sm btn-outline-primary">
+            <i class="fa-solid fa-share-nodes" aria-hidden="true"></i> <?php echo $escape($translate('Share')); ?>
+        </summary>
+        <ul>
+            <?php foreach ($shareLinks as $label => [$href, $icon]): ?>
+            <li><a href="<?php echo $escapeAttr($href); ?>"<?php echo strpos($href, 'mailto:') === 0 ? '' : ' target="_blank" rel="noopener"'; ?>><?php echo $icon; ?> <?php echo $escape($label); ?></a></li>
+            <?php endforeach; ?>
+        </ul>
+    </details>
+    <?php if ($manifest = (string) $this->placeholder('iiifManifest')): ?>
+    <?php // The logo can be dragged into IIIF viewers, which read the "?manifest=" of the link. ?>
+    <a class="iiif-manifest" href="<?php echo $escapeAttr($manifest); ?>" target="_blank" rel="noopener" title="<?php echo $escapeAttr($translate('IIIF Manifest')); ?>">
+        <img src="<?php echo $escapeAttr($this->assetUrl('img/iiif-logo.png')); ?>" alt="" width="34" height="30"> <?php echo $escape($translate('IIIF Manifest')); ?>
+    </a>
+    <?php endif; ?>
+    <a class="btn btn-sm btn-link" href="<?php echo $escapeAttr($resource->apiUrl() . '?pretty_print=1'); ?>" target="_blank" rel="noopener" title="<?php echo $escapeAttr($translate('Machine-readable data')); ?>">
+        <i class="fa-solid fa-code" aria-hidden="true"></i> JSON-LD
+    </a>
+</div>
+
+<dialog class="citation-dialog" id="<?php echo $escapeAttr($dialogId); ?>" aria-labelledby="<?php echo $escapeAttr($dialogId); ?>-title">
+    <form method="dialog" class="citation-dialog-close">
+        <button type="submit" class="btn-close" aria-label="<?php echo $escapeAttr($translate('Close')); ?>"></button>
+    </form>
+    <h3 id="<?php echo $escapeAttr($dialogId); ?>-title"><?php echo $escape($translate('How to cite this page')); ?></h3>
+    <p class="citation-text"><?php echo $escape($citation); ?></p>
+    <button type="button" class="btn btn-sm btn-primary" data-copy="<?php echo $escapeAttr($citation); ?>">
+        <i class="fa-regular fa-copy" aria-hidden="true"></i> <?php echo $escape($translate('Copy')); ?>
+    </button>
+</dialog>
