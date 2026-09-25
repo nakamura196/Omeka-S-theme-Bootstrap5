@@ -39,3 +39,11 @@ a,
     bottom: 20px;
     border-radius: 10px;
 }
+
+/* Omeka 4.1+ wraps each page block in .block with a 1rem margin (core page-blocks.css).
+   The old theme rendered blocks unwrapped, so drop it to keep the same spacing.
+   Aligned (left/right/center) blocks keep their own margins via more specific core rules. */
+.blocks .page-layout-normal .block {
+    margin-top: 0;
+    margin-bottom: 0;
+}

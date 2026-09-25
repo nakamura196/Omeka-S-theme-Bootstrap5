@@ -145,6 +145,8 @@ try:
         settings = {"footer": FOOTER, "top_image": top_image if slug == "main" else None}
         sql("INSERT INTO site_setting (id, site_id, value) VALUES "
             f"('theme_settings_{THEME}', {sid}, '{json.dumps(settings)}')")
+        # Production has page prev/next links turned off (no .site-page-pagination in its HTML).
+        sql(f"INSERT INTO site_setting (id, site_id, value) VALUES ('show_page_pagination', {sid}, 'false')")
 
         for item in live_get("items", site_id=live_id, per_page=LIMIT_ITEMS):
             sets = []
