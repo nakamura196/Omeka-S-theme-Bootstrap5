@@ -14,6 +14,28 @@ $this->headScript()->prependFile($this->assetUrl('js/theme.js'));
 $this->headScript()->prependFile($this->assetUrl('js/global.js', 'Omeka'));
 $this->headScript()->prependFile($this->assetUrl('vendor/jquery/jquery.min.js', 'Omeka'));
 $this->jsTranslate();
+
+// Theme colors from the settings. Nothing is added while they keep the defaults of theme.css;
+// hover shades and the rgb triplets Bootstrap needs are derived here.
+$themeColors = [];
+$shade = function ($hex, $factor) {
+    return sprintf('#%02x%02x%02x', ...array_map(fn($c) => (int) round($c * $factor), sscanf($hex, '#%02x%02x%02x')));
+};
+$primary = strtolower((string) $this->themeSetting('primary_color'));
+if (preg_match('/^#[0-9a-f]{6}$/', $primary) && $primary !== '#1e3a5f') {
+    $rgb = implode(', ', sscanf($primary, '#%02x%02x%02x'));
+    $themeColors[] = "--tb-primary: $primary; --tb-primary-hover: {$shade($primary, 0.75)};"
+        . " --tb-link: $primary; --bs-primary-rgb: $rgb; --bs-link-color-rgb: $rgb;"
+        . " --bs-link-hover-color-rgb: " . implode(', ', sscanf($shade($primary, 0.75), '#%02x%02x%02x')) . ";"
+        . " --bs-focus-ring-color: rgba($rgb, 0.35);";
+}
+$accent = strtolower((string) $this->themeSetting('accent_color'));
+if (preg_match('/^#[0-9a-f]{6}$/', $accent) && $accent !== '#a8322d') {
+    $themeColors[] = "--tb-accent: $accent; --tb-accent-hover: {$shade($accent, 0.83)};";
+}
+if ($themeColors) {
+    $this->headStyle()->appendStyle(':root { ' . implode(' ', $themeColors) . ' }');
+}
 $this->trigger('view.layout');
 $userBar = $this->userBar();
 

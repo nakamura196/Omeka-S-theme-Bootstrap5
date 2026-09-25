@@ -58,3 +58,15 @@ msgstr "画像なし"
 
 msgid "Part of %s"
 msgstr "所属: %s"
+
+msgid "Main color"
+msgstr "メインの色"
+
+msgid "Used for buttons, links and the current menu item. Choose a dark color so white text on it stays readable. The default value is #1e3a5f."
+msgstr "ボタン、リンク、今いるメニューに使います。白い文字が読めるよう、濃い色を選んでください。初期値は #1e3a5f（紺）です。"
+
+msgid "Accent color"
+msgstr "アクセントの色"
+
+msgid "Used for the button on the home banner and the mark under the current menu item. The default value is #a8322d."
+msgstr "トップの写真の上のボタンと、今いるメニューの下の印に使います。初期値は #a8322d（朱）です。"
