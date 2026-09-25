@@ -106,3 +106,15 @@ msgstr "フッターのメニュー"
 
 msgid "%d per page"
 msgstr "%d 件ずつ"
+
+msgid "Light or dark"
+msgstr "明るい表示・暗い表示"
+
+msgid "Light"
+msgstr "ライト（明るい表示）"
+
+msgid "Dark"
+msgstr "ダーク（暗い表示）"
+
+msgid "Same as the device"
+msgstr "端末の設定に合わせる"

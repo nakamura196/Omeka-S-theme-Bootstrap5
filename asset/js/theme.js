@@ -118,8 +118,8 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Share menu: close it on a click elsewhere or with Escape.
-    document.querySelectorAll('.share-menu').forEach(function (menu) {
+    // Share and light / dark menus: close them on a click elsewhere or with Escape.
+    document.querySelectorAll('.share-menu, .color-mode').forEach(function (menu) {
         document.addEventListener('click', function (event) {
             if (menu.open && !menu.contains(event.target)) {
                 menu.open = false;
@@ -130,6 +130,40 @@ document.addEventListener('DOMContentLoaded', function () {
                 menu.open = false;
                 menu.querySelector('summary').focus();
             }
+        });
+    });
+
+    // Light / dark switch. The first choice is applied by the script at the top of the layout;
+    // "auto" follows the device, also when the device setting changes while the page is open.
+    var modeKey = 'omeka-s-theme-bs5:color-mode';
+    var darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    var root = document.documentElement;
+    var applyMode = function (mode) {
+        var dark = mode === 'dark' || (mode === 'auto' && darkQuery.matches);
+        root.setAttribute('data-bs-theme', dark ? 'dark' : 'light');
+        root.setAttribute('data-color-mode', mode);
+        document.querySelectorAll('.color-mode [data-color-mode]').forEach(function (button) {
+            button.setAttribute('aria-pressed', button.getAttribute('data-color-mode') === mode ? 'true' : 'false');
+        });
+    };
+    applyMode(root.getAttribute('data-color-mode') || 'auto');
+    darkQuery.addEventListener('change', function () {
+        if (root.getAttribute('data-color-mode') === 'auto') {
+            applyMode('auto');
+        }
+    });
+    document.querySelectorAll('.color-mode').forEach(function (menu) {
+        menu.addEventListener('click', function (event) {
+            var button = event.target.closest('[data-color-mode]');
+            if (!button) {
+                return;
+            }
+            var mode = button.getAttribute('data-color-mode');
+            applyMode(mode);
+            try {
+                window.localStorage.setItem(modeKey, mode);
+            } catch (e) {}
+            menu.open = false;
         });
     });
 });

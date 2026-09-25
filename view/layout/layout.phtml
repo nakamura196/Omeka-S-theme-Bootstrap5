@@ -21,17 +21,24 @@ $themeColors = [];
 $shade = function ($hex, $factor) {
     return sprintf('#%02x%02x%02x', ...array_map(fn($c) => (int) round($c * $factor), sscanf($hex, '#%02x%02x%02x')));
 };
+// Lighter tint, used for text in dark mode.
+$tint = function ($hex, $amount = 0.62) {
+    return sprintf('#%02x%02x%02x', ...array_map(fn($c) => (int) round($c + (255 - $c) * $amount), sscanf($hex, '#%02x%02x%02x')));
+};
 $primary = strtolower((string) $this->themeSetting('primary_color'));
 if (preg_match('/^#[0-9a-f]{6}$/', $primary) && $primary !== '#1e3a5f') {
     $rgb = implode(', ', sscanf($primary, '#%02x%02x%02x'));
     $themeColors[] = "--tb-primary: $primary; --tb-primary-hover: {$shade($primary, 0.75)};"
         . " --tb-link: $primary; --bs-primary-rgb: $rgb; --bs-link-color-rgb: $rgb;"
         . " --bs-link-hover-color-rgb: " . implode(', ', sscanf($shade($primary, 0.75), '#%02x%02x%02x')) . ";"
-        . " --bs-focus-ring-color: rgba($rgb, 0.35);";
+        . " --bs-focus-ring-color: rgba($rgb, 0.35);"
+        . " --tb-footer: {$shade($primary, 0.45)};"
+        . " --tb-primary-light: {$tint($primary)};"
+        . " --tb-primary-light-rgb: " . implode(', ', sscanf($tint($primary), '#%02x%02x%02x')) . ";";
 }
 $accent = strtolower((string) $this->themeSetting('accent_color'));
 if (preg_match('/^#[0-9a-f]{6}$/', $accent) && $accent !== '#a8322d') {
-    $themeColors[] = "--tb-accent: $accent; --tb-accent-hover: {$shade($accent, 0.83)};";
+    $themeColors[] = "--tb-accent: $accent; --tb-accent-hover: {$shade($accent, 0.83)}; --tb-accent-light: {$tint($accent, 0.55)};";
 }
 if ($themeColors) {
     $this->headStyle()->appendStyle(':root { ' . implode(' ', $themeColors) . ' }');
@@ -63,6 +70,17 @@ $footerContent = $this->themeSetting('footer');
 <?php echo $this->doctype(); ?>
 <?php echo $this->htmlElement('html'); ?>
 <head>
+    <?php // Light / dark mode chosen with the switch in the header (asset/js/theme.js), applied before
+    // the page is drawn so it does not flash. "auto" (the default) follows the device setting. ?>
+    <script>
+    (function () {
+        var mode = 'auto';
+        try { mode = localStorage.getItem('omeka-s-theme-bs5:color-mode') || 'auto'; } catch (e) {}
+        var dark = mode === 'dark' || (mode === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.setAttribute('data-bs-theme', dark ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-color-mode', mode);
+    })();
+    </script>
     <?php echo $this->headMeta(); ?>
     <?php foreach (array_filter($og) as $property => $content): ?>
     <meta property="<?php echo $property; ?>" content="<?php echo $escape($content); ?>">
@@ -122,7 +140,9 @@ $footerContent = $this->themeSetting('footer');
                 <?php echo $site->publicNav()->menu()->renderMenu(null, ['maxDepth' => 0, 'ulClass' => 'footer-links']); ?>
             </nav>
         </div>
-        <p class="footer-bottom"><?php echo $translate('Powered by Omeka S'); ?></p>
+        <div class="footer-bottom">
+            <span><?php echo $translate('Powered by Omeka S'); ?></span>
+        </div>
     </div>
 </footer>
 

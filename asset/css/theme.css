@@ -12,8 +12,14 @@
     --tb-accent-hover: #8c2924;
     --tb-surface: #f6f5f2;        /* warm paper tone behind images */
     --tb-border: #e3e1dc;
-    --tb-footer: #1c222b;
+    --tb-footer: #0e1a2b;         /* the main colour, darkened (the layout derives it from the setting) */
     --tb-radius: 0.5rem;
+    --tb-bg: #fff;
+    --tb-primary-text: var(--tb-primary);   /* the main / accent colour used for text */
+    --tb-accent-text: var(--tb-accent);
+    --tb-chip: #eaf0f7;
+    --tb-chip-muted: #e9ecef;
+    --tb-no-thumb: #c9c5bd;
 
     --bs-body-font-family: system-ui, -apple-system, "Segoe UI", "Hiragino Sans", "Hiragino Kaku Gothic ProN",
         "Noto Sans JP", "Yu Gothic UI", Meiryo, sans-serif;
@@ -27,6 +33,36 @@
     --bs-primary-rgb: 30, 58, 95;
     --bs-border-color: var(--tb-border);
     --bs-focus-ring-color: rgba(31, 79, 138, 0.35);
+    --bs-body-bg: var(--tb-bg);
+}
+
+/* Dark mode (html[data-bs-theme="dark"], set from the switch in the header). The main and
+   accent colours stay for buttons; for text they are replaced by lighter tints, which the
+   layout derives from the colour settings (the values here are those of the defaults).
+   ":root" is repeated so these win over the colour settings printed after this file. */
+:root[data-bs-theme="dark"] {
+    --tb-ink: #e4e7eb;
+    --tb-muted: #a2abb7;
+    --tb-bg: #15191f;
+    --tb-surface: #1e242c;
+    --tb-border: #313a46;
+    --tb-footer: #0e1115;
+    --tb-link: var(--tb-primary-light, #9dbde3);
+    --tb-primary-text: var(--tb-primary-light, #9dbde3);
+    --tb-accent-text: var(--tb-accent-light, #e3968f);
+    --tb-chip: #23324a;
+    --tb-chip-muted: #2b323c;
+    --tb-no-thumb: #4b535e;
+    --bs-link-color-rgb: var(--tb-primary-light-rgb, 157, 189, 227);
+    --bs-link-hover-color: #fff;
+    --bs-link-hover-color-rgb: 255, 255, 255;
+    --bs-secondary-color: var(--tb-muted);
+    --bs-emphasis-color: #fff;
+    --bs-tertiary-bg: var(--tb-surface);
+}
+
+:root[data-bs-theme="dark"] .citation-dialog {
+    color: var(--tb-ink);
 }
 
 body {
@@ -83,7 +119,7 @@ a:hover {
 }
 
 .btn-outline-primary {
-    --bs-btn-color: var(--tb-primary);
+    --bs-btn-color: var(--tb-primary-text);
     --bs-btn-border-color: var(--tb-border);
     --bs-btn-hover-color: #fff;
     --bs-btn-hover-bg: var(--tb-primary);
@@ -130,7 +166,7 @@ a:hover {
 /* ---------- Header ---------- */
 
 .site-header {
-    background: #fff;
+    background: var(--tb-bg);
     border-bottom: 1px solid var(--tb-border);
 }
 
@@ -158,7 +194,84 @@ a:hover {
     text-decoration: none;
 }
 
+/* Light / dark switch: next to the menu button on phones, at the end of the menu bar on wide screens. */
+.site-header .navbar-brand { order: 0; }
+.site-header .color-mode { order: 1; margin-left: auto; margin-right: 0.5rem; }
+.site-header .navbar-toggler { order: 2; }
+.site-header .navbar-collapse { order: 3; }
+
+.color-mode {
+    position: relative;
+}
+
+.color-mode > summary {
+    list-style: none;
+    color: var(--tb-muted);
+    font-size: 1rem;
+    border: 0;
+}
+
+.color-mode > summary:hover {
+    color: var(--tb-ink);
+}
+
+.color-mode > summary::-webkit-details-marker {
+    display: none;
+}
+
+.color-mode [data-mode-icon] {
+    display: none;
+}
+
+:root[data-color-mode="light"] .color-mode [data-mode-icon="light"],
+:root[data-color-mode="dark"] .color-mode [data-mode-icon="dark"],
+:root[data-color-mode="auto"] .color-mode [data-mode-icon="auto"] {
+    display: inline-block;
+}
+
+.color-mode ul {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    z-index: 1030;
+    min-width: 13rem;
+    margin: 0;
+    padding: 0.4rem 0;
+    list-style: none;
+    background: var(--tb-bg);
+    border: 1px solid var(--tb-border);
+    border-radius: var(--tb-radius);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.color-mode ul button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.4rem 1rem;
+    border: 0;
+    background: none;
+    color: var(--tb-ink);
+    font-size: 0.875rem;
+    text-align: left;
+}
+
+.color-mode ul button:hover {
+    background: var(--tb-surface);
+}
+
+.color-mode ul button[aria-pressed="true"] {
+    color: var(--tb-primary-text);
+    font-weight: 600;
+}
+
 @media (min-width: 1200px) {
+    .site-header .color-mode {
+        order: 4;
+        margin: 0 0 0 0.5rem;
+    }
+
     /* On wide screens the menu stays in view while scrolling. */
     .site-header {
         position: sticky;
@@ -179,7 +292,7 @@ a:hover {
         bottom: -0.8rem;
         height: 3px;
         border-radius: 3px 3px 0 0;
-        background: var(--tb-accent);
+        background: var(--tb-accent-text);
     }
 
     #search-form {
@@ -188,6 +301,18 @@ a:hover {
 }
 
 @media (max-width: 1199.98px) {
+    /* Long site titles wrap, so the switch and the menu button stay on the same line. */
+    .site-header .navbar-brand {
+        flex: 1 1 0;
+        min-width: 0;
+        white-space: normal;
+        line-height: 1.35;
+    }
+
+    .site-header .color-mode {
+        margin-left: 0.5rem;
+    }
+
     .site-header .navbar-nav {
         padding-top: 0.5rem;
     }
@@ -209,7 +334,7 @@ a:hover {
 }
 
 #search-form .form-control:focus {
-    background: #fff;
+    background: var(--tb-bg);
 }
 
 #search-form .btn {
@@ -258,9 +383,9 @@ a:hover {
 /* ---------- Footer ---------- */
 
 .site-footer {
-    padding: 3rem 0 1.5rem;
+    padding: 3.5rem 0 1.25rem;
     background: var(--tb-footer);
-    color: rgba(255, 255, 255, 0.75);
+    color: rgba(255, 255, 255, 0.72);
     font-size: 0.875rem;
 }
 
@@ -269,48 +394,76 @@ a:hover {
 }
 
 .footer-main {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 2rem 3rem;
+    display: grid;
+    gap: 2rem;
+}
+
+@media (min-width: 992px) {
+    .footer-main {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+        align-items: start;
+    }
 }
 
 .footer-site-title {
     display: inline-block;
-    margin-bottom: 0.5rem;
-    font-size: 1.0625rem;
+    margin-bottom: 0.6rem;
+    font-size: 1.25rem;
     font-weight: 600;
+    line-height: 1.4;
     text-decoration: none;
+}
+
+.footer-content {
+    max-width: 32rem;
 }
 
 .footer-content p:last-child {
     margin-bottom: 0;
 }
 
-/* Top-level menu items, repeated so they can be reached from the bottom of long pages. */
+/* Top-level menu items in a row, so they can be reached from the bottom of long pages. */
 .footer-links {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, auto));
-    gap: 0.4rem 2.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem 2rem;
     margin: 0;
     padding: 0;
     list-style: none;
 }
 
+@media (max-width: 575.98px) {
+    .footer-links {
+        flex-direction: column;
+    }
+}
+
+@media (min-width: 992px) {
+    .footer-links {
+        justify-content: flex-end;
+        padding-top: 0.35rem;
+    }
+}
+
 .footer-links a {
-    color: rgba(255, 255, 255, 0.75);
+    color: rgba(255, 255, 255, 0.85);
     text-decoration: none;
 }
 
 .footer-links a:hover {
     color: #fff;
     text-decoration: underline;
+    text-underline-offset: 0.3em;
 }
 
 .footer-bottom {
-    margin: 2.5rem 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+    margin-top: 3rem;
     padding-top: 1.25rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
     color: rgba(255, 255, 255, 0.5);
     font-size: 0.8125rem;
 }
@@ -324,7 +477,7 @@ a:hover {
     max-width: calc(100% - 32px);
     padding: 0.6rem 1.25rem;
     border-radius: 999px;
-    background: var(--tb-ink);
+    background: #1f2328;
     color: #fff;
     font-size: 0.875rem;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
@@ -468,8 +621,8 @@ a:hover {
     padding: 0.3rem 0.8rem;
     font-size: 0.875rem;
     border-radius: 999px;
-    background: #eaf0f7;
-    color: var(--tb-primary);
+    background: var(--tb-chip);
+    color: var(--tb-primary-text);
 }
 
 .search-filters .filter-label {
@@ -516,7 +669,7 @@ a:hover {
 
 .resource-list .resource-thumb .no-thumb {
     font-size: 2rem;
-    color: #c9c5bd;
+    color: var(--tb-no-thumb);
 }
 
 .resource-list .resource-card:hover .resource-thumb img {
@@ -612,7 +765,7 @@ a:hover {
 .eyebrow {
     display: inline-block;
     margin-bottom: 0.5rem;
-    color: var(--tb-accent);
+    color: var(--tb-accent-text);
     font-size: 0.8125rem;
     font-weight: 600;
     letter-spacing: 0.1em;
@@ -766,7 +919,7 @@ a:hover {
     margin: 0;
     padding: 0.4rem 0;
     list-style: none;
-    background: #fff;
+    background: var(--tb-bg);
     border: 1px solid var(--tb-border);
     border-radius: var(--tb-radius);
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
@@ -792,6 +945,7 @@ a:hover {
 }
 
 .citation-dialog {
+    background: var(--tb-bg);
     width: min(40rem, calc(100% - 32px));
     padding: 1.5rem;
     border: 0;
@@ -873,7 +1027,7 @@ a:hover {
     margin-right: 0.4rem;
     padding: 0 0.5rem;
     border-radius: 999px;
-    background: #e9ecef;
+    background: var(--tb-chip-muted);
     color: var(--tb-muted);
     font-size: 0.75rem;
     vertical-align: 0.1em;
@@ -1000,7 +1154,7 @@ a:hover {
 
 .advanced-search-form .add-value {
     margin-left: auto;
-    color: var(--tb-primary);
+    color: var(--tb-primary-text);
     border: 1px solid var(--tb-border);
 }
 
@@ -1025,7 +1179,7 @@ a:hover {
 }
 
 .advanced-search-form .remove-value:hover {
-    color: var(--tb-accent);
+    color: var(--tb-accent-text);
 }
 
 .advanced-search-form .remove-value::before {
