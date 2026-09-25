@@ -7,6 +7,8 @@ templates. It is used by the Toyo Bunko Media Repository (app.toyobunko-lab.jp).
 
 Successor to [ldasjp8/Omeka-S-theme-Bootstrap5](https://github.com/ldasjp8/Omeka-S-theme-Bootstrap5)
 (4.0.x) and to version 2 of this repository ("Bootstrap5 Modernized").
+Version 3.0.0 is newer than ldasjp8's 4.0.x, although the number is smaller.
+The theme's version numbers do not follow those of Omeka S.
 
 日本語の説明は下にあります。
 
@@ -95,3 +97,6 @@ Omeka S 4.1 以降で使える Bootstrap 5 のテーマです。第3版は、Ome
 入れ方: `themes/` の下に、フォルダ名 `Omeka-S-theme-Bootstrap5` のまま置きます。
 同じフォルダ名で古い版と置き換えると、テーマの設定はそのまま引き継がれます。
 第2版の `hero_*` の設定も読みます。
+
+3.0.0 は ldasjp8/Omeka-S-theme-Bootstrap5 4.0.x の後継です（番号は小さくなりましたが、新しい版です）。
+テーマの版番号は、Omeka S の版番号とは対応していません。
