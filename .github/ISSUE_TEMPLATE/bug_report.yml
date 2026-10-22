@@ -1,0 +1,52 @@
+name: Bug report
+description: Something does not display or work as expected
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting. English is preferred, but Japanese is also fine (日本語でも構いません).
+  - type: input
+    id: url
+    attributes:
+      label: URL
+      description: A public page where the problem can be seen, if there is one
+      placeholder: https://example.org/s/my-site/item/123
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What you expected, and what happened instead
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open an item page
+        2. Click ...
+        3. See ...
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      description: Theme version, Omeka S version, and PHP version
+      placeholder: Theme 3.0.0, Omeka S 4.2.1, PHP 8.3
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and OS
+      placeholder: Chrome 141 on macOS 26
+  - type: textarea
+    id: modules
+    attributes:
+      label: Modules
+      description: Modules enabled on the site that might be related (for example IiifViewers, AdvancedSearch)
+  - type: textarea
+    id: logs
+    attributes:
+      label: Errors or screenshots
+      description: PHP errors from the Omeka S log, errors from the browser console, or screenshots

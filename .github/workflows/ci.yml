@@ -1,0 +1,28 @@
+name: CI
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - name: PHP syntax check of the templates
+        run: |
+          php --version
+          find view -name '*.phtml' -print0 | xargs -0 -n1 php -l
+      - name: theme.ini parses and has a version
+        run: php -r '$i = parse_ini_file("config/theme.ini", true); if (!$i || empty($i["info"]["version"])) { exit(1); } echo $i["info"]["version"], PHP_EOL;'
+      - name: Translations compile and ja.mo is up to date
+        run: |
+          sudo apt-get install -y -qq gettext >/dev/null
+          for po in language/*.po; do
+            mo=${po%.po}.mo
+            msgfmt --check -o "$RUNNER_TEMP/new.mo" "$po"
+            diff <(msgunfmt "$mo") <(msgunfmt "$RUNNER_TEMP/new.mo") || { echo "::error file=$mo::$mo is out of date. Run: msgfmt -o $mo $po"; exit 1; }
+          done
