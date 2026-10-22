@@ -11,6 +11,26 @@ if (count($locales) <= 1) {
 }
 
 $currentLocale = $this->siteSetting('locale') ?: $defaultLocale;
+
+// When a page has no translation, the module links the other languages to the
+// current page itself, so the switch does nothing. Link to the homepage of the
+// other site instead.
+$currentUrl = null;
+foreach ($locales as $locale) {
+    if ($locale['locale'] == $currentLocale) {
+        $currentUrl = $locale['url'];
+        break;
+    }
+}
+if ($currentUrl !== null) {
+    $url = $this->plugin('url');
+    foreach ($locales as $key => $locale) {
+        if ($locale['locale'] != $currentLocale && $locale['url'] === $currentUrl && !empty($locale['site'])) {
+            $locales[$key]['url'] = $url('site', ['site-slug' => $locale['site']]);
+        }
+    }
+}
+
 $code = function ($locale) {
     return rtrim(substr($locale, 0, 3), '_-');
 };

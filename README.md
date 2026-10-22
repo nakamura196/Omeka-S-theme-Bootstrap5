@@ -23,7 +23,8 @@ A video guide (15 minutes, Japanese narration with Japanese subtitles) shows ins
 - Language switch in the header when the module
   [Internationalisation](https://github.com/Daniel-KM/Omeka-S-module-Internationalisation)
   is enabled and the site belongs to a group of translated sites. It links to the same page
-  in the other languages. Nothing is shown without the module.
+  in the other languages, or to the homepage of the other site when the page has no translation.
+  Nothing is shown without the module.
 - Two color settings, main and accent. Text tints for dark mode are derived from them.
 - Browse pages as a grid or a list, with a page size selector (default, 50, 100).
 - Item and media pages with breadcrumbs and a row of actions: copy the URL, a citation to copy
