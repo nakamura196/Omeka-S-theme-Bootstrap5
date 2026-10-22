@@ -20,6 +20,11 @@ A video guide (15 minutes, Japanese narration with Japanese subtitles) shows ins
 
 - Light and dark mode. A switch in the header offers light, dark and "same as the device";
   the browser remembers the choice.
+- Language switch in the header when the module
+  [Internationalisation](https://github.com/Daniel-KM/Omeka-S-module-Internationalisation)
+  is enabled and the site belongs to a group of translated sites. It links to the same page
+  in the other languages, or to the homepage of the other site when the page has no translation.
+  Nothing is shown without the module.
 - Two color settings, main and accent. Text tints for dark mode are derived from them.
 - Browse pages as a grid or a list, with a page size selector (default, 50, 100).
 - Item and media pages with breadcrumbs and a row of actions: copy the URL, a citation to copy
@@ -113,6 +118,7 @@ Omeka S 4.1 以降で使える Bootstrap 5 のテーマです。第3版は、Ome
 主な機能:
 
 - ライトとダークの切り替え（ヘッダー右端。端末の設定に合わせることもできます）
+- 言語の切り替え（ヘッダー。Internationalisation モジュールを入れ、言語ごとのサイトをまとめたときだけ出ます）
 - メインの色とアクセントの色の設定
 - 一覧のグリッドとリストの切り替え、表示件数の切り替え
 - 資料の画面に、パンくず、URL のコピー、引用（日本語の形）、共有、IIIF マニフェスト、JSON-LD

@@ -118,8 +118,8 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Share and light / dark menus: close them on a click elsewhere or with Escape.
-    document.querySelectorAll('.share-menu, .color-mode').forEach(function (menu) {
+    // Share, language and light / dark menus: close them on a click elsewhere or with Escape.
+    document.querySelectorAll('.share-menu, .language-menu, .color-mode').forEach(function (menu) {
         document.addEventListener('click', function (event) {
             if (menu.open && !menu.contains(event.target)) {
                 menu.open = false;
