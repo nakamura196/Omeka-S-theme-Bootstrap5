@@ -194,16 +194,19 @@ a:hover {
     text-decoration: none;
 }
 
-/* Light / dark switch: next to the menu button on phones, at the end of the menu bar on wide screens. */
+/* Language and light / dark switches: next to the menu button on phones, at the end of the menu bar on wide screens. */
 .site-header .navbar-brand { order: 0; }
+.site-header .language-menu,
 .site-header .color-mode { order: 1; margin-left: auto; margin-right: 0.5rem; }
 .site-header .navbar-toggler { order: 2; }
 .site-header .navbar-collapse { order: 3; }
 
+.language-menu,
 .color-mode {
     position: relative;
 }
 
+.language-menu > summary,
 .color-mode > summary {
     list-style: none;
     color: var(--tb-muted);
@@ -211,10 +214,12 @@ a:hover {
     border: 0;
 }
 
+.language-menu > summary:hover,
 .color-mode > summary:hover {
     color: var(--tb-ink);
 }
 
+.language-menu > summary::-webkit-details-marker,
 .color-mode > summary::-webkit-details-marker {
     display: none;
 }
@@ -229,6 +234,7 @@ a:hover {
     display: inline-block;
 }
 
+.language-menu ul,
 .color-mode ul {
     position: absolute;
     top: calc(100% + 6px);
@@ -244,6 +250,7 @@ a:hover {
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 }
 
+.language-menu ul a,
 .color-mode ul button {
     display: flex;
     align-items: center;
@@ -257,19 +264,40 @@ a:hover {
     text-align: left;
 }
 
+.language-menu ul a:hover,
 .color-mode ul button:hover {
     background: var(--tb-surface);
 }
 
+.language-menu ul a[aria-current],
 .color-mode ul button[aria-pressed="true"] {
     color: var(--tb-primary-text);
     font-weight: 600;
 }
 
+.language-menu > summary {
+    white-space: nowrap;
+}
+
+.language-menu .language-code {
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+}
+
+.language-menu ul a:hover {
+    text-decoration: none;
+}
+
 @media (min-width: 1200px) {
+    .site-header .language-menu,
     .site-header .color-mode {
         order: 4;
         margin: 0 0 0 0.5rem;
+    }
+
+    /* The menu bar is full here: the globe alone, the current language is marked in the list. */
+    .site-header .language-code {
+        display: none;
     }
 
     /* On wide screens the menu stays in view while scrolling. */
@@ -309,6 +337,7 @@ a:hover {
         line-height: 1.35;
     }
 
+    .site-header .language-menu,
     .site-header .color-mode {
         margin-left: 0.5rem;
     }

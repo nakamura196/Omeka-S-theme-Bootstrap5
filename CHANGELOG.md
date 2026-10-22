@@ -8,6 +8,8 @@ All notable changes to this project will be documented in this file.
 - Contributing guide, code of conduct, security policy, issue forms and pull request template.
 - CI that checks the templates for PHP syntax errors and that `language/ja.mo` matches `ja.po`.
 - `CITATION.cff` and sponsor links.
+- Language switch in the header, shown only when the module Internationalisation is enabled and the
+  site is in a group of translated sites. The current language code is hidden on wide screens to save room.
 
 ## [3.0.0] - 2026-09-25
 

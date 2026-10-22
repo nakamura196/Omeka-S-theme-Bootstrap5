@@ -1,0 +1,29 @@
+<?php
+// Rendered by the view helper languageSwitcher() of the module Internationalisation (see common/header.phtml).
+// $locales: one entry per site of the group, with "locale", "locale_label" and "url" (the same page in that site).
+// $defaultLocale: the locale of the install, used when the site has none.
+$escape = $this->plugin('escapeHtml');
+$translate = $this->plugin('translate');
+
+// Nothing to switch to when the site is not in a group of translated sites.
+if (count($locales) <= 1) {
+    return;
+}
+
+$currentLocale = $this->siteSetting('locale') ?: $defaultLocale;
+$code = function ($locale) {
+    return rtrim(substr($locale, 0, 3), '_-');
+};
+?>
+<details class="language-menu">
+    <summary class="btn btn-sm" title="<?php echo $escape($translate('Language')); ?>">
+        <i class="fa-solid fa-globe" aria-hidden="true"></i>
+        <span class="language-code"><?php echo $escape($code($currentLocale)); ?></span>
+        <span class="visually-hidden"><?php echo $escape($translate('Language')); ?></span>
+    </summary>
+    <ul>
+        <?php foreach ($locales as $locale): ?>
+        <li><a href="<?php echo $escape($locale['url']); ?>" hreflang="<?php echo $escape(str_replace('_', '-', $locale['locale'])); ?>"<?php echo $locale['locale'] == $currentLocale ? ' aria-current="true"' : ''; ?>><?php echo $escape($locale['locale_label']); ?></a></li>
+        <?php endforeach; ?>
+    </ul>
+</details>

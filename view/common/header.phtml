@@ -6,6 +6,8 @@ $translate = $this->plugin('translate');
 <nav class="navbar navbar-expand-xl" aria-label="<?php echo $escape($translate('Main navigation')); ?>">
     <div class="container-fluid">
         <a href="<?php echo $escape($site->url()); ?>" class="navbar-brand"><?php echo $escape($site->title()); ?></a>
+        <?php // Language switch, only when the module Internationalisation is enabled. ?>
+        <?php echo $this->getHelperPluginManager()->has('languageSwitcher') ? $this->languageSwitcher(['template' => 'common/header-language-switcher']) : ''; ?>
         <details class="color-mode">
             <summary class="btn btn-sm" title="<?php echo $escape($translate('Light or dark')); ?>">
                 <i class="fa-solid fa-sun" data-mode-icon="light" aria-hidden="true"></i>
