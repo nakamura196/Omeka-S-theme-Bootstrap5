@@ -1,0 +1,10 @@
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    # Supply-chain safety: do not take versions right after release.
+    # github-actions does not support semver-*-days; listing them makes the whole config invalid
+    cooldown:
+      default-days: 5

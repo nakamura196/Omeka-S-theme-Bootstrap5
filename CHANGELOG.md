@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+### Added
+- Contributing guide, code of conduct, security policy, issue forms and pull request template.
+- CI that checks the templates for PHP syntax errors and that `language/ja.mo` matches `ja.po`.
+- `CITATION.cff` and sponsor links.
+
 ## [3.0.0] - 2026-09-25
 
 Rebuilt on the Omeka S 4.2.1 core templates, for Omeka S 4.1 and later.

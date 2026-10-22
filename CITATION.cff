@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use this theme in your research or project, please cite it as below."
+type: software
+title: "Omeka-S-theme-Bootstrap5"
+abstract: "A Bootstrap 5 theme for Omeka S 4.1 and later, rebuilt on the Omeka S 4.2.1 core templates."
+authors:
+  - family-names: Nakamura
+    given-names: Satoru
+    orcid: "https://orcid.org/0000-0001-8245-7925"
+    affiliation: "The University of Tokyo"
+version: "3.0.0"
+date-released: "2026-09-25"
+license: GPL-3.0-only
+repository-code: "https://github.com/nakamura196/Omeka-S-theme-Bootstrap5"
+keywords:
+  - Omeka S
+  - theme
+  - Bootstrap
+  - IIIF
+  - digital archives

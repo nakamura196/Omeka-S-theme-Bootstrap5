@@ -77,6 +77,22 @@ public items from a live site through its API. See the comments at the top of th
 The first commit of the version 3 history holds the Omeka S 4.2.1 core templates as they are,
 so `git log -p -- view/<path>` shows what the theme changed.
 
+## Contributing
+
+Bug reports, feature ideas, translations and pull requests are welcome.
+See [CONTRIBUTING.md](CONTRIBUTING.md). Please report security issues privately, as described
+in [SECURITY.md](SECURITY.md).
+
+## Citation
+
+If you use this theme in your research or project, please cite it.
+GitHub's "Cite this repository" button gives the citation from [CITATION.cff](CITATION.cff).
+
+## Support
+
+If this theme is useful to you, you can support its development through
+[GitHub Sponsors](https://github.com/sponsors/nakamura196) or [Ko-fi](https://ko-fi.com/nakamura196).
+
 ## License
 
 GPLv3, as the theme contains Omeka S core templates.
@@ -108,3 +124,10 @@ Omeka S 4.1 以降で使える Bootstrap 5 のテーマです。第3版は、Ome
 
 3.0.0 は ldasjp8/Omeka-S-theme-Bootstrap5 4.0.x の後継です（番号は小さくなりましたが、新しい版です）。
 テーマの版番号は、Omeka S の版番号とは対応していません。
+
+不具合の報告や要望は Issue にお寄せください。日本語でも構いません。
+手順は [CONTRIBUTING.md](CONTRIBUTING.md) にあります。セキュリティの問題は、公開の Issue ではなく
+[SECURITY.md](SECURITY.md) の方法でお知らせください。
+
+研究などで使っていただいた場合は、引用していただけると幸いです（GitHub の "Cite this repository" から引用の形が得られます）。
+開発は [GitHub Sponsors](https://github.com/sponsors/nakamura196) や [Ko-fi](https://ko-fi.com/nakamura196) で支援していただけます。

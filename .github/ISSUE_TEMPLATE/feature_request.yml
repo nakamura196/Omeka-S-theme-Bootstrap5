@@ -1,0 +1,25 @@
+name: Feature request
+description: Suggest a new feature or an improvement
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        English is preferred, but Japanese is also fine (日本語でも構いません).
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Use case
+      description: What kind of site and material is it for, and what do you want visitors or editors to be able to do?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed feature
+      description: How you imagine it would work, and whether it should be a theme setting
+  - type: textarea
+    id: examples
+    attributes:
+      label: Examples
+      description: Other Omeka S themes or sites that do this, or screenshots
