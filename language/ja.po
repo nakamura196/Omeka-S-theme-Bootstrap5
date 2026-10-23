@@ -118,3 +118,14 @@ msgstr "ダーク（暗い表示）"
 
 msgid "Same as the device"
 msgstr "端末の設定に合わせる"
+
+# MetadataBrowse builds "See all %s with this value" from a lowercase
+# "items" / "item sets", which neither the module nor the core translates.
+msgid "See all %s with this value"
+msgstr "この値の%sをすべて表示"
+
+msgid "items"
+msgstr "アイテム"
+
+msgid "item sets"
+msgstr "アイテムセット"
