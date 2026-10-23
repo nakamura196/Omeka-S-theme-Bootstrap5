@@ -21,6 +21,8 @@ All notable changes to this project will be documented in this file.
   Unicode-aware matching.
 - Item browse: the grid / list choice remembered in the browser is applied before the cards are
   drawn. The page no longer shows the theme setting's layout first and then switches.
+- Home page: the title, subtitle and summary on the top image break Japanese between phrases
+  and keep the lines even, instead of leaving one or two characters on the last line.
 
 ## [3.0.0] - 2026-09-25
 
