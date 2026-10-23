@@ -385,6 +385,15 @@ a:hover {
     background: linear-gradient(180deg, rgba(12, 20, 32, 0.35) 0%, rgba(12, 20, 32, 0.7) 100%);
 }
 
+/* Break Japanese between phrases, not inside a word ("データベ / ース"), and even out the lines.
+   Browsers without support keep the normal wrapping. */
+.top-hero h1,
+.top-hero .top-hero-sub,
+.top-hero .top-hero-summary {
+    word-break: auto-phrase;
+    text-wrap: balance;
+}
+
 .top-hero h1 {
     font-size: clamp(1.75rem, 1.2rem + 2.4vw, 3rem);
     letter-spacing: 0.04em;
