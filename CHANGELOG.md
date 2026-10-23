@@ -23,6 +23,7 @@ All notable changes to this project will be documented in this file.
   drawn. The page no longer shows the theme setting's layout first and then switches.
 - Home page: the title, subtitle and summary on the top image break Japanese between phrases
   and keep the lines even, instead of leaving one or two characters on the last line.
+- Home page: the content under the top image has as much space above it as below it.
 
 ## [3.0.0] - 2026-09-25
 

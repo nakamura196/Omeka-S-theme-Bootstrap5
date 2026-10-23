@@ -418,6 +418,11 @@ a:hover {
     font-weight: 600;
 }
 
+/* The page under the hero: as much space above as below (mt-5), not the usual mt-4 under the header. */
+.top-hero + #content > .container:first-child {
+    margin-top: 3rem !important;
+}
+
 /* ---------- Footer ---------- */
 
 .site-footer {
