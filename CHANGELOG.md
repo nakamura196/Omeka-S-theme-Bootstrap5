@@ -11,6 +11,15 @@ All notable changes to this project will be documented in this file.
 - Language switch in the header, shown only when the module Internationalisation is enabled and the
   site is in a group of translated sites. The current language code is hidden on wide screens to save room.
 
+### Changed
+- Item and media pages: the Open Graph title is "item title · site title", so cards on X and Facebook,
+  which do not show `og:site_name`, still tell which site the item comes from.
+- Japanese translation of MetadataBrowse's "See all items with this value".
+
+### Fixed
+- Browse pages: the theme settings "sort_property" and "body_property" are split into lines with
+  Unicode-aware matching.
+
 ## [3.0.0] - 2026-09-25
 
 Rebuilt on the Omeka S 4.2.1 core templates, for Omeka S 4.1 and later.

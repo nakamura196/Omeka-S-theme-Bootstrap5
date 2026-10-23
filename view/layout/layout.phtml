@@ -56,11 +56,12 @@ $topButtonText = $this->themeSetting('hero_button_text') ?: $translate('Browse')
 
 // Open Graph tags (the card shown when a page is shared). Item and media pages pass their own
 // values through common/og-meta; other pages use the site's title, summary and top image.
+// The site title is added to an item's title because X and Facebook do not show og:site_name.
 $absolute = fn($url) => $url && $url[0] === '/' ? $this->serverUrl($url) : $url;
 $og = [
     'og:site_name' => $siteTitle,
     'og:type' => $this->ogType ?: 'website',
-    'og:title' => $this->ogTitle ?: $this->headTitle()->renderTitle(),
+    'og:title' => $this->ogTitle ? $this->ogTitle . ' · ' . $siteTitle : $this->headTitle()->renderTitle(),
     'og:description' => $this->ogDescription ?: strip_tags((string) $site->summary()),
     'og:url' => $this->serverUrl(true),
     'og:image' => $absolute($this->ogImage ?: $topImage),

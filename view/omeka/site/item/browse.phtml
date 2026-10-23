@@ -21,7 +21,7 @@ endif;
 // or "Title" when that is empty. Same as the old theme; core 4.2's default list would also
 // offer "Resource class", which means nothing to visitors of this site.
 $sortHeadings = [['label' => $translate('Created'), 'value' => 'created']];
-foreach (preg_split('/\R/', trim((string) $this->themeSetting('sort_property'))) as $row) {
+foreach (preg_split('/\R/u', trim((string) $this->themeSetting('sort_property'))) as $row) {
     $parts = array_map('trim', explode(',', $row, 2));
     if (count($parts) === 2 && $parts[0] !== '') {
         $sortHeadings[] = ['label' => $translate($parts[1]), 'value' => $parts[0]];
@@ -34,7 +34,7 @@ if (count($sortHeadings) === 1) {
 // Text under the title in list view: the theme setting "body_property" (one "term,Label" per
 // line), else the site's browse body property, else the description.
 $bodyFields = [];
-foreach (preg_split('/\R/', trim((string) $this->themeSetting('body_property'))) as $row) {
+foreach (preg_split('/\R/u', trim((string) $this->themeSetting('body_property'))) as $row) {
     $parts = array_map('trim', explode(',', $row, 2));
     if (count($parts) === 2 && $parts[0] !== '') {
         $bodyFields[$parts[0]] = $translate($parts[1]);
