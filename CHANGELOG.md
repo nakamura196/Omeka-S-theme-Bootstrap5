@@ -19,6 +19,8 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Browse pages: the theme settings "sort_property" and "body_property" are split into lines with
   Unicode-aware matching.
+- Item browse: the grid / list choice remembered in the browser is applied before the cards are
+  drawn. The page no longer shows the theme setting's layout first and then switches.
 
 ## [3.0.0] - 2026-09-25
 

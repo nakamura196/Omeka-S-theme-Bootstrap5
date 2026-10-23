@@ -95,6 +95,24 @@ $metadataOpen = (int) $this->params()->fromQuery('page', 1) <= 1;
 
 <?php $this->trigger('view.browse.before'); ?>
 <ul class="resource-list is-<?php echo $layout; ?>" id="resource-list">
+<?php // Apply the layout remembered by asset/js/theme.js before the cards are drawn, so the page
+// does not first show the theme setting's layout and then switch. ?>
+<script>
+(function () {
+    try {
+        var saved = window.localStorage.getItem('omeka-s-theme-bs5:browse-layout');
+        if (saved !== 'grid' && saved !== 'list') {
+            return;
+        }
+        var list = document.getElementById('resource-list');
+        list.classList.toggle('is-grid', saved === 'grid');
+        list.classList.toggle('is-list', saved === 'list');
+        document.querySelectorAll('.view-toggle[data-target="resource-list"] [data-layout]').forEach(function (button) {
+            button.setAttribute('aria-pressed', button.getAttribute('data-layout') === saved ? 'true' : 'false');
+        });
+    } catch (e) {}
+})();
+</script>
 <?php foreach ($items as $item):
     $heading = $headingTerm
         ? $item->value($headingTerm, ['default' => $translate('[Untitled]'), 'lang' => $valueLang])
