@@ -26,6 +26,7 @@ All notable changes to this project will be documented in this file.
 - Home page: the content under the top image has as much space above it as below it.
 - `theme.jpg` shows a sample of CC BY 4.0 botanical illustrations from the University of Tokyo
   Agricultural and Life Sciences Library, added by the new `scripts/dev/seed_sample.py`.
+- README: the English section links to the English video guide instead of the Japanese one.
 
 ## [3.0.0] - 2026-09-25
 

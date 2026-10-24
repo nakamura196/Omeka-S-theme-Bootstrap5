@@ -16,9 +16,9 @@ The theme's version numbers do not follow those of Omeka S.
 
 日本語の説明は下にあります。
 
-A video guide (15 minutes, Japanese narration with Japanese subtitles) shows installation, the public pages and the settings:
+A video guide (14 minutes, English narration with English subtitles) shows installation, the public pages and the settings:
 
-[![Video guide on YouTube](.github/video-cover.jpg)](https://www.youtube.com/watch?v=N2jiDQmq38c)
+[![Video guide on YouTube](.github/video-cover-en.jpg)](https://www.youtube.com/watch?v=gUKUz6sASGg)
 
 ## Features
 
