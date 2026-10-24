@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+## [3.0.1] - 2026-10-24
+
 ### Added
 - Contributing guide, code of conduct, security policy, issue forms and pull request template.
 - CI that checks the templates for PHP syntax errors and that `language/ja.mo` matches `ja.po`.
