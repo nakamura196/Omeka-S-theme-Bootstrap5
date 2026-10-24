@@ -5,6 +5,10 @@ templates. It is used by the Toyo Bunko Media Repository (app.toyobunko-lab.jp).
 
 ![theme](theme.jpg)
 
+Screenshot images: The University of Tokyo Agricultural and Life Sciences Library,
+[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), via the
+[UTokyo Digital Archives Portal](https://da.dl.itc.u-tokyo.ac.jp/portal/).
+
 Successor to [ldasjp8/Omeka-S-theme-Bootstrap5](https://github.com/ldasjp8/Omeka-S-theme-Bootstrap5)
 (4.0.x) and to version 2 of this repository ("Bootstrap5 Modernized").
 Version 3.0.0 is newer than ldasjp8's 4.0.x, although the number is smaller.
@@ -78,6 +82,8 @@ Then set the main and accent colors, which are new.
 
 `scripts/dev/setup.zsh` starts a local Omeka S with [DDEV](https://ddev.com/) and copies a few
 public items from a live site through its API. See the comments at the top of the script.
+`scripts/dev/seed_sample.py` instead fills an empty install with the CC BY 4.0 sample used for
+`theme.jpg`.
 
 The first commit of the version 3 history holds the Omeka S 4.2.1 core templates as they are,
 so `git log -p -- view/<path>` shows what the theme changed.
@@ -110,6 +116,8 @@ IIIF logo (from iiif.io).
 
 Omeka S 4.1 以降で使える Bootstrap 5 のテーマです。第3版は、Omeka S 4.2.1 の本体テンプレートを土台に作り直しました。
 東洋文庫メディアリポジトリ（app.toyobunko-lab.jp）で使っています。
+
+冒頭の画面写真の資料画像は、東京大学農学生命科学図書館の所蔵資料です（東京大学デジタルアーカイブポータル、CC BY 4.0）。
 
 使い方の動画（15分）: 入れ方、公開サイトでの見え方、管理画面での設定を順に紹介しています。章ごとに区切ってあるので、見たいところから再生できます。
 
